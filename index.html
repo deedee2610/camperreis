@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camperreis Scandinavië 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --paper2: #ede8dc;
+    --fjord: #2d6a8f;
+    --fjord-light: #4a9bc4;
+    --moss: #4a7c59;
+    --amber: #c9873a;
+    --danger: #c0392b;
+    --warn: #e67e22;
+    --ok: #27ae60;
+    --muted: #8a8070;
+    --border: #d4cfc3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+  }
+
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  header h1 span { font-style: italic; color: var(--fjord-light); }
+
+  .header-status { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    padding: 4px 10px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .status-pill .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--ok);
+  }
+  .status-pill.warn .dot { background: var(--warn); }
+  .status-pill.danger .dot { background: var(--danger); }
+
+  .loading-badge {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    padding: 3px 8px; border-radius: 12px;
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .loading-badge.done { color: var(--ok); }
+
+  main {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    overflow: hidden;
+  }
+
+  sidebar {
+    display: flex; flex-direction: column;
+    background: var(--paper2);
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .location-bar {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--paper);
+  }
+
+  .location-bar label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 6px;
+  }
+
+  .location-bar select {
+    width: 100%; padding: 8px 10px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    background: var(--paper); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: var(--ink); cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8070' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .location-bar select:focus { outline: none; border-color: var(--fjord); }
+
+  .buffer-meter {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--paper);
+  }
+
+  .buffer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .buffer-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .buffer-value { font-family: 'DM Mono', monospace; font-size: 0.8rem; font-weight: 500; }
+  .buffer-bar-bg { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .buffer-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease, background 0.4s ease; }
+
+  .buffer-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .buffer-stat {
+    text-align: center; padding: 6px 4px;
+    background: var(--paper2); border-radius: 6px; border: 1px solid var(--border);
+  }
+  .buffer-stat .val { font-family: 'DM Mono', monospace; font-size: 1rem; font-weight: 500; display: block; line-height: 1; }
+  .buffer-stat .lbl { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; display: block; }
+
+  /* Weather strip */
+  .weer-strip {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--paper);
+  }
+  .weer-strip-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: block;
+  }
+  .weer-strip-items { display: flex; gap: 6px; overflow-x: auto; }
+  .weer-strip-item {
+    flex-shrink: 0; text-align: center; padding: 6px 8px;
+    border-radius: 8px; border: 1.5px solid var(--border);
+    cursor: pointer; transition: border-color 0.15s;
+    min-width: 52px;
+  }
+  .weer-strip-item:hover { border-color: var(--fjord); }
+  .weer-strip-item .wi-emoji { font-size: 18px; display: block; line-height: 1; }
+  .weer-strip-item .wi-temp { font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500; display: block; margin-top: 2px; }
+  .weer-strip-item .wi-name { font-size: 0.58rem; color: var(--muted); display: block; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52px; }
+
+  /* Scenarios */
+  .scenarios-header {
+    padding: 10px 16px 6px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .scenarios-header h2 {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+
+  .scenarios-list {
+    flex: 1; overflow-y: auto;
+    padding: 0 12px 12px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .scenario-card {
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 14px;
+    cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .scenario-card:hover { border-color: var(--fjord); box-shadow: 0 2px 12px rgba(45,106,143,0.12); }
+  .scenario-card.active { border-color: var(--fjord); box-shadow: 0 0 0 3px rgba(45,106,143,0.12); }
+
+  .scenario-type {
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .type-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .scenario-card h3 { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: 4px; line-height: 1.2; }
+  .scenario-card .distance { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+  .scenario-card .tip-preview { font-size: 0.78rem; color: var(--muted); line-height: 1.45; border-left: 2px solid var(--border); padding-left: 8px; margin-bottom: 8px; }
+
+  .scenario-weather-row { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .weather-badge {
+    font-size: 0.7rem; padding: 3px 8px; border-radius: 20px;
+    background: var(--paper2); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .scenario-consequence {
+    margin-top: 8px; padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    font-size: 0.72rem; display: flex; align-items: center; gap: 6px;
+  }
+  .consequence-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .consequence-fill { height: 100%; border-radius: 2px; }
+
+  .yr-link {
+    display: inline-block; margin-top: 6px; font-size: 0.72rem;
+    color: var(--fjord); text-decoration: none;
+  }
+  .yr-link:hover { text-decoration: underline; }
+
+  #map { width: 100%; height: 100%; z-index: 1; }
+
+  .stop-popup { min-width: 240px; font-family: 'DM Sans', sans-serif; }
+  .stop-popup h4 { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: 4px; }
+  .stop-popup .day-badge { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-bottom: 8px; }
+  .stop-popup .tip { font-size: 0.78rem; line-height: 1.5; color: #333; }
+
+  .weather-3day {
+    display: flex; gap: 6px; margin: 8px 0;
+  }
+  .weather-day-cell {
+    flex: 1; text-align: center; padding: 5px 4px;
+    border-radius: 6px; border: 1px solid var(--border);
+  }
+  .weather-day-cell .wdc-icon { font-size: 18px; display: block; }
+  .weather-day-cell .wdc-temp { font-family: monospace; font-size: 0.8rem; font-weight: 600; display: block; }
+  .weather-day-cell .wdc-label { font-size: 0.6rem; color: #666; display: block; margin-top: 2px; }
+
+  /* Loading overlay */
+  .map-loading {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    background: rgba(26,26,46,0.85); color: white;
+    padding: 6px 14px; border-radius: 20px;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    z-index: 1000; pointer-events: none;
+    transition: opacity 0.4s;
+  }
+
+  .scenarios-list::-webkit-scrollbar { width: 4px; }
+  .scenarios-list::-webkit-scrollbar-track { background: transparent; }
+  .scenarios-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 700px) {
+    main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    sidebar { max-height: 55vh; }
+    header { padding: 10px 14px; }
+    header h1 { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Camperreis <span>Scandinavië</span> — Zomer 2026</h1>
+  <div class="header-status">
+    <div class="loading-badge" id="routeStatus">⏳ Route laden…</div>
+    <div class="loading-badge" id="weerStatus">⏳ Weer laden…</div>
+    <div class="status-pill" id="headerPill">
+      <div class="dot"></div>
+      <span id="headerText">Selecteer huidige locatie</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <sidebar>
+    <div class="location-bar">
+      <label>📍 Huidige stop</label>
+      <select id="locationSelect" onchange="updateDashboard()">
+        <option value="">— Kies je huidige locatie —</option>
+      </select>
+    </div>
+
+    <div class="buffer-meter">
+      <div class="buffer-header">
+        <span class="buffer-label">⏱ Buffer naar Kristiansand dag 50</span>
+        <span class="buffer-value" id="bufferLabel">—</span>
+      </div>
+      <div class="buffer-bar-bg">
+        <div class="buffer-bar-fill" id="bufferFill" style="width:0%"></div>
+      </div>
+      <div class="buffer-stats">
+        <div class="buffer-stat">
+          <span class="val" id="statDagen">—</span>
+          <span class="lbl">Dagen resterend</span>
+        </div>
+        <div class="buffer-stat">
+          <span class="val" id="statStops">—</span>
+          <span class="lbl">Stops voor</span>
+        </div>
+        <div class="buffer-stat">
+          <span class="val" id="statBuffer">—</span>
+          <span class="lbl">Flexdagen</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weer-strip" id="weerStripContainer" style="display:none;">
+      <span class="weer-strip-label">🌤 Komende stops — weersoverzicht</span>
+      <div class="weer-strip-items" id="weerStripItems"></div>
+    </div>
+
+    <div class="scenarios-header">
+      <h2>🗺 Route-alternatieven</h2>
+    </div>
+
+    <div class="scenarios-list" id="scenariosList">
+      <div style="padding:20px 4px; color:var(--muted); font-size:0.82rem; line-height:1.6;">
+        Kies een locatie om weergebaseerde route-alternatieven te zien.
+      </div>
+    </div>
+  </sidebar>
+
+  <div style="position:relative; width:100%; height:100%;">
+    <div id="map"></div>
+    <div class="map-loading" id="mapLoading">Rijroute wordt berekend…</div>
+  </div>
+</main>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const TOTAL_DAYS = 50;
+
+const stops = [
+  { dag: 1,  naam: "Utrecht (vertrek)",       lat: 52.0907, lng: 5.1214,  type: "rij",  fase: "Heenreis",          tips: "Vroeg vertrekken. Lange dag via ferry Puttgarden-Rødby.", ferry: true },
+  { dag: 2,  naam: "Møns Klint",              lat: 54.9741, lng: 12.5444, type: "rust", fase: "Møns Klint",        tips: "Krijtrotsen en GeoCenter Møns Klint (kindvriendelijk). Liselund Slot tuinen." },
+  { dag: 3,  naam: "Vimmerby",                lat: 57.6654, lng: 15.8543, type: "rij",  fase: "Småland",           tips: "Via Öresundbrug de grens over. Småland binnenrijden." },
+  { dag: 4,  naam: "Vimmerby (rust)",         lat: 57.6654, lng: 15.8543, type: "rust", fase: "Småland",           tips: "Astrid Lindgrens Värld, Storsjön zwemmen, Glasriket glasdorpen." },
+  { dag: 5,  naam: "Färnebofjärden NP",       lat: 60.1700, lng: 16.9500, type: "rij",  fase: "Färnebofjärden",    tips: "Nationaal park met oerbos langs de Dalälven." },
+  { dag: 6,  naam: "Färnebofjärden NP (rust)",lat: 60.1700, lng: 16.9500, type: "rust", fase: "Färnebofjärden",    tips: "Oerbos, vlonderpaden, eland-spotten in de dageraad, kano huren." },
+  { dag: 7,  naam: "Skuleskogen NP",          lat: 63.0900, lng: 18.3500, type: "rij",  fase: "Höga Kusten",       tips: "UNESCO Höga Kusten. Lange dag maar prachtig." },
+  { dag: 8,  naam: "Skuleskogen NP (rust)",   lat: 63.0900, lng: 18.3500, type: "rust", fase: "Höga Kusten",       tips: "Slåttdalsskrevan kloof, Skuleberget kabelbaan, Norrfällsviken vissersdorpje." },
+  { dag: 9,  naam: "Luleå",                   lat: 65.5848, lng: 22.1567, type: "rij",  fase: "Luleå",             tips: "Lange dag. Lunchstop Skellefteå optioneel." },
+  { dag: 10, naam: "Luleå (rust)",            lat: 65.5848, lng: 22.1567, type: "rust", fase: "Luleå",             tips: "Gammelstad UNESCO-kerkdorp, archipel-boottocht, Storforsen dagtrip." },
+  { dag: 11, naam: "Jokkmokk",               lat: 66.6044, lng: 19.8300, type: "rij",  fase: "Jokkmokk",          tips: "Highway 97 — rustige scenic route langs Luleälven." },
+  { dag: 12, naam: "Jokkmokk (dag 1)",       lat: 66.6044, lng: 19.8300, type: "rust", fase: "Jokkmokk",          tips: "Ájtte Sámi-museum, rendierboerderij Sápmi, wandeling Talvatissjön." },
+  { dag: 13, naam: "Jokkmokk (dag 2)",       lat: 66.6044, lng: 19.8300, type: "rust", fase: "Jokkmokk",          tips: "Pite älv kanoën, lokale rookvis." },
+  { dag: 14, naam: "Kiruna",                  lat: 67.8558, lng: 20.2253, type: "rij",  fase: "Kiruna",            tips: "ICEHOTEL Jukkasjärvi (zomerexpositie). Via E45/E10." },
+  { dag: 15, naam: "Botnhamn (Senja)",        lat: 69.1550, lng: 17.4500, type: "rij",  fase: "Senja",             tips: "E10 via Riksgränsen en Abisko NP. Korte kloofwandeling bij Abisko." },
+  { dag: 16, naam: "Senja (dag 1)",           lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Tungeneset boardwalk (devil's teeth), Bergsbotn viewpoint, Ersfjordstrand wit zandstrand." },
+  { dag: 17, naam: "Senja (dag 2)",           lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Husøy klein eilanddorp, Hesten wandeling voor Segla uitzicht (3–4 uur)." },
+  { dag: 18, naam: "Andenes",                 lat: 69.3249, lng: 16.1274, type: "rij",  fase: "Andøya",            tips: "Ferry Gryllefjord–Andenes 1u45. Vooraf reserveren via senjafergene.no.", ferry: true },
+  { dag: 19, naam: "Andøya (rust)",           lat: 69.2500, lng: 16.1000, type: "rust", fase: "Andøya",            tips: "Walvis-safari (RIB), Bleik wit zandstrand, papegaaiduikers Bleiksøya." },
+  { dag: 20, naam: "Henningsvær",             lat: 68.1468, lng: 14.1888, type: "rij",  fase: "Lofoten",           tips: "Via E10 en Andøybrua naar de Lofoten. Schilderachtige aankomst." },
+  { dag: 21, naam: "Lofoten (dag 2)",         lat: 68.1100, lng: 13.9000, type: "rust", fase: "Lofoten",           tips: "Vissersdorp, voetbalveld op rotsen, lokale stokvis, galleries." },
+  { dag: 22, naam: "Lofoten (dag 3)",         lat: 68.0900, lng: 13.6000, type: "rust", fase: "Lofoten",           tips: "Kvalvika beach — 45 min wandeling, turquoise water." },
+  { dag: 23, naam: "Reine",                   lat: 67.9296, lng: 13.0867, type: "rust", fase: "Lofoten",           tips: "Reine wandeling rond meer, fjordkajak in Reinefjorden." },
+  { dag: 24, naam: "Lofoten (dag 5)",         lat: 68.0500, lng: 13.3000, type: "rust", fase: "Lofoten",           tips: "Ramberg/Skagsanden strand, Nusfjord oud vissersdorp." },
+  { dag: 25, naam: "Å (Lofoten)",             lat: 67.8819, lng: 12.9714, type: "rust", fase: "Lofoten",           tips: "Å vissersdorpmuseum, Moskenstraumen-maalstroom bekijken." },
+  { dag: 26, naam: "Lofoten (dag 7)",         lat: 67.9000, lng: 13.0000, type: "rust", fase: "Lofoten",           tips: "Zeearend-RIB-tour — book vooraf!" },
+  { dag: 27, naam: "Bodø",                    lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø. VOORAF RESERVEREN via torghatten-nord.no.", ferry: true },
+  { dag: 28, naam: "Bodø (rust)",             lat: 67.2804, lng: 14.4049, type: "rust", fase: "Bodø",              tips: "Saltstraumen — sterkste maalstroom ter wereld (vanaf brug). Kjerringøy handelspost." },
+  { dag: 29, naam: "Mo i Rana",               lat: 66.3126, lng: 14.1421, type: "rij",  fase: "Helgeland",         tips: "Fv17 Kystriksveien. Engenbreen gletsjer-uitzicht. Ferry Jektvik–Kilboghamn.", ferry: true },
+  { dag: 30, naam: "Brønnøysund",             lat: 65.4748, lng: 12.2134, type: "rij",  fase: "Helgeland",         tips: "Fv17 verder. Svartisen gletsjer. 1–2 ferries onderweg.", ferry: true },
+  { dag: 31, naam: "Brønnøysund (rust)",      lat: 65.4748, lng: 12.2134, type: "rust", fase: "Helgeland",         tips: "Torghatten — gat-door-de-berg wandeling. Kust zwemmen." },
+  { dag: 32, naam: "Namsos",                  lat: 64.4663, lng: 11.4963, type: "rij",  fase: "Helgeland",         tips: "Fv17 richting zuiden. Ferry Holm–Vennesund 25 min.", ferry: true },
+  { dag: 33, naam: "Karvag",                  lat: 63.2000, lng: 7.9000,  type: "rij",  fase: "Atlanterhavsvegen", tips: "Via E6. Omweg Namsskogan Familiepark (~1u extra): beren, wolven, lynxen." },
+  { dag: 34, naam: "Karvag (rust)",           lat: 63.2000, lng: 7.9000,  type: "rust", fase: "Atlanterhavsvegen", tips: "Atlanterhavsvegen rondrit over brugconstructies. Bud vissersdorp. Eldhusøya wandelpad." },
+  { dag: 35, naam: "Geiranger",               lat: 62.1004, lng: 7.2052,  type: "rij",  fase: "Geirangerfjord",    tips: "Via Trollstigen (check open-status vooraf!). Scenic road." },
+  { dag: 36, naam: "Geiranger (dag 2)",       lat: 62.1004, lng: 7.2052,  type: "rust", fase: "Geirangerfjord",    tips: "Flydalsjuvet + Ørnesvingen, fjordcruise 1,5u, Storsæterfossen waterval." },
+  { dag: 37, naam: "Geiranger (dag 3)",       lat: 62.1004, lng: 7.2052,  type: "rust", fase: "Geirangerfjord",    tips: "Dalsnibba 1500m uitzicht, kayak fjord, of Hellesylt–Geiranger ferry retour." },
+  { dag: 38, naam: "Loen",                    lat: 61.8741, lng: 6.8430,  type: "rij",  fase: "Loen",              tips: "Via Hellesylt-ferry + Strynefjellet. Loen Skylift naar 1011m.", ferry: true },
+  { dag: 39, naam: "Loen (rust)",             lat: 61.8741, lng: 6.8430,  type: "rust", fase: "Loen",              tips: "Briksdalsbreen gletsjerwandeling 6km (troll-trein optie). Lovatnet kayak." },
+  { dag: 40, naam: "Flåm",                    lat: 60.8632, lng: 7.1167,  type: "rij",  fase: "Sognefjord",        tips: "Via Lustrafjord. Urnes stavkirke (UNESCO) onderweg." },
+  { dag: 41, naam: "Flåm (rust)",             lat: 60.8632, lng: 7.1167,  type: "rust", fase: "Sognefjord",        tips: "Flåmsbana treinrit (1u), Nærøyfjord cruise (UNESCO), Stegastein viewpoint." },
+  { dag: 42, naam: "Eidfjord",                lat: 60.4660, lng: 7.0740,  type: "rij",  fase: "Hardangerfjord",    tips: "Via Hardangervidda Rv7. Tvindefossen waterval onderweg." },
+  { dag: 43, naam: "Eidfjord (rust)",         lat: 60.4660, lng: 7.0740,  type: "rust", fase: "Hardangerfjord",    tips: "Vøringsfossen (nieuwe brug-trap), Hardangervidda Natursenter, Sysendalen bos." },
+  { dag: 44, naam: "Bergen",                  lat: 60.3913, lng: 5.3221,  type: "rij",  fase: "Bergen",            tips: "Via Hardangerbrug. Steinsdalsfossen (loop achter waterval) onderweg." },
+  { dag: 45, naam: "Bergen (rust)",           lat: 60.3913, lng: 5.3221,  type: "rust", fase: "Bergen",            tips: "Bryggen UNESCO houtenwijk, Fløybanen kabeltrein, vismarkt, Aquarium Bergen." },
+  { dag: 46, naam: "Hemsedal/Geilo",          lat: 60.5400, lng: 8.5600,  type: "rij",  fase: "Terugreis",         tips: "Via E16/Rv7. Stalheim viewpoint en de oude haarspeldweg." },
+  { dag: 47, naam: "Geilo (flex)",            lat: 60.5400, lng: 8.5600,  type: "rust", fase: "Terugreis",         tips: "Flexdag. Rjukan omgeving optioneel (Hardangervidda, Gaustatoppen)." },
+  { dag: 48, naam: "Rjukan",                  lat: 59.8766, lng: 8.5864,  type: "rust", fase: "Terugreis",         tips: "Flexdag. Rjukan waterval en industrieel UNESCO-erfgoed." },
+  { dag: 49, naam: "Lyngor / Risør",          lat: 58.6386, lng: 9.1427,  type: "rij",  fase: "Terugreis",         tips: "Kustroute richting Kristiansand. Lyngor of Risør als laatste stop." },
+  { dag: 50, naam: "Kristiansand → Hirtshals",lat: 58.1599, lng: 8.0182, type: "rij",  fase: "Terugreis",         tips: "Ferry Kristiansand–Hirtshals. VOORAF RESERVEREN. Vertrek op tijd.", ferry: true },
+];
+
+// ─── ALTERNATIEVE BESTEMMINGEN per fase ────────────────────────────────────
+// Bij slecht weer of behoefte aan afwijking; altijd Kristiansand dag 50 haalbaar
+const alternatieven = {
+  "Møns Klint": [
+    { naam: "Rügen (DE)", lat: 54.4352, lng: 13.6085, beschrijving: "Vergelijkbare krijtrotsen, Jasmund NP, meer beschut bij wind", geschiktBij: "storm", maxRij: "45 min", bufImpact: 0 },
+    { naam: "Kopenhagen", lat: 55.6761, lng: 12.5683, beschrijving: "Stad-dag bij regen: Tivoli, Nyhavn, indoor musea (kleuter-proof)", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Småland": [
+    { naam: "Karlskrona", lat: 56.1612, lng: 15.5869, beschrijving: "UNESCO Barokke havenstad, marine-activiteiten, goed bij bewolking", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Glasriket (Kosta)", lat: 56.8460, lng: 15.4053, beschrijving: "Zweeds glasambacht, glasblaasdemo's — juist leuk bij regen", geschiktBij: "regen", maxRij: "0.5u", bufImpact: 0 }
+  ],
+  "Färnebofjärden": [
+    { naam: "Uppsala", lat: 59.8586, lng: 17.6389, beschrijving: "Universiteitsstad, domkerk, Gamla Uppsala grafheuvel, indoor opties", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Dalälven kust (Skutskär)", lat: 60.6530, lng: 17.4070, beschrijving: "Minder bekend, rustige rivier-delta, goed wildkamp-alternatief", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Höga Kusten": [
+    { naam: "Härnösand", lat: 62.6330, lng: 17.9399, beschrijving: "Gezellig historisch stadscentrum, kathedraal, beschut bij wind", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 },
+    { naam: "Kramfors / Ångermanland", lat: 62.9300, lng: 17.7940, beschrijving: "Rustig bosgebied, alternatieve campings, weinig toeristen", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
+  ],
+  "Luleå": [
+    { naam: "Gammelstad (Luleå)", lat: 65.6430, lng: 22.0300, beschrijving: "UNESCO kerkstad op 10 min — leuk ook bij bewolking", geschiktBij: "regen", maxRij: "0.2u", bufImpact: 0 },
+    { naam: "Storforsen / Älvsbyn", lat: 65.8280, lng: 20.8770, beschrijving: "Grootste vrije waterval Europa, indrukwekkend bij elke weersconditie", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
+  ],
+  "Jokkmokk": [
+    { naam: "Arvidsjaur", lat: 65.5911, lng: 19.1764, beschrijving: "Sami-kåtor (ronde hutten), rustiger alternatief, ook hondvriendelijk", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Muddus NP", lat: 66.9167, lng: 19.8333, beschrijving: "Oerbos nationaal park op 30 min van Jokkmokk, bijzondere vogels", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
+  ],
+  "Kiruna": [
+    { naam: "Abisko NP", lat: 68.3500, lng: 18.8300, beschrijving: "Nationaal park, toendra-wandelingen, goed bij bewolking (lage zon)", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
+    { naam: "Kebnekaise vallei", lat: 67.8500, lng: 18.5500, beschrijving: "Spectaculaire bergvallei, zelfs bij grijs weer indrukwekkend", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
+  ],
+  "Senja": [
+    { naam: "Tromsø", lat: 69.6489, lng: 18.9551, beschrijving: "Arctische studentenstad, Polarmuseum, warmte bij Senja-slecht-weer", geschiktBij: "regen", maxRij: "2u", bufImpact: -1 },
+    { naam: "Harstad", lat: 68.7990, lng: 16.5390, beschrijving: "Historische havenstad met kasteelruïne, minder toeristisch dan Tromsø", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 }
+  ],
+  "Andøya": [
+    { naam: "Tromsø", lat: 69.6489, lng: 18.9551, beschrijving: "Als walvistour afgeblazen door storm: Tromsø 3.5u rijden, veel te doen", geschiktBij: "storm", maxRij: "3.5u", bufImpact: -1 },
+    { naam: "Leknes (Lofoten vroeg)", lat: 68.1459, lng: 13.6092, beschrijving: "Sla Andøya deels over bij aanhoudend slecht weer, vroeg naar Lofoten", geschiktBij: "storm", maxRij: "3u", bufImpact: +1 }
+  ],
+  "Lofoten": [
+    { naam: "Svolvær (centrum)", lat: 68.2342, lng: 14.5651, beschrijving: "Centrale Lofoten hub, galeries, restaurants, indoor bij regen", geschiktBij: "regen", maxRij: "0.5u", bufImpact: 0 },
+    { naam: "Kabelvåg", lat: 68.2170, lng: 14.4760, beschrijving: "Historisch vissersdorp, Lofoten Museum — juist mooi bij bewolkt", geschiktBij: "regen", maxRij: "0.3u", bufImpact: 0 },
+    { naam: "Narvik (uitstap)", lat: 68.4384, lng: 17.4272, beschrijving: "Oorlogsmuseum + fjordpanorama, als Lofoten-days te lang regenen", geschiktBij: "regen", maxRij: "3u", bufImpact: -1 }
+  ],
+  "Bodø": [
+    { naam: "Kjerringøy", lat: 67.4790, lng: 14.9890, beschrijving: "19e-eeuwse handelspost, pittoresk, beschut bij westerstorm", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 },
+    { naam: "Saltstraumen (vanuit Bodø)", lat: 67.2200, lng: 14.6200, beschrijving: "Sterkste maalstroom ter wereld, gratis te bekijken, 30 min van Bodø", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
+  ],
+  "Helgeland": [
+    { naam: "Sandnessjøen", lat: 66.0120, lng: 12.6350, beschrijving: "Syv Søstre bergpanorama, haven, kindvriendelijk", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
+    { naam: "Mosjøen", lat: 65.8360, lng: 13.1950, beschrijving: "Schilderachtig centrum met oude houten huizen, wandelbaar bij regen", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Vega eiland", lat: 65.6667, lng: 11.9000, beschrijving: "UNESCO eiland, ederdons-cultuur, ferry 30 min — bij mooi weer!", geschiktBij: "altijd", maxRij: "1u + ferry", bufImpact: -1 }
+  ],
+  "Atlanterhavsvegen": [
+    { naam: "Ålesund", lat: 62.4724, lng: 6.1494, beschrijving: "Art Nouveau stad, Aksla top (418 treden), musea bij regen", geschiktBij: "regen", maxRij: "2u", bufImpact: -1 },
+    { naam: "Molde", lat: 62.7374, lng: 7.1591, beschrijving: "Rozenstad, fjordpanorama (ook bewolkt mooi), familievriendelijk", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Geirangerfjord": [
+    { naam: "Hjørundfjord", lat: 62.2260, lng: 6.4820, beschrijving: "Rustiger alternatief voor drukke Geiranger, spectaculair, minder toeristen", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Ålesund", lat: 62.4724, lng: 6.1494, beschrijving: "Als Trollstigen gesloten door sneeuw: via kust naar Ålesund ipv", geschiktBij: "kou", maxRij: "2u", bufImpact: 0 }
+  ],
+  "Loen": [
+    { naam: "Stryn", lat: 61.9040, lng: 6.7230, beschrijving: "Actieve zomerskigebied op gletsjer, Briksdalsbreen nabij", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
+    { naam: "Nordfjordeid", lat: 61.9230, lng: 6.0050, beschrijving: "Rustig fjorddorp, Sagastad Vikingen museum — goed bij regen", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Sognefjord": [
+    { naam: "Lærdal", lat: 61.1010, lng: 7.4830, beschrijving: "Borgund stavkirke (UNESCO), oude houten stad, prachtig ook bij grijs", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 },
+    { naam: "Voss", lat: 60.6280, lng: 6.4170, beschrijving: "Avontuurssport hub (raft/paragliding), treinverbinding Flåm, goed kindvriendelijk", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
+  ],
+  "Hardangerfjord": [
+    { naam: "Ulvik", lat: 60.5670, lng: 6.9140, beschrijving: "Rustiger Hardangerdorp, fruitboomgaarden, serene sfeer zonder drukte", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
+    { naam: "Odda", lat: 60.0690, lng: 6.5450, beschrijving: "Trolanipa, Buarbreen gletsjer, vertrekpunt Trolltunga (4h wandeling)", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Bergen": [
+    { naam: "Hardanger (Lofthus)", lat: 60.3280, lng: 6.7180, beschrijving: "Rustiger dan Bergen bij slecht fjord-weer, kleine campings", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Voss", lat: 60.6280, lng: 6.4170, beschrijving: "Actief alternatief voor Bergen-stad-dag, trein Bergen↔Voss", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Terugreis": [
+    { naam: "Stavanger (omweg!)", lat: 58.9690, lng: 5.7330, beschrijving: "Preikestolen (Pulpit Rock), havenwijk — alleen als buffer ≥ 3 flexdagen!", geschiktBij: "altijd", maxRij: "4u extra", bufImpact: -2 },
+    { naam: "Kristiansand direct", lat: 58.1599, lng: 8.0182, beschrijving: "Rechter kustroute E18/E39, vroeg aankomen = rust voor ferry", geschiktBij: "altijd", maxRij: "4u", bufImpact: +2 }
+  ]
+};
+
+// ─── WEATHER ────────────────────────────────────────────────────────────────
+const weatherCache = {};
+
+function wmoToIcon(code) {
+  if (code === 0)        return { emoji: '☀️',  label: 'Helder',      bg: '#fef9e7', border: '#f39c12' };
+  if (code <= 2)         return { emoji: '🌤',  label: 'Half bewolkt', bg: '#fef9e7', border: '#e8a317' };
+  if (code === 3)        return { emoji: '☁️',  label: 'Bewolkt',     bg: '#f2f3f4', border: '#95a5a6' };
+  if (code <= 48)        return { emoji: '🌫',  label: 'Mist',        bg: '#f2f3f4', border: '#95a5a6' };
+  if (code <= 55)        return { emoji: '🌦',  label: 'Motregen',    bg: '#ebf5fb', border: '#5dade2' };
+  if (code <= 67)        return { emoji: '🌧',  label: 'Regen',       bg: '#eaf4fb', border: '#2e86c1' };
+  if (code <= 77)        return { emoji: '❄️',  label: 'Sneeuw',      bg: '#eaf2ff', border: '#74b9ff' };
+  if (code <= 82)        return { emoji: '🌦',  label: 'Buien',       bg: '#eaf4fb', border: '#2980b9' };
+  if (code <= 86)        return { emoji: '🌨',  label: 'Sneeuwbuien', bg: '#eaf2ff', border: '#74b9ff' };
+  return                        { emoji: '⛈',  label: 'Onweer',      bg: '#f4ecf7', border: '#8e44ad' };
+}
+
+function isBadWeather(code) {
+  return code >= 51; // rain or worse
+}
+
+async function fetchWeather(lat, lng) {
+  const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+  if (weatherCache[key]) return weatherCache[key];
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max&timezone=auto&forecast_days=3`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const result = {
+      codes: data.daily.weathercode.slice(0, 3),
+      maxTemps: data.daily.temperature_2m_max.slice(0, 3),
+      dominantCode: Math.max(...data.daily.weathercode.slice(0, 3)),
+      maxTemp: Math.round(Math.max(...data.daily.temperature_2m_max.slice(0, 3)))
+    };
+    weatherCache[key] = result;
+    return result;
+  } catch (e) {
+    return null;
+  }
+}
+
+// ─── MAP SETUP ──────────────────────────────────────────────────────────────
+const map = L.map('map', { zoomControl: true }).setView([65, 15], 4);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap, © CARTO',
+  maxZoom: 18
+}).addTo(map);
+
+// ─── ROUTING (OSRM) ─────────────────────────────────────────────────────────
+let routeLayer = null;
+let currentHighlight = null;
+
+function getUniqueLocationStops() {
+  const seen = new Set();
+  return stops.filter(s => {
+    const k = `${s.lat.toFixed(4)},${s.lng.toFixed(4)}`;
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  });
+}
+
+async function loadRoute() {
+  const unique = getUniqueLocationStops();
+  const CHUNK = 13; // OSRM max per request
+  const allPoints = [];
+
+  for (let i = 0; i < unique.length - 1; i += CHUNK - 1) {
+    const chunk = unique.slice(i, i + CHUNK);
+    if (chunk.length < 2) break;
+    const coordStr = chunk.map(s => `${s.lng.toFixed(5)},${s.lat.toFixed(5)}`).join(';');
+    try {
+      const resp = await fetch(
+        `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`
+      );
+      const data = await resp.json();
+      if (data.routes && data.routes[0]) {
+        const pts = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+        // Avoid duplicate junction point
+        if (allPoints.length > 0) pts.shift();
+        allPoints.push(...pts);
+      }
+    } catch (e) {
+      // Fallback: add straight segments
+      chunk.forEach(s => allPoints.push([s.lat, s.lng]));
+    }
+  }
+
+  if (routeLayer) map.removeLayer(routeLayer);
+  routeLayer = L.polyline(allPoints, {
+    color: '#2d6a8f',
+    weight: 3.5,
+    opacity: 0.65
+  }).addTo(map);
+
+  document.getElementById('routeStatus').textContent = '✓ Route geladen';
+  document.getElementById('routeStatus').classList.add('done');
+  document.getElementById('mapLoading').style.opacity = '0';
+}
+
+// ─── WEATHER MARKERS ────────────────────────────────────────────────────────
+let weatherMarkers = [];
+let weatherLoaded = false;
+
+async function loadWeatherMarkers() {
+  const unique = getUniqueLocationStops();
+  const results = await Promise.all(unique.map(s => fetchWeather(s.lat, s.lng)));
+
+  weatherMarkers.forEach(m => map.removeLayer(m));
+  weatherMarkers = [];
+
+  unique.forEach((stop, i) => {
+    const w = results[i];
+    if (!w) return;
+
+    const ic = wmoToIcon(w.dominantCode);
+    const yrUrl = `https://www.yr.no/en/forecast/daily-table/${stop.lat.toFixed(4)},${stop.lng.toFixed(4)}`;
+    const dayLabels = ['Vandaag', 'Morgen', 'Overmorgen'];
+
+    const divIcon = L.divIcon({
+      html: `<div style="
+          background:${ic.bg};
+          border:1.5px solid ${ic.border};
+          border-radius:8px;
+          padding:3px 5px;
+          display:flex; flex-direction:column; align-items:center;
+          cursor:pointer;
+          box-shadow:0 1px 6px rgba(0,0,0,0.18);
+          font-family:sans-serif;
+          min-width:38px;
+          transition:transform 0.1s;
+        " onclick="window.open('${yrUrl}','_blank')" title="Klik voor 10-daags weerbericht op yr.no">
+          <span style="font-size:17px;line-height:1.1;">${ic.emoji}</span>
+          <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${w.maxTemp}°</span>
+        </div>`,
+      className: '',
+      iconSize: [42, 42],
+      iconAnchor: [21, 21]
+    });
+
+    const threeDayHtml = w.codes.map((code, di) => {
+      const dic = wmoToIcon(code);
+      return `<div class="weather-day-cell" style="background:${dic.bg};border-color:${dic.border}">
+        <span class="wdc-icon">${dic.emoji}</span>
+        <span class="wdc-temp">${Math.round(w.maxTemps[di])}°</span>
+        <span class="wdc-label">${dayLabels[di]}</span>
+      </div>`;
+    }).join('');
+
+    const marker = L.marker([stop.lat, stop.lng], { icon: divIcon, zIndexOffset: 100 });
+    marker.bindPopup(`
+      <div class="stop-popup">
+        <div class="day-badge">Dag ${stop.dag} · ${stop.fase}</div>
+        <h4>${stop.naam}</h4>
+        <div class="weather-3day">${threeDayHtml}</div>
+        <p class="tip">${stop.tips}</p>
+        ${stop.ferry ? '<div style="margin-top:6px;font-size:0.72rem;color:#c9873a;">⚓ Ferry — vooraf reserveren</div>' : ''}
+        <a class="yr-link" href="${yrUrl}" target="_blank">📅 Bekijk 10-daags weerbericht op yr.no →</a>
+      </div>
+    `, { maxWidth: 290 });
+
+    marker.addTo(map);
+    weatherMarkers.push(marker);
+  });
+
+  weatherLoaded = true;
+  document.getElementById('weerStatus').textContent = '✓ Weer geladen';
+  document.getElementById('weerStatus').classList.add('done');
+
+  // Re-render dashboard if a location is already selected
+  const idx = parseInt(document.getElementById('locationSelect').value);
+  if (!isNaN(idx)) updateDashboard();
+}
+
+// ─── CURRENT STOP MARKER ────────────────────────────────────────────────────
+let currentMarker = null;
+
+function showCurrentMarker(stop) {
+  if (currentMarker) map.removeLayer(currentMarker);
+  const divIcon = L.divIcon({
+    html: `<div style="
+      width:16px;height:16px;
+      background:#c9873a;
+      border:2.5px solid white;
+      border-radius:50%;
+      box-shadow:0 0 0 3px rgba(201,135,58,0.35), 0 2px 6px rgba(0,0,0,0.3);
+    "></div>`,
+    className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+  });
+  currentMarker = L.marker([stop.lat, stop.lng], { icon: divIcon, zIndexOffset: 2000 }).addTo(map);
+}
+
+// ─── POPULATE DROPDOWN ──────────────────────────────────────────────────────
+const select = document.getElementById('locationSelect');
+stops.forEach((s, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = `Dag ${s.dag} — ${s.naam}`;
+  select.appendChild(opt);
+});
+
+// ─── DASHBOARD UPDATE ────────────────────────────────────────────────────────
+async function updateDashboard() {
+  const idx = parseInt(document.getElementById('locationSelect').value);
+  if (isNaN(idx)) return;
+
+  const stop = stops[idx];
+  const daysLeft = TOTAL_DAYS - stop.dag;
+  const stopsLeft = stops.slice(idx + 1).filter(s => s.type === 'rij').length;
+  const flexDays = daysLeft - stopsLeft;
+
+  // Header
+  const pill = document.getElementById('headerPill');
+  document.getElementById('headerText').textContent = `Dag ${stop.dag} · ${stop.naam}`;
+  const fillColor = flexDays <= 1 ? 'var(--danger)' : flexDays <= 3 ? 'var(--warn)' : 'var(--ok)';
+  pill.className = 'status-pill' + (flexDays <= 1 ? ' danger' : flexDays <= 3 ? ' warn' : '');
+  pill.querySelector('.dot').style.background = fillColor;
+
+  // Buffer bar
+  const pct = Math.max(0, Math.min(100, (flexDays / 10) * 100));
+  document.getElementById('bufferFill').style.width = pct + '%';
+  document.getElementById('bufferFill').style.background = fillColor;
+  document.getElementById('bufferLabel').textContent = flexDays <= 1 ? '⚠ Krap' : flexDays <= 3 ? '~ Comfortabel' : '✓ Ruim';
+  document.getElementById('bufferLabel').style.color = fillColor;
+  document.getElementById('statDagen').textContent = daysLeft;
+  document.getElementById('statStops').textContent = stopsLeft;
+  document.getElementById('statBuffer').textContent = Math.max(0, flexDays);
+  document.getElementById('statBuffer').style.color = fillColor;
+
+  // Map: fly to current stop
+  showCurrentMarker(stop);
+  map.flyTo([stop.lat, stop.lng], 7, { duration: 1 });
+
+  // Remove old highlight
+  if (currentHighlight) { map.removeLayer(currentHighlight); currentHighlight = null; }
+
+  // ── Weather strip for next 5 stops ──────────────────────────────────────
+  const nextUniqueStops = [];
+  const seenCoords = new Set();
+  for (let i = idx; i < stops.length && nextUniqueStops.length < 6; i++) {
+    const k = `${stops[i].lat.toFixed(3)},${stops[i].lng.toFixed(3)}`;
+    if (!seenCoords.has(k)) {
+      seenCoords.add(k);
+      nextUniqueStops.push(stops[i]);
+    }
+  }
+
+  const weerStrip = document.getElementById('weerStripContainer');
+  const weerItems = document.getElementById('weerStripItems');
+  weerStrip.style.display = 'block';
+  weerItems.innerHTML = '<span style="color:var(--muted);font-size:0.75rem;">Laden…</span>';
+
+  const weerResults = await Promise.all(nextUniqueStops.map(s => fetchWeather(s.lat, s.lng)));
+  weerItems.innerHTML = '';
+
+  let badWeatherAhead = false;
+  nextUniqueStops.forEach((ns, i) => {
+    const w = weerResults[i];
+    if (!w) return;
+    const ic = wmoToIcon(w.dominantCode);
+    if (i > 0 && isBadWeather(w.dominantCode)) badWeatherAhead = true;
+
+    const yrUrl = `https://www.yr.no/en/forecast/daily-table/${ns.lat.toFixed(4)},${ns.lng.toFixed(4)}`;
+    const shortName = ns.naam.replace(' (rust)', '').replace(' (dag 1)', '').replace(' (dag 2)', '').split(' ').slice(0, 2).join(' ');
+    const el = document.createElement('div');
+    el.className = 'weer-strip-item';
+    el.style.background = ic.bg;
+    el.style.borderColor = i === 0 ? '#c9873a' : ic.border;
+    el.title = `${ns.naam} — klik voor yr.no`;
+    el.innerHTML = `
+      <span class="wi-emoji">${ic.emoji}</span>
+      <span class="wi-temp">${w.maxTemp}°</span>
+      <span class="wi-name">${shortName}</span>
+    `;
+    el.onclick = () => window.open(yrUrl, '_blank');
+    weerItems.appendChild(el);
+  });
+
+  // ── Scenarios (weather-based alternatives) ──────────────────────────────
+  const list = document.getElementById('scenariosList');
+  list.innerHTML = '';
+
+  const currentFase = stop.fase;
+  const alts = alternatieven[currentFase] || [];
+
+  // Card 1: Doorgaan zoals gepland
+  const nextStop = stops.slice(idx + 1).find(s => s.type === 'rij');
+  if (nextStop) {
+    const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] ||
+               await fetchWeather(nextStop.lat, nextStop.lng);
+    const nIc = nw ? wmoToIcon(nw.dominantCode) : null;
+    const bufAfter = flexDays;
+    const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
+    const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+
+    list.appendChild(makeCard({
+      label: 'Gepland',
+      kleur: '#2d6a8f',
+      description: 'Volgende stop zoals gepland',
+      naam: nextStop.naam,
+      sub: `Dag ${nextStop.dag} · ${nextStop.fase}${nextStop.ferry ? ' · ⚓ Ferry' : ''}`,
+      tips: nextStop.tips,
+      weerHtml: nw && nIc ? `<div class="scenario-weather-row">
+        <div class="weather-badge">${nIc.emoji} max ${nw.maxTemp}° — ${nIc.label}</div>
+      </div>` : '',
+      bufAfter, bufColor, bufPct,
+      onClick: () => {
+        if (currentHighlight) map.removeLayer(currentHighlight);
+        currentHighlight = L.polyline([[stop.lat, stop.lng], [nextStop.lat, nextStop.lng]], {
+          color: '#2d6a8f', weight: 3, opacity: 0.8, dashArray: '8,4'
+        }).addTo(map);
+        map.fitBounds([[stop.lat, stop.lng], [nextStop.lat, nextStop.lng]], { padding: [80, 80] });
+      }
+    }));
+  }
+
+  // Card 2 & 3: Weather-based alternatives
+  if (alts.length > 0) {
+    alts.slice(0, 2).forEach((alt, ai) => {
+      const bufAfter = flexDays + alt.bufImpact;
+      const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
+      const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+      const kleur = ai === 0 ? '#4a7c59' : '#8e44ad';
+      const yrUrl = `https://www.yr.no/en/forecast/daily-table/${alt.lat.toFixed(4)},${alt.lng.toFixed(4)}`;
+      const bufLabel = alt.bufImpact > 0 ? `+${alt.bufImpact}d buffer gewonnen` : alt.bufImpact < 0 ? `${alt.bufImpact}d buffer gebruikt` : 'Geen buffer-impact';
+
+      list.appendChild(makeCard({
+        label: 'Alternatief',
+        kleur,
+        description: `Max ${alt.maxRij} rijden · ${bufLabel}`,
+        naam: alt.naam,
+        sub: alt.geschiktBij === 'regen' ? '🌧 Aanbevolen bij regen' : alt.geschiktBij === 'storm' ? '🌪 Aanbevolen bij storm' : alt.geschiktBij === 'kou' ? '❄️ Aanbevolen bij kou' : '🗺 Route-alternatief',
+        tips: alt.beschrijving,
+        weerHtml: `<a class="yr-link" href="${yrUrl}" target="_blank" style="font-size:0.72rem;">📅 Bekijk weer op yr.no →</a>`,
+        bufAfter, bufColor, bufPct,
+        onClick: () => {
+          if (currentHighlight) map.removeLayer(currentHighlight);
+          currentHighlight = L.polyline([[stop.lat, stop.lng], [alt.lat, alt.lng]], {
+            color: kleur, weight: 3, opacity: 0.8, dashArray: '8,4'
+          }).addTo(map);
+          map.fitBounds([[stop.lat, stop.lng], [alt.lat, alt.lng]], { padding: [80, 80] });
+          // Temp marker for alternative
+          L.circleMarker([alt.lat, alt.lng], {
+            radius: 9, color: kleur, fillColor: kleur, fillOpacity: 0.7, weight: 2
+          }).addTo(map).bindPopup(`<b>${alt.naam}</b><br>${alt.beschrijving}`).openPopup();
+        }
+      }));
+    });
+  } else {
+    // Extra dag (rustdag inlassen)
+    const bufAfter = flexDays - 1;
+    const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
+    const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+    list.appendChild(makeCard({
+      label: 'Wachten',
+      kleur: '#c9873a',
+      description: 'Extra rustdag op huidige plek',
+      naam: stop.naam + ' (+1 dag)',
+      sub: `Dag ${stop.dag + 1} — 1 flexdag gebruikt`,
+      tips: 'Blijf een dag langer. Rust, was doen, lokaal verkennen.',
+      weerHtml: '',
+      bufAfter, bufColor, bufPct,
+      onClick: () => {}
+    }));
+  }
+}
+
+function makeCard({ label, kleur, description, naam, sub, tips, weerHtml, bufAfter, bufColor, bufPct, onClick }) {
+  const card = document.createElement('div');
+  card.className = 'scenario-card';
+  card.innerHTML = `
+    <div class="scenario-type">
+      <div class="type-dot" style="background:${kleur}"></div>
+      <span style="color:${kleur}">${label}</span>
+      <span style="color:var(--muted);margin-left:auto;font-size:0.58rem;">${description}</span>
+    </div>
+    <h3>${naam}</h3>
+    <div class="distance">${sub}</div>
+    <div class="tip-preview">${tips.slice(0, 110)}${tips.length > 110 ? '…' : ''}</div>
+    ${weerHtml}
+    <div class="scenario-consequence">
+      <span style="font-size:0.65rem;color:var(--muted);white-space:nowrap;">Buffer na keuze:</span>
+      <div class="consequence-bar">
+        <div class="consequence-fill" style="width:${bufPct}%;background:${bufColor}"></div>
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${bufColor};white-space:nowrap;">${Math.max(0, bufAfter)}d</span>
+    </div>
+  `;
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    onClick();
+  });
+  return card;
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadRoute();
+loadWeatherMarkers();
+</script>
+</body>
+</html>

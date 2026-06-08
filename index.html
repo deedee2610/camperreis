@@ -916,7 +916,7 @@ async function loadWeatherMarkers() {
     if (!w) return;
 
     const stopIdx = stops.indexOf(stop);
-    const ic = wmoToIcon(w.dominantCode);
+    const ic = wmoToIcon(w.codes[1]);
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${stop.lat.toFixed(4)},${stop.lng.toFixed(4)}`;
     const dayLabels = ['Vandaag', 'Morgen', 'Overmorgen'];
     const hasContent = !!stopData[stop.fase];
@@ -924,7 +924,7 @@ async function loadWeatherMarkers() {
     const divIcon = L.divIcon({
       html: `<div style="background:${ic.bg};border:1.5px solid ${ic.border};border-radius:8px;padding:3px 5px;display:flex;flex-direction:column;align-items:center;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.18);font-family:sans-serif;min-width:38px;">
         <span style="font-size:17px;line-height:1.1;">${ic.emoji}</span>
-        <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${w.maxTemp}°</span>
+        <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[1])}°</span>
       </div>`,
       className: '', iconSize: [42, 42], iconAnchor: [21, 21]
     });
@@ -1063,7 +1063,7 @@ async function updateDashboard() {
   nextUniqueStops.forEach((ns, i) => {
     const w = weerResults[i];
     if (!w) return;
-    const ic = wmoToIcon(w.dominantCode);
+    const ic = wmoToIcon(w.codes[1]);
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${ns.lat.toFixed(4)},${ns.lng.toFixed(4)}`;
     const shortName = ns.naam.replace(/ \(.*\)/, '').split(' ').slice(0, 2).join(' ');
     const el = document.createElement('div');
@@ -1071,7 +1071,7 @@ async function updateDashboard() {
     el.style.background = ic.bg;
     el.style.borderColor = i === 0 ? '#c9873a' : ic.border;
     el.title = ns.naam;
-    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${w.maxTemp}°</span><span class="wi-name">${shortName}</span>`;
+    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[1])}°</span><span class="wi-name">${shortName}</span>`;
     el.onclick = () => window.open(yrUrl, '_blank');
     weerItems.appendChild(el);
   });
@@ -1085,7 +1085,7 @@ async function updateDashboard() {
   const nextStop = stops.slice(idx + 1).find(s => s.type === 'rij');
   if (nextStop) {
     const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] || await fetchWeather(nextStop.lat, nextStop.lng);
-    const nIc = nw ? wmoToIcon(nw.dominantCode) : null;
+    const nIc = nw ? wmoToIcon(nw.codes[1]) : null;
     const bufAfter = flexDays;
     const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
     const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
@@ -1093,7 +1093,7 @@ async function updateDashboard() {
       label: 'Gepland', kleur: '#2d6a8f', description: 'Volgende stop zoals gepland',
       naam: nextStop.naam, sub: `Dag ${nextStop.dag} · ${nextStop.fase}${nextStop.ferry ? ' · ⚓ Ferry' : ''}`,
       tips: nextStop.tips,
-      weerHtml: nw && nIc ? `<div class="scenario-weather-row"><div class="weather-badge">${nIc.emoji} max ${nw.maxTemp}° — ${nIc.label}</div></div>` : '',
+      weerHtml: nw && nIc ? `<div class="scenario-weather-row"><div class="weather-badge">${nIc.emoji} max ${Math.round(nw.maxTemps[1])}° — ${nIc.label}</div></div>` : '',
       bufAfter, bufColor, bufPct,
       onClick: () => {
         if (currentHighlight) map.removeLayer(currentHighlight);

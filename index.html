@@ -175,6 +175,7 @@
   .weer-strip-item:hover { border-color: var(--fjord); }
   .weer-strip-item .wi-emoji { font-size: 18px; display: block; line-height: 1; }
   .weer-strip-item .wi-temp { font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500; display: block; margin-top: 2px; }
+  .weer-strip-item .wi-tempmin { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); display: block; margin-top: 0px; }
   .weer-strip-item .wi-name { font-size: 0.58rem; color: var(--muted); display: block; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52px; }
 
   /* Scenarios */
@@ -249,6 +250,7 @@
   }
   .weather-day-cell .wdc-icon { font-size: 18px; display: block; }
   .weather-day-cell .wdc-temp { font-family: monospace; font-size: 0.8rem; font-weight: 600; display: block; }
+  .weather-day-cell .wdc-tempmin { font-family: monospace; font-size: 0.68rem; color: #888; display: block; }
   .weather-day-cell .wdc-label { font-size: 0.6rem; color: #666; display: block; margin-top: 2px; }
 
   .open-detail-btn {
@@ -524,72 +526,170 @@
 const TOTAL_DAYS = 50;
 
 const stops = [
-  { dag: 1,  naam: "Utrecht (vertrek)",       lat: 52.0907, lng: 5.1214,  type: "rij",  fase: "Heenreis",          tips: "Vroeg vertrekken. Lange dag via ferry Puttgarden-Rødby.", ferry: true },
-  { dag: 2,  naam: "Møns Klint",              lat: 54.9741, lng: 12.5444, type: "rust", fase: "Møns Klint",        tips: "Krijtrotsen en GeoCenter Møns Klint (kindvriendelijk). Liselund Slot tuinen." },
-  { dag: 3,  naam: "Vimmerby",                lat: 57.6654, lng: 15.8543, type: "rij",  fase: "Småland",           tips: "Via Öresundbrug de grens over. Småland binnenrijden." },
-  { dag: 4,  naam: "Vimmerby (rust)",         lat: 57.6654, lng: 15.8543, type: "rust", fase: "Småland",           tips: "Astrid Lindgrens Värld, Storsjön zwemmen, Glasriket glasdorpen." },
-  { dag: 5,  naam: "Färnebofjärden NP",       lat: 60.1700, lng: 16.9500, type: "rij",  fase: "Färnebofjärden",    tips: "Nationaal park met oerbos langs de Dalälven." },
-  { dag: 6,  naam: "Färnebofjärden NP (rust)",lat: 60.1700, lng: 16.9500, type: "rust", fase: "Färnebofjärden",    tips: "Oerbos, vlonderpaden, eland-spotten in de dageraad, kano huren." },
-  { dag: 7,  naam: "Skuleskogen NP",          lat: 63.0900, lng: 18.3500, type: "rij",  fase: "Höga Kusten",       tips: "UNESCO Höga Kusten. Lange dag maar prachtig." },
-  { dag: 8,  naam: "Skuleskogen NP (rust)",   lat: 63.0900, lng: 18.3500, type: "rust", fase: "Höga Kusten",       tips: "Slåttdalsskrevan kloof, Skuleberget kabelbaan, Norrfällsviken vissersdorpje." },
-  { dag: 9,  naam: "Luleå",                   lat: 65.5848, lng: 22.1567, type: "rij",  fase: "Luleå",             tips: "Lange dag. Lunchstop Skellefteå optioneel." },
-  { dag: 10, naam: "Luleå (rust)",            lat: 65.5848, lng: 22.1567, type: "rust", fase: "Luleå",             tips: "Gammelstad UNESCO-kerkdorp, archipel-boottocht, Storforsen dagtrip." },
-  { dag: 11, naam: "Jokkmokk",               lat: 66.6044, lng: 19.8300, type: "rij",  fase: "Jokkmokk",          tips: "Highway 97 — rustige scenic route langs Luleälven." },
-  { dag: 12, naam: "Jokkmokk (dag 1)",       lat: 66.6044, lng: 19.8300, type: "rust", fase: "Jokkmokk",          tips: "Ájtte Sámi-museum, rendierboerderij Sápmi, wandeling Talvatissjön." },
-  { dag: 13, naam: "Jokkmokk (dag 2)",       lat: 66.6044, lng: 19.8300, type: "rust", fase: "Jokkmokk",          tips: "Pite älv kanoën, lokale rookvis." },
-  { dag: 14, naam: "Kiruna",                  lat: 67.8558, lng: 20.2253, type: "rij",  fase: "Kiruna",            tips: "ICEHOTEL Jukkasjärvi (zomerexpositie). Via E45/E10." },
-  { dag: 15, naam: "Botnhamn (Senja)",        lat: 69.1550, lng: 17.4500, type: "rij",  fase: "Senja",             tips: "E10 via Riksgränsen en Abisko NP. Korte kloofwandeling bij Abisko." },
-  { dag: 16, naam: "Senja (dag 1)",           lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Tungeneset boardwalk (devil's teeth), Bergsbotn viewpoint, Ersfjordstrand wit zandstrand." },
-  { dag: 17, naam: "Senja (dag 2)",           lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Husøy klein eilanddorp, Hesten wandeling voor Segla uitzicht (3–4 uur)." },
-  { dag: 18, naam: "Andenes",                 lat: 69.3249, lng: 16.1274, type: "rij",  fase: "Andøya",            tips: "Ferry Gryllefjord–Andenes 1u45. Vooraf reserveren via senjafergene.no.", ferry: true },
-  { dag: 19, naam: "Andøya (rust)",           lat: 69.2500, lng: 16.1000, type: "rust", fase: "Andøya",            tips: "Walvis-safari (RIB), Bleik wit zandstrand, papegaaiduikers Bleiksøya." },
-  { dag: 20, naam: "Henningsvær",             lat: 68.1468, lng: 14.1888, type: "rij",  fase: "Lofoten",           tips: "Via E10 en Andøybrua naar de Lofoten. Schilderachtige aankomst." },
-  { dag: 21, naam: "Lofoten (dag 2)",         lat: 68.1100, lng: 13.9000, type: "rust", fase: "Lofoten",           tips: "Vissersdorp, voetbalveld op rotsen, lokale stokvis, galleries." },
-  { dag: 22, naam: "Lofoten (dag 3)",         lat: 68.0900, lng: 13.6000, type: "rust", fase: "Lofoten",           tips: "Kvalvika beach — 45 min wandeling, turquoise water." },
-  { dag: 23, naam: "Reine",                   lat: 67.9296, lng: 13.0867, type: "rust", fase: "Lofoten",           tips: "Reine wandeling rond meer, fjordkajak in Reinefjorden." },
-  { dag: 24, naam: "Lofoten (dag 5)",         lat: 68.0500, lng: 13.3000, type: "rust", fase: "Lofoten",           tips: "Ramberg/Skagsanden strand, Nusfjord oud vissersdorp." },
-  { dag: 25, naam: "Å (Lofoten)",             lat: 67.8819, lng: 12.9714, type: "rust", fase: "Lofoten",           tips: "Å vissersdorpmuseum, Moskenstraumen-maalstroom bekijken." },
-  { dag: 26, naam: "Lofoten (dag 7)",         lat: 67.9000, lng: 13.0000, type: "rust", fase: "Lofoten",           tips: "Zeearend-RIB-tour — book vooraf!" },
-  { dag: 27, naam: "Bodø",                    lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø. VOORAF RESERVEREN via torghatten-nord.no.", ferry: true },
-  { dag: 28, naam: "Bodø (rust)",             lat: 67.2804, lng: 14.4049, type: "rust", fase: "Bodø",              tips: "Saltstraumen — sterkste maalstroom ter wereld (vanaf brug). Kjerringøy handelspost." },
-  { dag: 29, naam: "Mo i Rana",               lat: 66.3126, lng: 14.1421, type: "rij",  fase: "Helgeland",         tips: "Fv17 Kystriksveien. Engenbreen gletsjer-uitzicht. Ferry Jektvik–Kilboghamn.", ferry: true },
-  { dag: 30, naam: "Brønnøysund",             lat: 65.4748, lng: 12.2134, type: "rij",  fase: "Helgeland",         tips: "Fv17 verder. Svartisen gletsjer. 1–2 ferries onderweg.", ferry: true },
-  { dag: 31, naam: "Brønnøysund (rust)",      lat: 65.4748, lng: 12.2134, type: "rust", fase: "Helgeland",         tips: "Torghatten — gat-door-de-berg wandeling. Kust zwemmen." },
-  { dag: 32, naam: "Namsos",                  lat: 64.4663, lng: 11.4963, type: "rij",  fase: "Helgeland",         tips: "Fv17 richting zuiden. Ferry Holm–Vennesund 25 min.", ferry: true },
-  { dag: 33, naam: "Karvag",                  lat: 63.2000, lng: 7.9000,  type: "rij",  fase: "Atlanterhavsvegen", tips: "Via E6. Omweg Namsskogan Familiepark (~1u extra): beren, wolven, lynxen." },
-  { dag: 34, naam: "Karvag (rust)",           lat: 63.2000, lng: 7.9000,  type: "rust", fase: "Atlanterhavsvegen", tips: "Atlanterhavsvegen rondrit over brugconstructies. Bud vissersdorp. Eldhusøya wandelpad." },
-  { dag: 35, naam: "Geiranger",               lat: 62.1004, lng: 7.2052,  type: "rij",  fase: "Geirangerfjord",    tips: "Via Trollstigen (check open-status vooraf!). Scenic road." },
-  { dag: 36, naam: "Geiranger (dag 2)",       lat: 62.1004, lng: 7.2052,  type: "rust", fase: "Geirangerfjord",    tips: "Flydalsjuvet + Ørnesvingen, fjordcruise 1,5u, Storsæterfossen waterval." },
-  { dag: 37, naam: "Geiranger (dag 3)",       lat: 62.1004, lng: 7.2052,  type: "rust", fase: "Geirangerfjord",    tips: "Dalsnibba 1500m uitzicht, kayak fjord, of Hellesylt–Geiranger ferry retour." },
-  { dag: 38, naam: "Loen",                    lat: 61.8741, lng: 6.8430,  type: "rij",  fase: "Loen",              tips: "Via Hellesylt-ferry + Strynefjellet. Loen Skylift naar 1011m.", ferry: true },
-  { dag: 39, naam: "Loen (rust)",             lat: 61.8741, lng: 6.8430,  type: "rust", fase: "Loen",              tips: "Briksdalsbreen gletsjerwandeling 6km (troll-trein optie). Lovatnet kayak." },
-  { dag: 40, naam: "Flåm",                    lat: 60.8632, lng: 7.1167,  type: "rij",  fase: "Sognefjord",        tips: "Via Lustrafjord. Urnes stavkirke (UNESCO) onderweg." },
-  { dag: 41, naam: "Flåm (rust)",             lat: 60.8632, lng: 7.1167,  type: "rust", fase: "Sognefjord",        tips: "Flåmsbana treinrit (1u), Nærøyfjord cruise (UNESCO), Stegastein viewpoint." },
-  { dag: 42, naam: "Eidfjord",                lat: 60.4660, lng: 7.0740,  type: "rij",  fase: "Hardangerfjord",    tips: "Via Hardangervidda Rv7. Tvindefossen waterval onderweg." },
-  { dag: 43, naam: "Eidfjord (rust)",         lat: 60.4660, lng: 7.0740,  type: "rust", fase: "Hardangerfjord",    tips: "Vøringsfossen (nieuwe brug-trap), Hardangervidda Natursenter, Sysendalen bos." },
-  { dag: 44, naam: "Bergen",                  lat: 60.3913, lng: 5.3221,  type: "rij",  fase: "Bergen",            tips: "Via Hardangerbrug. Steinsdalsfossen (loop achter waterval) onderweg." },
-  { dag: 45, naam: "Bergen (rust)",           lat: 60.3913, lng: 5.3221,  type: "rust", fase: "Bergen",            tips: "Bryggen UNESCO houtenwijk, Fløybanen kabeltrein, vismarkt, Aquarium Bergen." },
-  { dag: 46, naam: "Hemsedal/Geilo",          lat: 60.5400, lng: 8.5600,  type: "rij",  fase: "Terugreis",         tips: "Via E16/Rv7. Stalheim viewpoint en de oude haarspeldweg." },
-  { dag: 47, naam: "Geilo (flex)",            lat: 60.5400, lng: 8.5600,  type: "rust", fase: "Terugreis",         tips: "Flexdag. Rjukan omgeving optioneel (Hardangervidda, Gaustatoppen)." },
-  { dag: 48, naam: "Rjukan",                  lat: 59.8766, lng: 8.5864,  type: "rust", fase: "Terugreis",         tips: "Flexdag. Rjukan waterval en industrieel UNESCO-erfgoed." },
-  { dag: 49, naam: "Lyngor / Risør",          lat: 58.6386, lng: 9.1427,  type: "rij",  fase: "Terugreis",         tips: "Kustroute richting Kristiansand. Lyngor of Risør als laatste stop." },
-  { dag: 50, naam: "Kristiansand → Hirtshals",lat: 58.1599, lng: 8.0182, type: "rij",  fase: "Terugreis",         tips: "Ferry Kristiansand–Hirtshals. VOORAF RESERVEREN. Vertrek op tijd.", ferry: true },
+  // ── Fase A: Positionering via Zweden ──────────────────────────────────────
+  { dag: 1,  naam: "Utrecht (vertrek)",          lat: 52.0907, lng:  5.1214, type: "rij",  fase: "Heenreis",          tips: "Vroeg vertrekken. Lange dag via Puttgarden–Rødby ferry (~45min). Hamburg tussenstop.", ferry: true },
+  { dag: 2,  naam: "Møns Klint",                 lat: 54.9741, lng: 12.5444, type: "rust", fase: "Møns Klint",        tips: "Krijtrotsen en GeoCenter Møns Klint (kindvriendelijk). Liselund Slot tuinen." },
+  { dag: 3,  naam: "Møns Klint (dag 2)",         lat: 54.9741, lng: 12.5444, type: "rust", fase: "Møns Klint",        tips: "Rustdag. Strand, wandelingen op de klif, lokale eetgelegenheden." },
+  { dag: 4,  naam: "Jönköping / Vättern",        lat: 57.7826, lng: 14.1618, type: "rij",  fase: "Jönköping",         tips: "5u09 via Øresundbrug + E4. Aankomst bij het Vätternmeer." },
+  { dag: 5,  naam: "Jönköping (rust)",           lat: 57.7826, lng: 14.1618, type: "rust", fase: "Jönköping",         tips: "Zwemmen Vätternmeer (zandstrand Råslättstrand). Dagtripje Vimmerby: Astrid Lindgrens Värld (1u rijden)." },
+  { dag: 6,  naam: "Wildkamp Uppsala-gebied",    lat: 59.8586, lng: 17.6389, type: "rij",  fase: "Uppsala",           tips: "~4u via E4. Wildkamp in de bossen rondom Uppsala. Gamla Uppsala grafheuvel (5 min)." },
+  { dag: 7,  naam: "Härnösand / Höga Kusten",    lat: 62.6330, lng: 17.9399, type: "rij",  fase: "Höga Kusten",       tips: "~4u via E4 noord. UNESCO Höga Kusten. Spectaculaire aankomst langs de kust." },
+  { dag: 8,  naam: "Höga Kusten (rust)",         lat: 63.0900, lng: 18.3500, type: "rust", fase: "Höga Kusten",       tips: "Slåttdalsskrevan kloof (Skuleskogen NP), Skuleberget kabelbaan, Norrfällsviken vissersdorpje." },
+  { dag: 9,  naam: "Wildkamp Umeå-gebied",       lat: 63.8258, lng: 20.2630, type: "rij",  fase: "Umeå",              tips: "~3u via E4. Wildkamp in bosgebied bij Umeå. Umeå centrum optioneel (universiteitsstad)." },
+  { dag: 10, naam: "Jokkmokk",                   lat: 66.6044, lng: 19.8300, type: "rij",  fase: "Jokkmokk",          tips: "~4u via Luleå (2u01) + Route 97 langs Luleälven (2u). Poolcirkel gepasseerd!" },
+  { dag: 11, naam: "Jokkmokk (dag 1)",           lat: 66.6044, lng: 19.8300, type: "rust", fase: "Jokkmokk",          tips: "Ájtte Sámi-museum, rendierboerderij Sápmi, wandeling Talvatissjön meer." },
+  { dag: 12, naam: "Jokkmokk (dag 2)",           lat: 66.6044, lng: 19.8300, type: "rust", fase: "Jokkmokk",          tips: "Pite älv kanoën, lokale rookvis kopen, Polarcirkel-monument foto." },
+  { dag: 13, naam: "Kiruna",                     lat: 67.8558, lng: 20.2253, type: "rij",  fase: "Kiruna",            tips: "2u37 via E45 + E10. ICEHOTEL Jukkasjärvi (ook zomer open). Kiruna stad verplaatst." },
+  { dag: 14, naam: "Kiruna (rust)",              lat: 67.8558, lng: 20.2253, type: "rust", fase: "Kiruna",            tips: "ICEHOTEL zomersculpturen, Kiirunavaara mijn rondleiding, Abisko NP dagtrip (1u)." },
+  // ── Fase B: Noord-Noorwegen eilanden ─────────────────────────────────
+  { dag: 15, naam: "Botnhamn (Senja)",           lat: 69.1550, lng: 17.4500, type: "rij",  fase: "Senja",             tips: "5u via E10 door Riksgränsen, Narvik, Senja-brug. Indrukwekkend fjordenlandschap." },
+  { dag: 16, naam: "Senja (dag 1)",              lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Tungeneset boardwalk (devil's teeth), Bergsbotn viewpoint, Ersfjordstrand wit zandstrand." },
+  { dag: 17, naam: "Senja (dag 2)",              lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Husøy klein eilanddorp, Hesten wandeling voor Segla uitzicht (3–4u, stevig!)." },
+  { dag: 18, naam: "Andenes",                    lat: 69.3249, lng: 16.1274, type: "rij",  fase: "Andøya",            tips: "3u07 incl. ferry Gryllefjord–Andenes (1u45). VOORAF RESERVEREN via senjafergene.no.", ferry: true },
+  { dag: 19, naam: "Andøya (rust)",              lat: 69.2500, lng: 16.1000, type: "rust", fase: "Andøya",            tips: "Walvis-safari RIB (reserveren!), Bleik wit zandstrand, papegaaiduikers Bleiksøya." },
+  { dag: 20, naam: "Henningsvær (Lofoten)",      lat: 68.1468, lng: 14.1888, type: "rij",  fase: "Lofoten",           tips: "3u15 via Fv82 + E10, door Vesterålen. Schilderachtige aankomst Henningsvær." },
+  { dag: 21, naam: "Lofoten (dag 2)",            lat: 68.1100, lng: 13.9000, type: "rust", fase: "Lofoten",           tips: "Henningsvær: vissersdorp, voetbalveld op rotsen, lokale stokvis, galleries." },
+  { dag: 22, naam: "Lofoten (dag 3)",            lat: 68.0900, lng: 13.6000, type: "rust", fase: "Lofoten",           tips: "Kvalvika beach — 45 min wandeling, turquoise water, bijna nooit druk." },
+  { dag: 23, naam: "Reine",                      lat: 67.9296, lng: 13.0867, type: "rust", fase: "Lofoten",           tips: "Reinebringen wandeling (3-4u, shuttle €10), fjordkajak Reinefjorden, Hamnøy foto." },
+  { dag: 24, naam: "Lofoten (dag 5)",            lat: 68.0500, lng: 13.3000, type: "rust", fase: "Lofoten",           tips: "Ramberg/Skagsanden strand (wit zand, bergpanorama), Nusfjord oud vissersdorp." },
+  { dag: 25, naam: "Å (zuidpunt Lofoten)",       lat: 67.8819, lng: 12.9714, type: "rust", fase: "Lofoten",           tips: "Å vissersdorpmuseum, Moskenstraumen maalstroom bekijken, einde van de E10." },
+  { dag: 26, naam: "Lofoten (dag 7)",            lat: 67.9000, lng: 13.0000, type: "rust", fase: "Lofoten",           tips: "Zeearend RIB-tour (book vooraf in Svolvær/Reine!), of extra rustige dag." },
+  // ── Fase C: Noorwegen kust terug ─────────────────────────────────
+  { dag: 27, naam: "Bodø",                       lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø (3u30). VOORAF RESERVEREN via torghatten-nord.no.", ferry: true },
+  { dag: 28, naam: "Bodø (rust)",                lat: 67.2804, lng: 14.4049, type: "rust", fase: "Bodø",              tips: "Saltstraumen (sterkste maalstroom ter wereld), Kjerringøy handelspost dagtrip." },
+  { dag: 29, naam: "Mo i Rana (Helgeland)",      lat: 66.3126, lng: 14.1421, type: "rij",  fase: "Helgeland",         tips: "Fv17 Kystriksveien start. Engenbreen gletsjer uitzicht. Ferry Jektvik–Kilboghamn.", ferry: true },
+  { dag: 30, naam: "Brønnøysund",                lat: 65.4748, lng: 12.2134, type: "rij",  fase: "Helgeland",         tips: "Fv17 verder. Svartisen gletsjer. 1–2 kleine ferries onderweg.", ferry: true },
+  { dag: 31, naam: "Brønnøysund (rust)",         lat: 65.4748, lng: 12.2134, type: "rust", fase: "Helgeland",         tips: "Torghatten: gat-door-de-berg wandeling (1u, kindvriendelijk). Kust zwemmen." },
+  { dag: 32, naam: "Namsskogan",                 lat: 64.9167, lng: 13.2667, type: "rij",  fase: "Namsskogan",        tips: "~3u30 via kust + Namsos. Park Nordica Familiepark: beren, wolven, lynxen (kind-OK)." },
+  { dag: 33, naam: "Trondheim",                  lat: 63.4305, lng: 10.3951, type: "rij",  fase: "Trondheim",         tips: "~2u30 via E6. Derde stad van Noorwegen. Nidarosdomen aanrader." },
+  { dag: 34, naam: "Trondheim (dag 2)",          lat: 63.4305, lng: 10.3951, type: "rust", fase: "Trondheim",         tips: "Nidarosdomen (gotische kathedraal), Bakklandet historisch kwartier, Festning." },
+  { dag: 35, naam: "Trondheim (dag 3)",          lat: 63.4305, lng: 10.3951, type: "rust", fase: "Trondheim",         tips: "Ringve Museum (muziek), Pirbadet zwemparadijs voor kinderen, of dagtrip Oppdal." },
+  { dag: 36, naam: "Kårvåg / Atlanterhavsvegen", lat: 63.0200, lng:  7.5800, type: "rij",  fase: "Atlanterhavsvegen", tips: "3u20 via E39 + Fv64. Spectaculaire Atlantische Oceaanweg: 8 bruggen over scheren." },
+  { dag: 37, naam: "Atlanterhavsvegen (rust)",   lat: 63.0200, lng:  7.5800, type: "rust", fase: "Atlanterhavsvegen", tips: "Rondrit Atlantic Ocean Road, Bud vissersdorp, Eldhusøya wandelpad, zeehonden spotten." },
+  { dag: 38, naam: "Ålesund",                    lat: 62.4724, lng:  6.1494, type: "rij",  fase: "Ålesund",           tips: "2u26 incl. Fv64 + E136/E39 met ferry. Art Nouveau stad, spectaculaire ligging." },
+  { dag: 39, naam: "Ålesund (rust)",             lat: 62.4724, lng:  6.1494, type: "rust", fase: "Ålesund",           tips: "Aksla top (418 treden, uitzicht), Art Nouveau Museum, Atlanterhavsparken aquarium." },
+  { dag: 40, naam: "Geiranger",                  lat: 62.1004, lng:  7.2052, type: "rij",  fase: "Geirangerfjord",    tips: "1u52 via Ørnesvingen (Fv63) — haarspeldweg ZIT al in route. UNESCO fjord." },
+  { dag: 41, naam: "Geiranger (dag 2)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Fjordcruise (1.5u), Flydalsjuvet overhang-foto, Storsæterfossen waterval, Dalsnibba 1500m." },
+  { dag: 42, naam: "Geiranger (dag 3)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Trollstigen dagtrip (~1u30 v/v, check open-status!), kayak fjord, of rustdag." },
+  { dag: 43, naam: "Loen",                       lat: 61.8741, lng:  6.8430, type: "rij",  fase: "Loen",              tips: "1u34 via Grotli bergpass (Rv15). Spectaculair berglandschap." },
+  { dag: 44, naam: "Loen (rust)",                lat: 61.8741, lng:  6.8430, type: "rust", fase: "Loen",              tips: "Loen Skylift (1011m, 5 min), Briksdalsbreen gletsjerwandeling, Lovatnet kayak." },
+  { dag: 45, naam: "Bergen",                     lat: 60.3913, lng:  5.3221, type: "rij",  fase: "Bergen",            tips: "4u46 via E39 incl. ferry + tol. Steinsdalsfossen (loop achter waterval) onderweg." },
+  { dag: 46, naam: "Bergen (dag 2)",             lat: 60.3913, lng:  5.3221, type: "rust", fase: "Bergen",            tips: "Bryggen UNESCO, Fløybanen kabelbaan, vismarkt Torget, Aquarium Bergen (kind-OK)." },
+  { dag: 47, naam: "Bergen (dag 3)",             lat: 60.3913, lng:  5.3221, type: "rust", fase: "Bergen",            tips: "Flexdag: Hardangerfjord dagtrip, Ulriken wandeling, of extra rust in Bergen." },
+  { dag: 48, naam: "Stavanger",                  lat: 58.9690, lng:  5.7330, type: "rij",  fase: "Stavanger",         tips: "4u17 via E39 + ferries. Directe kustroute door Rogaland." },
+  { dag: 49, naam: "Stavanger (rust)",           lat: 58.9690, lng:  5.7330, type: "rust", fase: "Stavanger",         tips: "Gamle Stavanger (witte houten huizen), Norsk Oljemuseum, haven, verse vis eten." },
+  { dag: 50, naam: "Kristiansand → Hirtshals",  lat: 58.1599, lng:  8.0182, type: "rij",  fase: "Terugreis",         tips: "3u07 via E39. Ferry Kristiansand–Hirtshals. VOORAF RESERVEREN. Tijdig aanwezig zijn.", ferry: true },
 ];
-
 // ─── STOP CONTENT DATA ─────────────────────────────────────────────────────
-// Sleutel = stop.fase. Wordt later aangevuld met alle stops.
+// Sleutel = stop.fase. Top-3 campings per stop (niet te groot, hoge beoordeling, natuur, kind+hond OK).
+// P4N-links alleen voor wildkamp; reguliere campings: geen P4N-link (wordt onderweg zelf opgezocht).
 const stopData = {
+  "Møns Klint": {
+    activiteiten: [
+      { icon: "🏔", naam: "GeoCenter Møns Klint", desc: "Interactief museum over de geologische geschiedenis van de krijtrotsen. Uitstekend voor kinderen: fossielen zoeken, dino-zaal, microscopen.", duur: "2u", kosten: "€15 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://geocentermonsklint.dk" },
+      { icon: "🦅", naam: "Klinteskoven wandelnetwerk", desc: "Goed bewegwijzerd netwerk van paden langs de rotsen (125m hoog). Spectaculair uitzicht over de Oostzee. Buggy-vriendelijk gedeeltes aan de bovenkant.", duur: "1–3u", kosten: "gratis", tags: ["🧒 kind-OK (>3jr)"], link: null },
+      { icon: "🏰", naam: "Liselund Slot en tuinen", desc: "Pittoresk 18e-eeuws slot in een romantisch parklandschap. Wandelen door de tuin, vijvers, witte theehuisjes. Gratis toegang tot de tuin.", duur: "1u", kosten: "gratis (tuin)", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🏖", naam: "Strand Møns Klint", desc: "Aan de voet van de krijtrotsen ligt een smal kiezelstrand. Goed voor fossielen zoeken. Bereikbaar via steile trap.", duur: "1u", kosten: "gratis", tags: ["⚠ steile afdaling"], link: null },
+    ],
+    campings: [
+      { naam: "Møns Klint Camping", score: 8.4, tags: ["🐕 hond", "🌲 bos", "🧒 speeltuin", "⭐ kleine camping"], p4nId: null, lat: 54.9600, lng: 12.5400, wildkamp: false },
+      { naam: "Klintholm Havn Camping", score: 8.0, tags: ["🐕 hond", "⚓ haven nabij", "🏖 strand"], p4nId: null, lat: 54.9700, lng: 12.4800, wildkamp: false },
+      { naam: "Camp Møns Klint", score: 7.8, tags: ["🐕 hond", "🌿 natuur", "🧒 kind-OK"], p4nId: null, lat: 54.9750, lng: 12.5200, wildkamp: false },
+    ]
+  },
+
+  "Jönköping": {
+    activiteiten: [
+      { icon: "🏊", naam: "Vätternmeer zwemmen", desc: "Het op twee na grootste meer van Zweden. Zandstrand bij Råslättstrand (5 min rijden). Helder, koud water. Picknickplek aanwezig.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond welkom"], link: null },
+      { icon: "🏭", naam: "Tändsticksmuseet (lucifermuseum)", desc: "Jönköping was ooit de luciferhoofdstad van de wereld. Uniek industrieel museum in een historische fabriek. Kind-OK, goed bij regen.", duur: "1u", kosten: "€8 p.p.", tags: ["🌧 indoor", "🧒 kind-OK"], link: null },
+      { icon: "🎡", naam: "Dagtripje Vimmerby (Astrid Lindgrens Värld)", desc: "1u rijden. Het beroemdste kinderpark van Zweden met Pippi Langkous, Emil, Ronja. Aanrader met kleine kinderen. BOEK VOORAF in zomer.", duur: "Hele dag", kosten: "€45–55 p.p.", tags: ["🧒 kind-OK!", "reserveren!"], link: "https://alv.se" },
+      { icon: "🚶", naam: "Huskvarna vallei wandeling", desc: "Langs de rivier Huskvarna naar de Vättern-kust. Mooi groen pad, wandelwagens kunnen mee.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Vätternsiden Camping", score: 8.6, tags: ["🐕 hond", "🏖 meer strand", "🌿 natuur", "🧒 speeltuin"], p4nId: null, lat: 57.7800, lng: 14.1600, wildkamp: false },
+      { naam: "Villa Björkhagen", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🧒 kind-OK"], p4nId: null, lat: 57.8000, lng: 14.1400, wildkamp: false },
+      { naam: "Huskvarna Camping", score: 7.8, tags: ["🐕 hond", "⚓ meer nabij"], p4nId: null, lat: 57.7900, lng: 14.2800, wildkamp: false },
+    ]
+  },
+
+  "Uppsala": {
+    activiteiten: [
+      { icon: "🏛", naam: "Gamla Uppsala grafheuvel", desc: "Drie grote Viking-graven vlak bij de camping. Gratis te bezoeken. Museum ernaast (klein). Goed voor kinderen om op te klimmen.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🌲", naam: "Bos wandelen / wildkamp", desc: "Het Uppsala-gebied heeft uitgestrekte naaldbossen. Zweeds allemannsrecht: overal mogen kamperen. Goed wildkampgebied met veel water.", duur: "vrij", kosten: "gratis", tags: ["🐕 hond", "🌿 natuur"], link: null },
+    ],
+    campings: [
+      { naam: "Uppsala Camping (Fyrishov)", score: 7.9, tags: ["🐕 hond", "🏊 zwembad nabij", "📶 wifi"], p4nId: null, lat: 59.8600, lng: 17.6400, wildkamp: true, wildkampTip: "Rondom Uppsala zijn uitstekende wildkampplekken in de bossen. Zweeds allemannsrecht (allemansrätten) van toepassing." },
+      { naam: "Graneberg Camping", score: 7.5, tags: ["🐕 hond", "🌲 bos"], p4nId: null, lat: 59.9000, lng: 17.5000, wildkamp: false },
+      { naam: "Lövstalöt Camping", score: 7.3, tags: ["🐕 hond", "🌊 meer nabij"], p4nId: null, lat: 59.8000, lng: 17.4500, wildkamp: false },
+    ]
+  },
+
+  "Höga Kusten": {
+    activiteiten: [
+      { icon: "🕳", naam: "Slåttdalsskrevan kloof", desc: "Indrukwekkende kloof in Skuleskogen NP. Wandeling 1-2u door smalle rotskloof. Kind-OK als ze goed lopen (>5jr).", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK (>5jr)"], link: null },
+      { icon: "🚡", naam: "Skuleberget kabelbaan", desc: "Naar de top van Skuleberget voor panorama over de archipel en de Hoge Kust. Eenvoudig en indrukwekkend.", duur: "1u", kosten: "€15 p.p.", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🏘", naam: "Norrfällsviken vissersdorpje", desc: "Authentiek rood vissersdorpje aan de kust. Zwemmen, wandelen, koffie, hond welkom op strand.", duur: "1–2u", kosten: "gratis", tags: ["🐕 hond"], link: null },
+      { icon: "🏊", naam: "Zwemmen in de Bothnische Golf", desc: "In de zomer warmt het water op tot 20°C. Prachtige rotsige kustlijn. Honden welkom.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+    ],
+    campings: [
+      { naam: "Norrfällsviken Camping", score: 8.3, tags: ["🐕 hond", "🏊 zwemmen", "⚓ haven", "🌿 natuur"], p4nId: null, lat: 62.9500, lng: 18.4000, wildkamp: false },
+      { naam: "Skuleskogen Camping", score: 7.9, tags: ["🐕 hond", "🌲 NP-rand", "🏕 rustig"], p4nId: null, lat: 63.0900, lng: 18.3500, wildkamp: true, wildkampTip: "Buiten het nationaal park is wildkampen goed mogelijk langs de Höga Kusten. Mooie rotsige plekken aan zee." },
+      { naam: "Härnösands Camping", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij", "🌊 zeezicht"], p4nId: null, lat: 62.6330, lng: 17.9399, wildkamp: false },
+    ]
+  },
+
+  "Umeå": {
+    activiteiten: [
+      { icon: "🌲", naam: "Wildkampen bosgebied Umeå", desc: "Uitgestrekte naaldbossen rondom Umeå. Ideaal voor een rustige wildkampnacht. Zweeds allemannsrecht van toepassing.", duur: "vrij", kosten: "gratis", tags: ["🐕 hond", "🌿 natuur"], link: null },
+      { icon: "🏙", naam: "Umeå centrum (optioneel)", desc: "Levendige universiteitsstad, veel groen, fietsvriendelijk. Bershaven, leuke eetgelegenheden. Kindermuseum Bildmuseet.", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Umeå Camping (Nydalasjön)", score: 8.1, tags: ["🐕 hond", "🏊 meer zwemmen", "🌲 bos"], p4nId: null, lat: 63.8500, lng: 20.3200, wildkamp: true, wildkampTip: "Uitstekende wildkampplekken in de bossen rondom Umeå. Check de Nydalasjön-omgeving. Zweeds allemannsrecht van toepassing." },
+      { naam: "Grössjön Camping", score: 7.7, tags: ["🐕 hond", "🌿 natuur", "🕊 stil"], p4nId: null, lat: 63.7800, lng: 20.1500, wildkamp: false },
+      { naam: "Sörmjöle Havscamping", score: 7.9, tags: ["🐕 hond", "🌊 zee nabij", "🏖 strand"], p4nId: null, lat: 63.7600, lng: 20.3800, wildkamp: false },
+    ]
+  },
+
+  "Jokkmokk": {
+    activiteiten: [
+      { icon: "🦌", naam: "Ájtte Sámi-museum", desc: "Het nationaal museum van de Sámi-cultuur. Uitstekend ingericht, goed voor kinderen: traditioneel leven, rendieren, joik-muziek.", duur: "2u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://ajtte.com" },
+      { icon: "🦌", naam: "Rendierboerderij bezoek", desc: "Bezoek aan een werkende rendierboerderij. Voer rendieren, leer over het nomadisch Sámi-leven. Reserveren aanbevolen.", duur: "2u", kosten: "€20 p.p.", tags: ["🧒 kind-OK", "reserveren aanbevolen"], link: null },
+      { icon: "🛶", naam: "Pite älv kanoën", desc: "Verhuur via lokale camping. Rustige rivier, prachtig oerboslandschap. Goed voor een halve dag.", duur: "3–4u", kosten: "€30–40 kano", tags: ["🐕 hond mee"], link: null },
+      { icon: "🌿", naam: "Polarcirkel monument foto", desc: "Jokkmokk ligt precies op de poolcirkel. Monument en infobord. Leuk voor kinderen: officieel de Arctische cirkel bereikt!", duur: "15min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Jokkmokk Camping (Storholmen)", score: 8.1, tags: ["🐕 hond", "🛁 sauna", "🌲 bos", "🏊 zwemmen"], p4nId: null, lat: 66.6044, lng: 19.8300, wildkamp: true, wildkampTip: "Ruim aanbod wildkampen in het Jokkmokk-gebied langs de Luleälven. Zweeds allemannsrecht (allemansrätten) van toepassing." },
+      { naam: "Camp Vittjåkk", score: 7.8, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 66.5900, lng: 19.8100, wildkamp: false },
+      { naam: "Gasskas Camping", score: 7.5, tags: ["🐕 hond", "🌊 meer nabij"], p4nId: null, lat: 66.6200, lng: 19.7800, wildkamp: false },
+    ]
+  },
+
+  "Kiruna": {
+    activiteiten: [
+      { icon: "🏨", naam: "ICEHOTEL Jukkasjärvi (zomer)", desc: "Het ICEHOTEL is ook in zomer open: ijssculpturen in een gekoelde zaal. Spectaculair, ook voor kinderen. 15 min rijden van Kiruna.", duur: "1.5u", kosten: "€20 p.p.", tags: ["🧒 kind-OK", "❄ gekoeld"], link: "https://icehotel.com" },
+      { icon: "⛏", naam: "Kiirunavaara mijn rondleiding", desc: "De grootste ijzerertsomijn ter wereld. Ondergrondse tour door een actieve mijn. Indrukwekkend. Kinderen OK.", duur: "2.5u", kosten: "€25 p.p.", tags: ["🧒 kind-OK (>5jr)", "🌧 underground"], link: null },
+      { icon: "🏔", naam: "Abisko NP dagtrip", desc: "1u rijden. Spectaculair nationaal park met toendra-wandelingen, Abiskojaure meer, König's route startpunt.", duur: "Halve dag", kosten: "gratis + parkeergeld", tags: ["🐕 hond"], link: null },
+      { icon: "🏙", naam: "Kiruna nieuwe stadscentrum", desc: "Kiruna wordt letterlijk verplaatst vanwege de mijn. Het nieuwe centrum (2023) is modern en interessant. Infocentrum gratis.", duur: "1u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Camp Ripan Kiruna", score: 8.5, tags: ["🐕 hond", "🏕 cabins", "🌲 natuur", "🧒 activiteiten"], p4nId: null, lat: 67.8600, lng: 20.2100, wildkamp: false },
+      { naam: "Abisko Turiststation (camping)", score: 8.2, tags: ["🐕 hond", "🏔 NP-rand", "🌿 spectaculair"], p4nId: null, lat: 68.3500, lng: 18.8300, wildkamp: false },
+      { naam: "Jukkasjärvi Camping", score: 7.7, tags: ["🐕 hond", "🏔 ICEHOTEL nabij", "🌊 rivier"], p4nId: null, lat: 67.8600, lng: 20.6000, wildkamp: false },
+    ]
+  },
+
   "Senja": {
     activiteiten: [
-      { icon: "🥾", naam: "Tungeneset boardwalk", desc: "Het iconische 'duivelsgebit' boardwalk over de rotsen met spectaculair zeezicht. Gratis parkeren, korte wandeling.", duur: "1–2u", kosten: "gratis", tags: [], link: null },
-      { icon: "🏔", naam: "Hesten wandeling (uitzicht Segla)", desc: "Steile wandeling van 3–4u naar de top. Een van de mooiste uitzichten van Noord-Noorwegen. Stevig schoeisel vereist.", duur: "3–4u", kosten: "gratis", tags: ["↑ 600m", "⚠ niet met kleine kinderen"], link: "https://ut.no" },
-      { icon: "🏖", naam: "Ersfjordstrand", desc: "Wit zandstrand omringd door dramatische bergtoppen. Zwemmen mogelijk in de zomer. Klein parkeerterrein bij het dorpje.", duur: "vrij", kosten: "gratis", tags: [], link: null },
-      { icon: "🏘", naam: "Husøy eilanddorp", desc: "Schilderachtig vissersdorpje op een klein eiland. Stukje rijden + kort loopje. Authentiek, weinig toeristen.", duur: "1u", kosten: "gratis", tags: [], link: null },
+      { icon: "🥾", naam: "Tungeneset boardwalk", desc: "Het iconische 'duivelsgebit' boardwalk over de rotsen met spectaculair zeezicht. Gratis parkeren, korte wandeling.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🏔", naam: "Hesten wandeling (uitzicht Segla)", desc: "Steile wandeling van 3–4u. Een van de mooiste uitzichten van Noord-Noorwegen. Stevig schoeisel vereist.", duur: "3–4u", kosten: "gratis", tags: ["↑ 600m", "⚠ niet met kleine kinderen"], link: "https://ut.no" },
+      { icon: "🏖", naam: "Ersfjordstrand", desc: "Wit zandstrand omringd door dramatische bergtoppen. Zwemmen mogelijk in de zomer. Klein parkeerterrein.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+      { icon: "🏘", naam: "Husøy eilanddorp", desc: "Schilderachtig vissersdorpje op een klein eiland. Authentiek, weinig toeristen.", duur: "1u", kosten: "gratis", tags: ["🐕 hond"], link: null },
       { icon: "🔭", naam: "Bergsbotn viewpoint", desc: "Spectaculair uitzichtpunt over de fjorden vanuit een ronde platform. Goede weg tot vlakbij.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Hamn i Senja Resort", score: 9.1, tags: ["🐕 hond", "🍽 restaurant", "⚓ haventje"], p4nId: null, lat: 69.1900, lng: 17.5200, wildkamp: false },
-      { naam: "Senja Camping (Botnhamn)", score: 8.0, tags: ["🐕 hond", "🌊 zeezicht"], p4nId: null, lat: 69.1550, lng: 17.4500, wildkamp: true, wildkampTip: "Meerdere geschikte plekken langs de kust. Allemannsrecht van toepassing — blijf uit zicht van bewoonde percelen." },
+      { naam: "Hamn i Senja Resort", score: 9.1, tags: ["🐕 hond", "🍽 restaurant", "⚓ haventje", "🌿 natuur"], p4nId: null, lat: 69.1900, lng: 17.5200, wildkamp: false },
+      { naam: "Senja Camping Botnhamn", score: 8.2, tags: ["🐕 hond", "🌊 zeezicht", "🏕 rustig"], p4nId: null, lat: 69.1550, lng: 17.4500, wildkamp: false },
+      { naam: "Ersfjord Camping", score: 7.8, tags: ["🐕 hond", "🏖 strand nabij", "🌿 natuur"], p4nId: null, lat: 69.2400, lng: 17.6200, wildkamp: true, wildkampTip: "Meerdere geschikte plekken langs de Senja-kust. Allemannsrecht van toepassing — blijf uit zicht van bewoonde percelen." },
     ]
   },
 
@@ -597,38 +697,41 @@ const stopData = {
     activiteiten: [
       { icon: "🐋", naam: "Walvis-safari (RIB)", desc: "Spectaculaire RIB-tochten naar potvis en andere walvissen. Seizoensgebonden, maar zomer is goed. VOORAF RESERVEREN.", duur: "3–4u", kosten: "€90–120 p.p.", tags: ["reserveren!", "⚠ weer-afhankelijk"], link: "https://whalesafari.no" },
       { icon: "🐦", naam: "Papegaaiduikers op Bleiksøya", desc: "Zodiac-tocht vanuit Bleik naar het eiland met duizenden papegaaiduikers. Uniek in Noorwegen.", duur: "2u", kosten: "€60–80 p.p.", tags: ["seizoen: juni–aug", "reserveren!"], link: null },
-      { icon: "🏖", naam: "Bleik strand", desc: "Lang wit zandstrand, een van de mooiste van Noord-Noorwegen. Achter het strand ligt het grasland voor puffins.", duur: "vrij", kosten: "gratis", tags: [], link: null },
+      { icon: "🏖", naam: "Bleik strand", desc: "Lang wit zandstrand, een van de mooiste van Noord-Noorwegen. Achter het strand graslanden met puffins.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Andenes Camping", score: 7.8, tags: ["🐕 hond", "🌊 zeezicht"], p4nId: null, lat: 69.3249, lng: 16.1274, wildkamp: false },
-      { naam: "Bleik Camping", score: 8.2, tags: ["🐕 hond", "🏖 strand nabij"], p4nId: null, lat: 69.2600, lng: 16.0400, wildkamp: true, wildkampTip: "Langs de westkust van Andøya zijn goede wildkamppekken. Check lokale regels." },
+      { naam: "Bleik Camping", score: 8.4, tags: ["🐕 hond", "🏖 strand nabij", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 69.2600, lng: 16.0400, wildkamp: false },
+      { naam: "Andenes Camping", score: 7.9, tags: ["🐕 hond", "🌊 zeezicht", "🏙 dorp nabij"], p4nId: null, lat: 69.3249, lng: 16.1274, wildkamp: false },
+      { naam: "Nordmela Camping", score: 7.6, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 69.2000, lng: 15.9800, wildkamp: true, wildkampTip: "Langs de westkust van Andøya zijn goede wildkampplekken op de rotsen bij zee. Allemannsrecht van toepassing." },
     ]
   },
 
   "Lofoten": {
     activiteiten: [
-      { icon: "🏔", naam: "Reinebringen wandeling", desc: "Iconisch uitzichtpunt over Reine en de fjorden. Shuttle bus beschikbaar vanuit Reine. Steil maar goed begaanbaar.", duur: "3–4u", kosten: "gratis (shuttle €10)", tags: ["↑ 448m", "⚠ niet met peuters"], link: "https://ut.no" },
-      { icon: "🚣", naam: "Kayakken Reinefjorden", desc: "Verhuur ter plekke in Reine. Rustig fjord, spectaculaire bergtoppen. Geschikt voor beginners bij mooi weer.", duur: "2–4u", kosten: "€45–60 p.p.", tags: [], link: null },
-      { icon: "📷", naam: "Hamnøy bij zonsondergang", desc: "De meest gefotografeerde plek van Lofoten: rode rorbuer aan het water. Druk — parkeer vroeg, kom laat.", duur: "1u", kosten: "gratis", tags: ["🕘 21:30–23:00"], link: null },
+      { icon: "🏔", naam: "Reinebringen wandeling", desc: "Iconisch uitzichtpunt over Reine. Shuttle bus beschikbaar vanuit Reine. Steil maar goed begaanbaar.", duur: "3–4u", kosten: "gratis (shuttle €10)", tags: ["↑ 448m", "⚠ niet met peuters"], link: "https://ut.no" },
+      { icon: "🚣", naam: "Kayakken Reinefjorden", desc: "Verhuur ter plekke in Reine. Rustig fjord, spectaculaire bergtoppen. Geschikt voor beginners bij mooi weer.", duur: "2–4u", kosten: "€45–60 p.p.", tags: ["🐕 hond mee"], link: null },
+      { icon: "📷", naam: "Hamnøy bij zonsondergang", desc: "De meest gefotografeerde plek van Lofoten: rode rorbuer aan het water. Druk — kom laat.", duur: "1u", kosten: "gratis", tags: ["🕘 21:30–23:00"], link: null },
       { icon: "🎣", naam: "Å vissersdorpmuseum", desc: "Geconserveerd vissersdorpje aan het einde van de E10. Stockfish-droogrekken, museum, authentieke sfeer.", duur: "1–2u", kosten: "€10 museum", tags: ["🧒 kind-OK"], link: null },
-      { icon: "🦅", naam: "Zeearend RIB-tour", desc: "VOORAF RESERVEREN. Tocht langs zeearend-nesten. Operatoren in Svolvær en Reine. Een van de hoogtepunten van Lofoten.", duur: "3u", kosten: "€80–110 p.p.", tags: ["reserveren!", "aanbevolen!"], link: null },
-      { icon: "🏖", naam: "Ramberg / Skagsanden strand", desc: "Prachtig wit zandstrand met bergpanorama. Zwemmen mogelijk in de zomer. Parkeren bij het paviljoen.", duur: "vrij", kosten: "gratis", tags: [], link: null },
-      { icon: "🏘", naam: "Nusfjord oud vissersdorp", desc: "Een van de best bewaarde vissersdorpjes van Noorwegen. Fotogeniek, klein museum, koffie ter plekke.", duur: "1–2u", kosten: "€15 toegang", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🦅", naam: "Zeearend RIB-tour", desc: "VOORAF RESERVEREN. Tocht langs zeearend-nesten. Operatoren in Svolvær en Reine.", duur: "3u", kosten: "€80–110 p.p.", tags: ["reserveren!", "aanbevolen!"], link: null },
+      { icon: "🏖", naam: "Ramberg / Skagsanden strand", desc: "Prachtig wit zandstrand met bergpanorama. Zwemmen mogelijk in de zomer.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+      { icon: "🏘", naam: "Nusfjord oud vissersdorp", desc: "Een van de best bewaarde vissersdorpjes van Noorwegen. Fotogeniek, klein museum.", duur: "1–2u", kosten: "€15 toegang", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Ramberg Strand Camping", score: 8.4, tags: ["🐕 hond", "🍽 eten nabij", "🏖 strand"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false },
-      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wildkampTip: "Meerdere geschikte wildkamppekken langs de Lofotenkust. Allemannsrecht." },
+      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false },
+      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false },
+      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wildkampTip: "Meerdere geschikte wildkampplekken langs de Lofotenkust. Norsk allemannsrett van toepassing." },
     ]
   },
 
   "Bodø": {
     activiteiten: [
       { icon: "🌊", naam: "Saltstraumen maalstroom", desc: "Sterkste maalstroom ter wereld — gratis te bekijken vanaf de brug. Kom bij vloed voor het spectaculairst effect.", duur: "1u", kosten: "gratis", tags: ["🧒 kind-OK", "check tijden!"], link: "https://saltstraumen.com" },
-      { icon: "🏘", naam: "Kjerringøy handelspost", desc: "19e-eeuwse handelspost, prachtig geconserveerd. Mooie rit er naartoe langs de kust (~1u enkele reis).", duur: "2–3u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 gedeeltelijk indoor"], link: null },
+      { icon: "🏘", naam: "Kjerringøy handelspost", desc: "19e-eeuwse handelspost, prachtig geconserveerd. Mooie rit er naartoe langs de kust (~1u rijden).", duur: "2–3u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 gedeeltelijk indoor"], link: null },
     ],
     campings: [
-      { naam: "Bodø Camping", score: 7.6, tags: ["🐕 hond", "🏙 stad nabij"], p4nId: null, lat: 67.2804, lng: 14.4049, wildkamp: false },
-      { naam: "Saltstraumen Camping", score: 8.1, tags: ["🐕 hond", "🌊 maalstroom nabij"], p4nId: null, lat: 67.2200, lng: 14.6200, wildkamp: false },
+      { naam: "Saltstraumen Camping", score: 8.3, tags: ["🐕 hond", "🌊 maalstroom nabij", "🌿 natuur"], p4nId: null, lat: 67.2200, lng: 14.6200, wildkamp: false },
+      { naam: "Bodø Gjestgård Camping", score: 7.8, tags: ["🐕 hond", "🏙 stad nabij", "📶 wifi"], p4nId: null, lat: 67.2804, lng: 14.4049, wildkamp: false },
+      { naam: "Kjerringøy Camping", score: 7.6, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 67.4800, lng: 14.9800, wildkamp: false },
     ]
   },
 
@@ -636,25 +739,80 @@ const stopData = {
     activiteiten: [
       { icon: "🕳", naam: "Torghatten (gat door de berg)", desc: "Wandeling (1u) naar het beroemde gat door de rotsformatie. Eenvoudig te doen, goed voor kinderen.", duur: "1.5u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
       { icon: "🏔", naam: "Svartisen gletsjer", desc: "Op ~1u van de Fv17: uitzicht op de gletsjer. Bootje over het meer om dichter bij te komen.", duur: "3u", kosten: "€10–15 boot", tags: [], link: null },
-      { icon: "🛥", naam: "Kystriksveien (Fv17)", desc: "De scenic coastal route zelf is de attractie: watervallen, eilandjes, 6+ ferries. Neem er de tijd voor.", duur: "3 dagen", kosten: "ferrykosten", tags: ["scenic route"], link: null },
+      { icon: "🛥", naam: "Kystriksveien (Fv17)", desc: "De scenic coastal route zelf is de attractie: watervallen, eilandjes, meerdere kleine ferries.", duur: "3 dagen", kosten: "ferrykosten", tags: ["scenic route"], link: null },
     ],
     campings: [
-      { naam: "Brønnøysund Camping", score: 7.5, tags: ["🐕 hond", "🏙 dorp nabij"], p4nId: null, lat: 65.4748, lng: 12.2134, wildkamp: true, wildkampTip: "De eilanden langs de Kystriksveien zijn ideaal voor wildkamp. Allemannsrecht geldt." },
-      { naam: "Torghatten Camping", score: 7.8, tags: ["🐕 hond", "🏔 berg nabij"], p4nId: null, lat: 65.3900, lng: 12.0200, wildkamp: false },
+      { naam: "Torghatten Camping", score: 8.0, tags: ["🐕 hond", "🏔 berg nabij", "🌿 natuur"], p4nId: null, lat: 65.3900, lng: 12.0200, wildkamp: false },
+      { naam: "Brønnøysund Camping", score: 7.6, tags: ["🐕 hond", "🏙 dorp nabij"], p4nId: null, lat: 65.4748, lng: 12.2134, wildkamp: false },
+      { naam: "Kystriksveien wildkamp (eilanden)", score: 9.0, tags: ["🐕 hond", "🌊 zee", "⛺ wild"], p4nId: null, lat: 65.5000, lng: 12.0000, wildkamp: true, wildkampTip: "De eilanden langs de Kystriksveien zijn ideaal voor wildkamp. Allemannsrett geldt in heel Noorwegen. Meld je buiten de 150m-grens van woningen." },
+    ]
+  },
+
+  "Namsskogan": {
+    activiteiten: [
+      { icon: "🐺", naam: "Park Nordica Familiepark", desc: "Het meest bijzondere Scandinavische dierenpark: beren, wolven, lynxen, veelvraten in grote buitenverblijven. Goed voor kinderen.", duur: "3–4u", kosten: "€20 p.p.", tags: ["🧒 kind-OK!", "aanbevolen!"], link: "https://parknordica.no" },
+      { icon: "🌲", naam: "Namsskogan bos wandelingen", desc: "Rustig en uitgestrekt bosgebied aan de Namsfjord. Wandelpaden, eekhoorn- en vogelsignalen.", duur: "1–2u", kosten: "gratis", tags: ["🐕 hond"], link: null },
+    ],
+    campings: [
+      { naam: "Namsskogan Familiepark Camping", score: 8.5, tags: ["🐕 hond", "🌲 bos", "🐺 dierenpark nabij", "🧒 kind-OK"], p4nId: null, lat: 64.9200, lng: 13.2700, wildkamp: false },
+      { naam: "Namsos Camping", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij"], p4nId: null, lat: 64.4663, lng: 11.4963, wildkamp: false },
+      { naam: "Namsfjord wildkamp", score: 8.8, tags: ["🐕 hond", "🌿 natuur", "🕊 eenzaam"], p4nId: null, lat: 65.0000, lng: 13.0000, wildkamp: true, wildkampTip: "Het Namsskogan-gebied heeft uitstekende wildkampplekken langs de Namsfjord. Noors allemannsrett van toepassing." },
+    ]
+  },
+
+  "Trondheim": {
+    activiteiten: [
+      { icon: "⛪", naam: "Nidarosdomen", desc: "Gotische kathedraal, begraafplaats van Noorse koningen, pelgrimsbestemming. Schitterende architectuur. Aanrader.", duur: "1.5u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://nidarosdomen.no" },
+      { icon: "🏘", naam: "Bakklandet historisch kwartier", desc: "Pittoresk buurtje met gekleurde houten huizen, koffietentjes, kleine winkels. Fijn om door te slenteren.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🏰", naam: "Kristiansten Festning (Fort)", desc: "17e-eeuws fort met panoramisch uitzicht over de stad en de fjord. Gratis toegang.", duur: "45min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🏊", naam: "Pirbadet Waterpretpark", desc: "Overdekt zwemparadijs met glijbanen en kinderbassins. Ideaal voor kids bij (koud) weer.", duur: "2–3u", kosten: "€20 p.p.", tags: ["🧒 kind-OK!", "🌧 indoor"], link: null },
+    ],
+    campings: [
+      { naam: "Trondheim Camping (Nedre Leirfoss)", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🌊 rivier nabij", "🧒 speeltuin"], p4nId: null, lat: 63.3700, lng: 10.4500, wildkamp: false },
+      { naam: "Flakk Camping", score: 7.9, tags: ["🐕 hond", "🌊 fjordview", "⛴ ferry nabij"], p4nId: null, lat: 63.4800, lng: 10.2200, wildkamp: false },
+      { naam: "Byneset Camping", score: 7.7, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 63.4100, lng: 10.2400, wildkamp: false },
+    ]
+  },
+
+  "Atlanterhavsvegen": {
+    activiteiten: [
+      { icon: "🌊", naam: "Atlantic Ocean Road rondrit", desc: "De beroemdste weg van Noorwegen: 8 bruggen over scheren in open zee. Indrukwekkend bij storm én mooi weer.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK", "aanbevolen!"], link: null },
+      { icon: "🦭", naam: "Zeehonden spotten Eldhusøya", desc: "Wandelpad op het eiland Eldhusøya met kans op zeehonden op de rotsen. Korte ferry of bij eb te voet.", duur: "1.5u", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+      { icon: "🏘", naam: "Bud vissersdorp", desc: "Authentiek Noors vissersdorp met kleine haventje. Vis kopen, koffie, wandelen langs de kust.", duur: "1u", kosten: "gratis", tags: ["🐕 hond"], link: null },
+    ],
+    campings: [
+      { naam: "Kårvåg Camping", score: 8.4, tags: ["🐕 hond", "🌊 zeezicht", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 63.0200, lng: 7.5800, wildkamp: false },
+      { naam: "Atlantic Ocean Road Camping", score: 8.0, tags: ["🐕 hond", "🌊 brug nabij", "🕊 rustig"], p4nId: null, lat: 63.0100, lng: 7.3400, wildkamp: false },
+      { naam: "Bud Camping", score: 7.6, tags: ["🐕 hond", "⚓ haven", "🏘 dorp nabij"], p4nId: null, lat: 62.9100, lng: 7.0100, wildkamp: true, wildkampTip: "Langs de scheren bij de Atlanterhavsvegen zijn mooie wildkampplekken op de rotsen bij zee. Norsk allemannsrett." },
+    ]
+  },
+
+  "Ålesund": {
+    activiteiten: [
+      { icon: "🏛", naam: "Art Nouveau centrum", desc: "Ålesund brandde af in 1904 en werd herbouwd in Art Nouveau stijl. Wandelroute door het centrum langs de mooiste gevels.", duur: "1.5u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "⛰", naam: "Aksla uitzichtpunt (418 treden)", desc: "418 treden omhoog naar een spectaculair panorama over de stad, eilanden en de fjorden. Mooiste uitzicht van de stad.", duur: "1u", kosten: "gratis", tags: ["🧒 kind-OK (>5jr)"], link: null },
+      { icon: "🐠", naam: "Atlanterhavsparken Aquarium", desc: "Groot aquarium aan zee met zeehonden, zeehondenshows, zeewier-bassins. Uitstekend voor kinderen.", duur: "2–3u", kosten: "€18 p.p.", tags: ["🧒 kind-OK!", "🌧 indoor"], link: "https://atlanterhavsparken.no" },
+      { icon: "🚢", naam: "Geirangerfjord dagtrip (ferry)", desc: "Ferry vanuit Ålesund naar Geiranger. Spektaculaire fjordroute. Optioneel voor tussenstop.", duur: "Hele dag", kosten: "€40–60 p.p.", tags: ["🧒 kind-OK", "reserveren"], link: null },
+    ],
+    campings: [
+      { naam: "Ålesund Camping (Tørla)", score: 8.1, tags: ["🐕 hond", "🌊 fjordview", "🧒 speeltuin", "🌿 natuur"], p4nId: null, lat: 62.4900, lng: 6.1800, wildkamp: false },
+      { naam: "Borgund Camping", score: 7.8, tags: ["🐕 hond", "🕊 rustig", "🌲 groen"], p4nId: null, lat: 62.4400, lng: 6.0400, wildkamp: false },
+      { naam: "Urke Camping (Hjørundfjord)", score: 8.3, tags: ["🐕 hond", "🌊 fjord", "🌿 natuur", "⭐ klein"], p4nId: null, lat: 62.2300, lng: 6.4900, wildkamp: false },
     ]
   },
 
   "Geirangerfjord": {
     activiteiten: [
       { icon: "🚢", naam: "Fjordcruise Geiranger", desc: "1,5u tocht door het UNESCO-fjord langs De Zeven Zusters en De Vrouwelijke Vrijster watervallen. Meerdere operators aan de kade.", duur: "1.5u", kosten: "€25–35 p.p.", tags: ["🧒 kind-OK", "aanbevolen!"], link: null },
-      { icon: "👁", naam: "Flydalsjuvet & Ørnesvingen", desc: "Twee spectaculaire uitzichtpunten op het fjord. Flydalsjuvet = overhangfoto. Ørnesvingen = Eagle Road, bochtige klim.", duur: "1–2u", kosten: "gratis", tags: [], link: null },
-      { icon: "🏔", naam: "Dalsnibba 1500m", desc: "Tolweg naar 1500m. Fjordpanorama vanuit de sneeuw, ook in zomer. Campers toegestaan. Spectaculair.", duur: "2u", kosten: "€25 tol", tags: ["❄ ook in zomer sneeuw"], link: null },
+      { icon: "👁", naam: "Flydalsjuvet & Ørnesvingen", desc: "Twee spectaculaire uitzichtpunten op het fjord. Flydalsjuvet = overhangfoto. Ørnesvingen zit al in de route (Fv63).", duur: "1–2u", kosten: "gratis", tags: [], link: null },
+      { icon: "🏔", naam: "Dalsnibba 1500m", desc: "Tolweg naar 1500m. Fjordpanorama vanuit de sneeuw, ook in zomer. Campers toegestaan.", duur: "2u", kosten: "€25 tol", tags: ["❄ ook in zomer sneeuw"], link: null },
       { icon: "🌊", naam: "Storsæterfossen waterval", desc: "Korte wandeling (30 min) naar een indrukwekkende waterval vlak bij het dorp. Goed voor kinderen.", duur: "1u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
-      { icon: "🚣", naam: "Kayak in het fjord", desc: "Verhuur in het dorp. Paddle tussen de watervallen door. Schitterend bij mooi weer, rustig water.", duur: "2–3u", kosten: "€40–55 p.p.", tags: [], link: null },
+      { icon: "🚣", naam: "Kayak in het fjord", desc: "Verhuur in het dorp. Paddle tussen de watervallen door. Schitterend bij mooi weer.", duur: "2–3u", kosten: "€40–55 p.p.", tags: [], link: null },
     ],
     campings: [
-      { naam: "Geiranger Camping", score: 8.6, tags: ["🐕 hond", "📶 wifi", "🌊 fjordview"], p4nId: null, lat: 62.1004, lng: 7.2050, wildkamp: false },
-      { naam: "Grande Hytteutleige", score: 8.1, tags: ["🐕 hond", "🍽 restaurant nabij"], p4nId: null, lat: 62.0980, lng: 7.2100, wildkamp: false },
+      { naam: "Geiranger Camping", score: 8.7, tags: ["🐕 hond", "📶 wifi", "🌊 fjordview", "⭐ beste plek"], p4nId: null, lat: 62.1004, lng: 7.2050, wildkamp: false },
+      { naam: "Grande Hytteutleige & Camping", score: 8.2, tags: ["🐕 hond", "🍽 restaurant nabij", "🌊 uitzicht"], p4nId: null, lat: 62.0980, lng: 7.2100, wildkamp: false },
+      { naam: "Vinje Camping (Geiranger)", score: 7.9, tags: ["🐕 hond", "🕊 rustig", "🌿 groen"], p4nId: null, lat: 62.1100, lng: 7.1800, wildkamp: false },
     ]
   },
 
@@ -662,75 +820,79 @@ const stopData = {
     activiteiten: [
       { icon: "🚡", naam: "Loen Skylift", desc: "Kabelbaan naar 1011m in slechts 5 minuten. Spectaculaire fjord- en bergpanorama's. Restaurant bovenop.", duur: "2–3u", kosten: "€30–40 retour", tags: ["🧒 kind-OK", "aanbevolen!"], link: "https://loenskylift.no" },
       { icon: "🏔", naam: "Briksdalsbreen gletsjer", desc: "Gletsjerwandeling van 6km (enkele reis). Troll-trein optie voor de terugweg. Indrukwekkend blauw ijs.", duur: "3–4u", kosten: "gratis (troll-trein €15)", tags: [], link: null },
-      { icon: "🚣", naam: "Kayak op Lovatnet", desc: "Het smaragdgroene meer onder de gletsjer is ideaal voor kanoën. Verhuur bij de camping.", duur: "2u", kosten: "€25–35", tags: [], link: null },
+      { icon: "🚣", naam: "Kayak op Lovatnet", desc: "Het smaragdgroene meer onder de gletsjer is ideaal voor kanoën. Verhuur bij de camping.", duur: "2u", kosten: "€25–35", tags: ["🐕 hond mee"], link: null },
     ],
     campings: [
-      { naam: "Loen Aktivhotel Camping", score: 8.3, tags: ["🐕 hond", "🏊 zwembad", "📶 wifi"], p4nId: null, lat: 61.8741, lng: 6.8430, wildkamp: false },
-      { naam: "Alexandra Camping (Loen)", score: 7.9, tags: ["🐕 hond", "🌊 meerView"], p4nId: null, lat: 61.8700, lng: 6.8500, wildkamp: false },
+      { naam: "Loen Aktivhotel Camping", score: 8.5, tags: ["🐕 hond", "🏊 zwembad", "📶 wifi", "🌊 meerView"], p4nId: null, lat: 61.8741, lng: 6.8430, wildkamp: false },
+      { naam: "Sande Camping (Loen)", score: 8.0, tags: ["🐕 hond", "🌲 bos", "🕊 rustig"], p4nId: null, lat: 61.8800, lng: 6.8600, wildkamp: false },
+      { naam: "Olden Fjordhotel Camping", score: 7.7, tags: ["🐕 hond", "🌊 fjord", "⭐ kleine camping"], p4nId: null, lat: 61.8500, lng: 6.8000, wildkamp: false },
     ]
   },
 
   "Sognefjord": {
     activiteiten: [
       { icon: "🚂", naam: "Flåmsbana treinrit", desc: "Spectaculaire bergtrein van Flåm naar Myrdal. 1u enkele reis door watervallen en tunnels. VOORAF RESERVEREN in zomer.", duur: "2u retour", kosten: "€40–50 p.p.", tags: ["🧒 kind-OK", "reserveren!", "aanbevolen!"], link: "https://flamsbana.no" },
-      { icon: "🚢", naam: "Nærøyfjord cruise (UNESCO)", desc: "2u cruise door het smalste fjord van Noorwegen (UNESCO). Vanuit Flåm of Gudvangen. Spectaculair.", duur: "2u", kosten: "€35–45 p.p.", tags: ["🧒 kind-OK", "aanbevolen!"], link: null },
-      { icon: "👁", naam: "Stegastein viewpoint", desc: "Modern uitzichtplatform 30m boven het fjord. 5 min autorit van Flåm. Gratis. Geweldig uitzicht.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
-      { icon: "⛪", naam: "Urnes stavkirke (UNESCO)", desc: "Oudste houten kerk van Noorwegen, op de route naar Flåm. Via korte bootje over het fjord.", duur: "1.5u", kosten: "€12 p.p.", tags: [], link: null },
+      { icon: "🚢", naam: "Nærøyfjord cruise (UNESCO)", desc: "2u cruise door het smalste fjord van Noorwegen (UNESCO). Vanuit Flåm of Gudvangen.", duur: "2u", kosten: "€35–45 p.p.", tags: ["🧒 kind-OK", "aanbevolen!"], link: null },
+      { icon: "👁", naam: "Stegastein viewpoint", desc: "Modern uitzichtplatform 30m boven het fjord. 5 min autorit van Flåm. Gratis.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "⛪", naam: "Urnes stavkirke (UNESCO)", desc: "Oudste houten kerk van Noorwegen, via korte bootje over het fjord.", duur: "1.5u", kosten: "€12 p.p.", tags: [], link: null },
     ],
     campings: [
-      { naam: "Flåm Camping & Vandrehjem", score: 8.0, tags: ["🐕 hond", "🏙 station nabij", "📶 wifi"], p4nId: null, lat: 60.8632, lng: 7.1167, wildkamp: false },
-      { naam: "Brekke Camping (Sognefjord)", score: 7.7, tags: ["🐕 hond", "🌊 fjordview"], p4nId: null, lat: 60.9100, lng: 7.0800, wildkamp: false },
+      { naam: "Flåm Camping & Vandrehjem", score: 8.2, tags: ["🐕 hond", "🏙 station nabij", "📶 wifi", "🌊 fjordview"], p4nId: null, lat: 60.8632, lng: 7.1167, wildkamp: false },
+      { naam: "Aurland Fjordhotel Camping", score: 8.0, tags: ["🐕 hond", "🌊 fjord", "🕊 rustig"], p4nId: null, lat: 60.9100, lng: 7.1900, wildkamp: false },
+      { naam: "Lærdal Ferie & Fritidspark", score: 7.7, tags: ["🐕 hond", "🧒 activiteiten", "🏊 zwemmen"], p4nId: null, lat: 61.1000, lng: 7.4800, wildkamp: false },
     ]
   },
 
   "Hardangerfjord": {
     activiteiten: [
-      { icon: "🌊", naam: "Vøringsfossen waterval", desc: "Een van de beroemdste watervallen van Noorwegen (182m). Nieuwe brug-trap voor close-up. Spectaculair.", duur: "1–2u", kosten: "gratis (parkeren €5)", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🌊", naam: "Vøringsfossen waterval", desc: "Een van de beroemdste watervallen van Noorwegen (182m). Nieuwe brug-trap voor close-up.", duur: "1–2u", kosten: "gratis (parkeren €5)", tags: ["🧒 kind-OK"], link: null },
       { icon: "🏛", naam: "Hardangervidda Natursenter", desc: "Natuur- en cultuurcentrum over het Hardangerplateau. Goed bij regen. Kinderactiviteiten.", duur: "1.5u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: null },
-      { icon: "🍎", naam: "Fruitboomgaarden Hardanger", desc: "In juni zijn de bloesems weg maar de vruchten groeien. Lokale boerderijen verkopen producten langs de weg.", duur: "vrij", kosten: "gratis (producten kopen)", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🍎", naam: "Fruitboomgaarden Hardanger", desc: "Lokale boerderijen verkopen producten langs de weg. In zomer ook zelfplukkopties.", duur: "vrij", kosten: "gratis (producten kopen)", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Eidfjord Camping", score: 8.1, tags: ["🐕 hond", "🌊 fjordview", "📶 wifi"], p4nId: null, lat: 60.4660, lng: 7.0740, wildkamp: false },
-      { naam: "Ulvik Fjord Camping", score: 7.9, tags: ["🐕 hond", "🍎 fruitstreek"], p4nId: null, lat: 60.5670, lng: 6.9140, wildkamp: false },
+      { naam: "Eidfjord Camping", score: 8.2, tags: ["🐕 hond", "🌊 fjordview", "📶 wifi", "🌿 natuur"], p4nId: null, lat: 60.4660, lng: 7.0740, wildkamp: false },
+      { naam: "Ulvik Fjord Camping", score: 8.0, tags: ["🐕 hond", "🍎 fruitstreek", "🕊 rustig"], p4nId: null, lat: 60.5670, lng: 6.9140, wildkamp: false },
+      { naam: "Kinsarvik Camping", score: 7.8, tags: ["🐕 hond", "🌊 fjord", "🧒 speeltuin"], p4nId: null, lat: 60.3700, lng: 6.7300, wildkamp: false },
     ]
   },
 
   "Bergen": {
     activiteiten: [
       { icon: "🏛", naam: "Bryggen (UNESCO)", desc: "Middeleeuwse houten pakhuizen, nu winkels en restaurants. Werelderfgoed. Wandelbaar in elk weer.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK", "🌧 OK bij regen"], link: null },
-      { icon: "🚡", naam: "Fløybanen kabelbaan", desc: "7 minuten naar de top van Fløyen (320m). Panoramisch uitzicht over de stad en fjorden. Spelplaats bovenop voor kinderen.", duur: "2u", kosten: "€22 retour", tags: ["🧒 kind-OK", "aanbevolen!"], link: "https://floyen.no" },
-      { icon: "🐟", naam: "Vismarkt Torget", desc: "Levende vismarkt met verse zeevruchten en lokale producten. Eet buiten verse garnalen of gerookte zalm.", duur: "30–60min", kosten: "gratis (eten kopen)", tags: ["🍽 eten", "🧒 leuk"], link: null },
-      { icon: "🐠", naam: "Aquarium Bergen", desc: "Groot aquarium met zeehonden, pinguïns en tropische vissen. Voedertijden voor kinderen extra leuk.", duur: "2–3u", kosten: "€28 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://akvariet.no" },
-      { icon: "🌊", naam: "Steinsdalsfossen (op de route)", desc: "Loop achter de waterval door — een van de weinige watervallen waar dat kan. Op de weg naar Bergen.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🚡", naam: "Fløybanen kabelbaan", desc: "7 minuten naar de top van Fløyen (320m). Panoramisch uitzicht. Spelplaats bovenop voor kinderen.", duur: "2u", kosten: "€22 retour", tags: ["🧒 kind-OK", "aanbevolen!"], link: "https://floyen.no" },
+      { icon: "🐟", naam: "Vismarkt Torget", desc: "Levende vismarkt met verse zeevruchten en lokale producten. Eet buiten verse garnalen.", duur: "30–60min", kosten: "gratis (eten kopen)", tags: ["🍽 eten", "🧒 leuk"], link: null },
+      { icon: "🐠", naam: "Aquarium Bergen", desc: "Groot aquarium met zeehonden, pinguïns en tropische vissen. Voedertijden voor kinderen.", duur: "2–3u", kosten: "€28 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://akvariet.no" },
     ],
     campings: [
-      { naam: "Bratland Camping", score: 8.0, tags: ["🐕 hond", "🏊 zwemmen", "🚌 bus naar centrum"], p4nId: null, lat: 60.3280, lng: 5.2900, wildkamp: false },
-      { naam: "Lone Camping", score: 7.8, tags: ["🐕 hond", "🍽 winkel", "📶 wifi"], p4nId: null, lat: 60.3560, lng: 5.4290, wildkamp: false },
+      { naam: "Bratland Camping", score: 8.2, tags: ["🐕 hond", "🏊 zwemmen", "🚌 bus naar centrum", "🌿 natuur"], p4nId: null, lat: 60.3280, lng: 5.2900, wildkamp: false },
+      { naam: "Lone Camping", score: 7.9, tags: ["🐕 hond", "🍽 winkel", "📶 wifi", "🕊 rustig"], p4nId: null, lat: 60.3560, lng: 5.4290, wildkamp: false },
+      { naam: "Bergen Camping Park", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij", "⛴ ferry nabij"], p4nId: null, lat: 60.4050, lng: 5.3200, wildkamp: false },
     ]
   },
 
-  "Jokkmokk": {
+  "Stavanger": {
     activiteiten: [
-      { icon: "🦌", naam: "Ájtte Sámi-museum", desc: "Het nationaal museum van de Sámi-cultuur. Uitstekend ingericht, goed voor kinderen. Budget 2 uur.", duur: "2u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://ajtte.com" },
-      { icon: "🦌", naam: "Rendierboerderij bezoek", desc: "Bezoek aan een werkende rendierboerderij. Voer rendieren, leer over het nomadisch Sámi-leven.", duur: "2u", kosten: "€20 p.p.", tags: ["🧒 kind-OK", "reserveren aanbevolen"], link: null },
-      { icon: "🛶", naam: "Pite älv kanoën", desc: "Verhuur via lokale camping. Rustige rivier, prachtig oerboslandschap. Goed voor een halve dag.", duur: "3–4u", kosten: "€30–40 kano", tags: [], link: null },
-      { icon: "🌿", naam: "Polarcirkel oversteken", desc: "Jokkmokk ligt op de poolcirkel. Bezoek het monument en foto ter herdenking!", duur: "15min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🏘", naam: "Gamle Stavanger", desc: "Best bewaarde houten huizenbuurt van Noorwegen: 173 witte houten huisjes uit de 18e eeuw. Gratis wandelen.", duur: "1u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🛢", naam: "Norsk Oljemuseum", desc: "Indrukwekkend museum over de olie-industrie van Noorwegen. Interactief, goed voor kinderen.", duur: "2u", kosten: "€18 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://norskolje.museum" },
+      { icon: "⚓", naam: "Haven en visrestaurants", desc: "Levendig haventje met uitstekende visrestaurants. Verse garnalen, sushi, lokale specialiteiten.", duur: "1–2u", kosten: "gratis (eten betaald)", tags: ["🍽 eten", "🐕 hond terras"], link: null },
+      { icon: "🏖", naam: "Sola strand", desc: "Lang wit zandstrand, 15 min rijden van het centrum. Een van de mooiste stranden van West-Noorwegen.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Jokkmokk Camping", score: 7.9, tags: ["🐕 hond", "🛁 sauna", "🌲 bos"], p4nId: null, lat: 66.6044, lng: 19.8300, wildkamp: true, wildkampTip: "Ruim aanbod wildkampen in het Jokkmokk-gebied. Zweeds allemannsrecht (allemansrätten) van toepassing." },
-      { naam: "Storholmen Camping", score: 7.5, tags: ["🐕 hond", "🏊 zwemmen"], p4nId: null, lat: 66.5900, lng: 19.8100, wildkamp: false },
+      { naam: "Mosvangen Camping Stavanger", score: 8.3, tags: ["🐕 hond", "🌿 natuur", "🧒 speeltuin", "🏊 meer nabij"], p4nId: null, lat: 58.9800, lng: 5.7100, wildkamp: false },
+      { naam: "Sola Strand Camping", score: 8.1, tags: ["🐕 hond", "🏖 strand", "🌿 natuur"], p4nId: null, lat: 58.8900, lng: 5.6300, wildkamp: false },
+      { naam: "Ølberg Camping", score: 7.9, tags: ["🐕 hond", "🌊 kust", "⭐ kleine camping"], p4nId: null, lat: 58.8400, lng: 5.6700, wildkamp: false },
     ]
   },
 
-  "Höga Kusten": {
+  "Terugreis": {
     activiteiten: [
-      { icon: "🕳", naam: "Slåttdalsskrevan kloof", desc: "Indrukwekkende kloof in Skuleskogen NP. Wandeling 1-2u door smalle rotskloof. Kind-OK als ze goed lopen.", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK (>5jr)"], link: null },
-      { icon: "🚡", naam: "Skuleberget kabelbaan", desc: "Naar de top van Skuleberget voor panorama over de archipel. Eenvoudig en indrukwekkend.", duur: "1u", kosten: "€15 p.p.", tags: ["🧒 kind-OK"], link: null },
-      { icon: "🏘", naam: "Norrfällsviken vissersdorpje", desc: "Authentiek rood vissersdorpje aan de kust van de Hoge Kust. Zwemmen, wandelen, koffie.", duur: "1–2u", kosten: "gratis", tags: [], link: null },
+      { icon: "⛴", naam: "Ferry Kristiansand–Hirtshals", desc: "Fjord Line of Color Line ferry. Oversteek ca. 2u15–3u30. VOORAF RESERVEREN via fjordline.com of colorline.com.", duur: "2.5–3.5u", kosten: "€60–120 camper", tags: ["reserveren!", "⚠ op tijd aanwezig"], link: "https://fjordline.com" },
+      { icon: "🏖", naam: "Kristiansand centrum", desc: "Gezellige havenstad. Posebyen (historisch centrum), Fiskebrygga haven, markt. Relaxte sfeer na de lange reis.", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Skuleskogen Camping", score: 7.8, tags: ["🐕 hond", "🌲 NP-rand"], p4nId: null, lat: 63.0900, lng: 18.3500, wildkamp: true, wildkampTip: "Buiten het nationaal park is wildkampen goed mogelijk langs de Höga Kusten." },
-      { naam: "Norrfällsviken Camping", score: 8.1, tags: ["🐕 hond", "🏊 zwemmen", "⚓ haven"], p4nId: null, lat: 62.9500, lng: 18.4000, wildkamp: false },
+      { naam: "Kristiansand Camping (Roligheden)", score: 8.0, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "🏙 stad nabij"], p4nId: null, lat: 58.1800, lng: 8.0800, wildkamp: false },
+      { naam: "Hamresanden Camping", score: 8.2, tags: ["🐕 hond", "🏊 zwemmen", "🌊 strand"], p4nId: null, lat: 58.1700, lng: 8.0400, wildkamp: false },
+      { naam: "Dvergsnes Camping", score: 7.7, tags: ["🐕 hond", "⛴ haven nabij", "🕊 rustig"], p4nId: null, lat: 58.1400, lng: 7.9600, wildkamp: false },
     ]
   },
 };
@@ -741,28 +903,28 @@ const alternatieven = {
     { naam: "Rügen (DE)", lat: 54.4352, lng: 13.6085, beschrijving: "Vergelijkbare krijtrotsen, Jasmund NP, meer beschut bij wind", geschiktBij: "storm", maxRij: "45 min", bufImpact: 0 },
     { naam: "Kopenhagen", lat: 55.6761, lng: 12.5683, beschrijving: "Stad-dag bij regen: Tivoli, Nyhavn, indoor musea (kleuter-proof)", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 }
   ],
-  "Småland": [
-    { naam: "Karlskrona", lat: 56.1612, lng: 15.5869, beschrijving: "UNESCO Barokke havenstad, marine-activiteiten, goed bij bewolking", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 },
-    { naam: "Glasriket (Kosta)", lat: 56.8460, lng: 15.4053, beschrijving: "Zweeds glasambacht, glasblaasdemo's — juist leuk bij regen", geschiktBij: "regen", maxRij: "0.5u", bufImpact: 0 }
+  "Jönköping": [
+    { naam: "Vimmerby (dagtrip)", lat: 57.6654, lng: 15.8543, beschrijving: "Astrid Lindgrens Värld — toch gaan! Alleen 1u rijden, geen extra nacht nodig", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
+    { naam: "Karlskrona", lat: 56.1612, lng: 15.5869, beschrijving: "UNESCO Barokke havenstad, marine-activiteiten, goed bij bewolking", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 }
   ],
-  "Färnebofjärden": [
-    { naam: "Uppsala", lat: 59.8586, lng: 17.6389, beschrijving: "Universiteitsstad, domkerk, Gamla Uppsala grafheuvel, indoor opties", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 },
-    { naam: "Dalälven kust (Skutskär)", lat: 60.6530, lng: 17.4070, beschrijving: "Minder bekend, rustige rivier-delta, goed wildkamp-alternatief", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+  "Uppsala": [
+    { naam: "Uppsala centrum", lat: 59.8586, lng: 17.6389, beschrijving: "Domkerk, universiteitsgebouwen, Gamla Uppsala grafheuvel — ook bij regen leuk", geschiktBij: "regen", maxRij: "0u", bufImpact: 0 },
+    { naam: "Dalälven rivier (Skutskär)", lat: 60.6530, lng: 17.4070, beschrijving: "Minder bekend, rustige rivier-delta, alternatief wildkampgebied", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
   ],
   "Höga Kusten": [
-    { naam: "Härnösand", lat: 62.6330, lng: 17.9399, beschrijving: "Gezellig historisch stadscentrum, kathedraal, beschut bij wind", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 },
+    { naam: "Härnösand centrum", lat: 62.6330, lng: 17.9399, beschrijving: "Historisch centrum, kathedraal, beschut bij wind vanuit zee", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 },
     { naam: "Kramfors / Ångermanland", lat: 62.9300, lng: 17.7940, beschrijving: "Rustig bosgebied, alternatieve campings, weinig toeristen", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
   ],
-  "Luleå": [
-    { naam: "Gammelstad (Luleå)", lat: 65.6430, lng: 22.0300, beschrijving: "UNESCO kerkstad op 10 min — leuk ook bij bewolking", geschiktBij: "regen", maxRij: "0.2u", bufImpact: 0 },
-    { naam: "Storforsen / Älvsbyn", lat: 65.8280, lng: 20.8770, beschrijving: "Grootste vrije waterval Europa, indrukwekkend bij elke weersconditie", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
+  "Umeå": [
+    { naam: "Umeå centrum", lat: 63.8258, lng: 20.2630, beschrijving: "Universiteitsstad, Bildmuseet, goede eetgelegenheden — goed bij regen", geschiktBij: "regen", maxRij: "0u", bufImpact: 0 },
+    { naam: "Hörnefors / kust", lat: 63.6500, lng: 19.9500, beschrijving: "Rustige kuststrook met wildkampopties en minder mensen", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
   ],
   "Jokkmokk": [
     { naam: "Arvidsjaur", lat: 65.5911, lng: 19.1764, beschrijving: "Sami-kåtor (ronde hutten), rustiger alternatief, ook hondvriendelijk", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
     { naam: "Muddus NP", lat: 66.9167, lng: 19.8333, beschrijving: "Oerbos nationaal park op 30 min van Jokkmokk, bijzondere vogels", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
   ],
   "Kiruna": [
-    { naam: "Abisko NP", lat: 68.3500, lng: 18.8300, beschrijving: "Nationaal park, toendra-wandelingen, goed bij bewolking (lage zon)", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
+    { naam: "Abisko NP", lat: 68.3500, lng: 18.8300, beschrijving: "Nationaal park, toendra-wandelingen, goed bij bewolking", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
     { naam: "Kebnekaise vallei", lat: 67.8500, lng: 18.5500, beschrijving: "Spectaculaire bergvallei, zelfs bij grijs weer indrukwekkend", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
   ],
   "Senja": [
@@ -775,7 +937,7 @@ const alternatieven = {
   ],
   "Lofoten": [
     { naam: "Svolvær (centrum)", lat: 68.2342, lng: 14.5651, beschrijving: "Centrale Lofoten hub, galeries, restaurants, indoor bij regen", geschiktBij: "regen", maxRij: "0.5u", bufImpact: 0 },
-    { naam: "Kabelvåg", lat: 68.2170, lng: 14.4760, beschrijving: "Historisch vissersdorp, Lofoten Museum — juist mooi bij bewolkt", geschiktBij: "regen", maxRij: "0.3u", bufImpact: 0 },
+    { naam: "Kabelvåg", lat: 68.2170, lng: 14.4760, beschrijving: "Historisch vissersdorp, Lofoten Museum — mooi bij bewolkt", geschiktBij: "regen", maxRij: "0.3u", bufImpact: 0 },
     { naam: "Narvik (uitstap)", lat: 68.4384, lng: 17.4272, beschrijving: "Oorlogsmuseum + fjordpanorama, als Lofoten-days te lang regenen", geschiktBij: "regen", maxRij: "3u", bufImpact: -1 }
   ],
   "Bodø": [
@@ -784,12 +946,23 @@ const alternatieven = {
   ],
   "Helgeland": [
     { naam: "Sandnessjøen", lat: 66.0120, lng: 12.6350, beschrijving: "Syv Søstre bergpanorama, haven, kindvriendelijk", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
-    { naam: "Mosjøen", lat: 65.8360, lng: 13.1950, beschrijving: "Schilderachtig centrum met oude houten huizen, wandelbaar bij regen", geschiktBij: "regen", maxRij: "1.5u", bufImpact: 0 },
     { naam: "Vega eiland", lat: 65.6667, lng: 11.9000, beschrijving: "UNESCO eiland, ederdons-cultuur, ferry 30 min — bij mooi weer!", geschiktBij: "altijd", maxRij: "1u + ferry", bufImpact: -1 }
+  ],
+  "Namsskogan": [
+    { naam: "Namsos centrum", lat: 64.4663, lng: 11.4963, beschrijving: "Havenstad, goede supermarkten, tanken + inkopen doen voor noordreis", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
+    { naam: "Grong / Tunnsjøen meer", lat: 64.4600, lng: 13.7000, beschrijving: "Rustig meer met wildkampopties bij regen, mooie naaldbossen", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
+  ],
+  "Trondheim": [
+    { naam: "Oppdal (dagtrip)", lat: 62.5900, lng: 9.6900, beschrijving: "Nationaal park + sportief dorp — bij mooi weer vanuit Trondheim (1.5u)", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
+    { naam: "Røros (UNESCO)", lat: 62.5700, lng: 11.3800, beschrijving: "Historische mijnstad, UNESCO, prachtig ook bij bewolkt — 2u rijden", geschiktBij: "regen", maxRij: "2u", bufImpact: -1 }
   ],
   "Atlanterhavsvegen": [
     { naam: "Ålesund", lat: 62.4724, lng: 6.1494, beschrijving: "Art Nouveau stad, Aksla top (418 treden), musea bij regen", geschiktBij: "regen", maxRij: "2u", bufImpact: -1 },
     { naam: "Molde", lat: 62.7374, lng: 7.1591, beschrijving: "Rozenstad, fjordpanorama (ook bewolkt mooi), familievriendelijk", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+  ],
+  "Ålesund": [
+    { naam: "Hjørundfjord", lat: 62.2260, lng: 6.4820, beschrijving: "Rustiger alternatief voor drukke Ålesund, spectaculaire fjord", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 },
+    { naam: "Ørsta / Volda", lat: 62.2000, lng: 6.1300, beschrijving: "Kleine fjorddorpjes, minder toeristen, goed strand bij mooi weer", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 }
   ],
   "Geirangerfjord": [
     { naam: "Hjørundfjord", lat: 62.2260, lng: 6.4820, beschrijving: "Rustiger alternatief voor drukke Geiranger, spectaculair, minder toeristen", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
@@ -804,16 +977,20 @@ const alternatieven = {
     { naam: "Voss", lat: 60.6280, lng: 6.4170, beschrijving: "Avontuurssport hub (raft/paragliding), treinverbinding Flåm, goed kindvriendelijk", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
   ],
   "Hardangerfjord": [
-    { naam: "Ulvik", lat: 60.5670, lng: 6.9140, beschrijving: "Rustiger Hardangerdorp, fruitboomgaarden, serene sfeer zonder drukte", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
-    { naam: "Odda", lat: 60.0690, lng: 6.5450, beschrijving: "Trolanipa, Buarbreen gletsjer, vertrekpunt Trolltunga (4h wandeling)", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
+    { naam: "Ulvik", lat: 60.5670, lng: 6.9140, beschrijving: "Rustiger Hardangerdorp, fruitboomgaarden, serene sfeer", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
+    { naam: "Odda", lat: 60.0690, lng: 6.5450, beschrijving: "Buarbreen gletsjer, vertrekpunt Trolltunga (4h wandeling)", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
   ],
   "Bergen": [
     { naam: "Hardanger (Lofthus)", lat: 60.3280, lng: 6.7180, beschrijving: "Rustiger dan Bergen bij slecht fjord-weer, kleine campings", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
     { naam: "Voss", lat: 60.6280, lng: 6.4170, beschrijving: "Actief alternatief voor Bergen-stad-dag, trein Bergen↔Voss", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
   ],
+  "Stavanger": [
+    { naam: "Preikestolen", lat: 58.9870, lng: 6.1900, beschrijving: "Pulpit Rock — als je er al bij bent! Pendelbusje beschikbaar. Steile wandeling 2u.", geschiktBij: "altijd", maxRij: "0.5u + bus", bufImpact: 0 },
+    { naam: "Lysefjord cruise", lat: 58.9000, lng: 6.4000, beschrijving: "Fjordcruise vanuit Stavanger langs Preikestolen. Geen klimmen, ook kind-OK.", geschiktBij: "altijd", maxRij: "0u", bufImpact: 0 }
+  ],
   "Terugreis": [
-    { naam: "Stavanger (omweg!)", lat: 58.9690, lng: 5.7330, beschrijving: "Preikestolen (Pulpit Rock), havenwijk — alleen als buffer ≥ 3 flexdagen!", geschiktBij: "altijd", maxRij: "4u extra", bufImpact: -2 },
-    { naam: "Kristiansand direct", lat: 58.1599, lng: 8.0182, beschrijving: "Rechter kustroute E18/E39, vroeg aankomen = rust voor ferry", geschiktBij: "altijd", maxRij: "4u", bufImpact: +2 }
+    { naam: "Lindesnes vuurtoren", lat: 57.9830, lng: 7.0490, beschrijving: "Zuidelijkste punt van Noorwegen, historisch vuurtoren, mooie kust", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
+    { naam: "Kristiansand direct naar ferry", lat: 58.1599, lng: 8.0182, beschrijving: "Vroeg aanwezig bij de ferry. Rust voor de overtocht.", geschiktBij: "altijd", maxRij: "0u", bufImpact: +1 }
   ]
 };
 
@@ -839,12 +1016,13 @@ async function fetchWeather(lat, lng) {
   const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
   if (weatherCache[key]) return weatherCache[key];
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max&timezone=auto&forecast_days=3`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=3`;
     const resp = await fetch(url);
     const data = await resp.json();
     const result = {
       codes: data.daily.weathercode.slice(0, 3),
       maxTemps: data.daily.temperature_2m_max.slice(0, 3),
+      minTemps: data.daily.temperature_2m_min.slice(0, 3),
       dominantCode: Math.max(...data.daily.weathercode.slice(0, 3)),
       maxTemp: Math.round(Math.max(...data.daily.temperature_2m_max.slice(0, 3)))
     };
@@ -925,8 +1103,9 @@ async function loadWeatherMarkers() {
       html: `<div style="background:${ic.bg};border:1.5px solid ${ic.border};border-radius:8px;padding:3px 5px;display:flex;flex-direction:column;align-items:center;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.18);font-family:sans-serif;min-width:38px;">
         <span style="font-size:17px;line-height:1.1;">${ic.emoji}</span>
         <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[1])}°</span>
+        <span style="font-size:9px;color:#666;">${Math.round(w.minTemps[1])}°</span>
       </div>`,
-      className: '', iconSize: [42, 42], iconAnchor: [21, 21]
+      className: '', iconSize: [42, 48], iconAnchor: [21, 24]
     });
 
     const threeDayHtml = w.codes.map((code, di) => {
@@ -934,6 +1113,7 @@ async function loadWeatherMarkers() {
       return `<div class="weather-day-cell" style="background:${dic.bg};border-color:${dic.border}">
         <span class="wdc-icon">${dic.emoji}</span>
         <span class="wdc-temp">${Math.round(w.maxTemps[di])}°</span>
+        <span class="wdc-tempmin">↓${Math.round(w.minTemps[di])}°</span>
         <span class="wdc-label">${dayLabels[di]}</span>
       </div>`;
     }).join('');
@@ -1071,7 +1251,7 @@ async function updateDashboard() {
     el.style.background = ic.bg;
     el.style.borderColor = i === 0 ? '#c9873a' : ic.border;
     el.title = ns.naam;
-    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[1])}°</span><span class="wi-name">${shortName}</span>`;
+    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[1])}°</span><span class="wi-tempmin">↓${Math.round(w.minTemps[1])}°</span><span class="wi-name">${shortName}</span>`;
     el.onclick = () => window.open(yrUrl, '_blank');
     weerItems.appendChild(el);
   });
@@ -1238,27 +1418,38 @@ function renderTab(tabName, stop) {
       body.innerHTML = `<div class="empty-state"><span class="big">🏕</span>De campings voor <strong>${getStopDisplayName(stop)}</strong> worden later ingevuld.</div>`;
       return;
     }
-    const wildkampStop = camps.find(c => c.wildkamp);
-    body.innerHTML = camps.map(c => {
-      const p4nUrl = c.p4nId
+    // Top-3 reguliere campings (op score), wildkamp apart
+    const regularCamps = camps.filter(c => !c.wildkamp).sort((a, b) => b.score - a.score).slice(0, 3);
+    const wildkampCamps = camps.filter(c => c.wildkamp);
+    const areaP4nUrl = `https://park4night.com/map#${stop.lat}/${stop.lng}/11`;
+    body.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="font-size:0.65rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);">Top 3 aanbevolen</span>
+        <a href="${areaP4nUrl}" target="_blank" style="font-size:0.72rem;color:var(--fjord);text-decoration:none;">↗ Meer opties op P4N</a>
+      </div>
+    ` + regularCamps.map(c => `
+      <div class="camping-card">
+        <div class="camping-top">
+          <div class="camping-name">${c.naam}</div>
+          <div class="camping-score">★ ${c.score}</div>
+        </div>
+        <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
+      </div>
+    `).join('') + wildkampCamps.map(c => {
+      const p4nWildUrl = c.p4nId
         ? `https://park4night.com/place/${c.p4nId}`
-        : `https://park4night.com/map#${c.lat}/${c.lng}/13`;
+        : `https://park4night.com/map#${c.lat}/${c.lng}/12`;
       return `
-        <div class="camping-card">
-          <div class="camping-top">
-            <div class="camping-name">${c.naam}</div>
-            <div class="camping-score">★ ${c.score}</div>
+        <div class="wildkamp-box" style="margin-top:12px;">
+          <div class="wildkamp-icon">⛺</div>
+          <div class="wildkamp-text">
+            <strong>Wildkampen mogelijk</strong><br>
+            ${c.wildkampTip || 'Geschikt voor wildkamp in dit gebied.'}<br>
+            <a href="${p4nWildUrl}" target="_blank" style="color:#2e7d32;font-size:0.72rem;margin-top:4px;display:inline-block;">↗ Wildkampplekken op Park4Night</a>
           </div>
-          <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
-          <a class="p4n-link" href="${p4nUrl}" target="_blank">↗ Bekijk op Park4Night</a>
         </div>
       `;
-    }).join('') + (wildkampStop ? `
-      <div class="wildkamp-box">
-        <div class="wildkamp-icon">⛺</div>
-        <div class="wildkamp-text"><strong>Wildkampen mogelijk</strong><br>${wildkampStop.wildkampTip || 'Geschikt voor wildkamp in dit gebied.'}</div>
-      </div>
-    ` : '');
+    }).join('');
   }
 
   else if (tabName === 'route') {

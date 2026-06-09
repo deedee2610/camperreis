@@ -503,6 +503,10 @@
   <div style="position:relative; width:100%; height:100%;">
     <div id="map"></div>
     <div class="map-loading" id="mapLoading">Rijroute wordt berekend…</div>
+    <div style="position:absolute;bottom:28px;left:10px;z-index:1000;background:rgba(245,240,232,0.92);border:1px solid #d4cfc3;border-radius:8px;padding:7px 11px;font-family:'DM Sans',sans-serif;font-size:0.72rem;line-height:1.8;pointer-events:none;">
+      <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:3px;background:#2d6a8f;border-radius:2px;"></span> Rijroute</div>
+      <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:0;border-top:2.5px dashed #c9873a;"></span> ⚓ Ferry</div>
+    </div>
 
     <!-- Detail panel: schuift over de kaart -->
     <div class="detail-panel" id="detailPanel">
@@ -566,20 +570,33 @@ const stops = [
   { dag: 35, naam: "Trondheim (dag 3)",          lat: 63.4305, lng: 10.3951, type: "rust", fase: "Trondheim",         tips: "Ringve Museum (muziek), Pirbadet zwemparadijs voor kinderen, of dagtrip Oppdal." },
   { dag: 36, naam: "Kårvåg / Atlanterhavsvegen", lat: 63.0200, lng:  7.5800, type: "rij",  fase: "Atlanterhavsvegen", tips: "3u20 via E39 + Fv64. Spectaculaire Atlantische Oceaanweg: 8 bruggen over scheren." },
   { dag: 37, naam: "Atlanterhavsvegen (rust)",   lat: 63.0200, lng:  7.5800, type: "rust", fase: "Atlanterhavsvegen", tips: "Rondrit Atlantic Ocean Road, Bud vissersdorp, Eldhusøya wandelpad, zeehonden spotten." },
-  { dag: 38, naam: "Ålesund",                    lat: 62.4724, lng:  6.1494, type: "rij",  fase: "Ålesund",           tips: "2u26 incl. Fv64 + E136/E39 met ferry. Art Nouveau stad, spectaculaire ligging." },
+  { dag: 38, naam: "Ålesund",                    lat: 62.4724, lng:  6.1494, type: "rij",  fase: "Ålesund",           tips: "2u26 incl. Fv64 + E136/E39 met ferry. Art Nouveau stad, spectaculaire ligging.", ferry: true },
   { dag: 39, naam: "Ålesund (rust)",             lat: 62.4724, lng:  6.1494, type: "rust", fase: "Ålesund",           tips: "Aksla top (418 treden, uitzicht), Art Nouveau Museum, Atlanterhavsparken aquarium." },
   { dag: 40, naam: "Geiranger",                  lat: 62.1004, lng:  7.2052, type: "rij",  fase: "Geirangerfjord",    tips: "1u52 via Ørnesvingen (Fv63) — haarspeldweg ZIT al in route. UNESCO fjord." },
   { dag: 41, naam: "Geiranger (dag 2)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Fjordcruise (1.5u), Flydalsjuvet overhang-foto, Storsæterfossen waterval, Dalsnibba 1500m." },
   { dag: 42, naam: "Geiranger (dag 3)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Trollstigen dagtrip (~1u30 v/v, check open-status!), kayak fjord, of rustdag." },
   { dag: 43, naam: "Loen",                       lat: 61.8741, lng:  6.8430, type: "rij",  fase: "Loen",              tips: "1u34 via Grotli bergpass (Rv15). Spectaculair berglandschap." },
   { dag: 44, naam: "Loen (rust)",                lat: 61.8741, lng:  6.8430, type: "rust", fase: "Loen",              tips: "Loen Skylift (1011m, 5 min), Briksdalsbreen gletsjerwandeling, Lovatnet kayak." },
-  { dag: 45, naam: "Bergen",                     lat: 60.3913, lng:  5.3221, type: "rij",  fase: "Bergen",            tips: "4u46 via E39 incl. ferry + tol. Steinsdalsfossen (loop achter waterval) onderweg." },
+  { dag: 45, naam: "Bergen",                     lat: 60.3913, lng:  5.3221, type: "rij",  fase: "Bergen",            tips: "4u46 via E39 incl. ferry + tol. Steinsdalsfossen (loop achter waterval) onderweg.", ferry: true },
   { dag: 46, naam: "Bergen (dag 2)",             lat: 60.3913, lng:  5.3221, type: "rust", fase: "Bergen",            tips: "Bryggen UNESCO, Fløybanen kabelbaan, vismarkt Torget, Aquarium Bergen (kind-OK)." },
   { dag: 47, naam: "Bergen (dag 3)",             lat: 60.3913, lng:  5.3221, type: "rust", fase: "Bergen",            tips: "Flexdag: Hardangerfjord dagtrip, Ulriken wandeling, of extra rust in Bergen." },
-  { dag: 48, naam: "Stavanger",                  lat: 58.9690, lng:  5.7330, type: "rij",  fase: "Stavanger",         tips: "4u17 via E39 + ferries. Directe kustroute door Rogaland." },
+  { dag: 48, naam: "Stavanger",                  lat: 58.9690, lng:  5.7330, type: "rij",  fase: "Stavanger",         tips: "4u17 via E39 + ferries. Directe kustroute door Rogaland.", ferry: true },
   { dag: 49, naam: "Stavanger (rust)",           lat: 58.9690, lng:  5.7330, type: "rust", fase: "Stavanger",         tips: "Gamle Stavanger (witte houten huizen), Norsk Oljemuseum, haven, verse vis eten." },
   { dag: 50, naam: "Kristiansand → Hirtshals",  lat: 58.1599, lng:  8.0182, type: "rij",  fase: "Terugreis",         tips: "3u07 via E39. Ferry Kristiansand–Hirtshals. VOORAF RESERVEREN. Tijdig aanwezig zijn.", ferry: true },
 ];
+
+// ─── FERRY ROUTES ──────────────────────────────────────────────────────────
+// Expliciete ferry-oversteken als coördinatenparen voor kaartvisualisatie
+const ferryRoutes = [
+  { from: [54.497, 11.209], to: [54.652, 11.356], naam: "Puttgarden–Rødby",     duur: "45 min",  tip: "Vooraf reserveren · dag 1" },
+  { from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u45",    tip: "VOORAF RESERVEREN senjafergene.no · dag 18" },
+  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u30",    tip: "VOORAF RESERVEREN torghatten-nord.no · dag 27" },
+  { from: [66.077, 13.672], to: [66.031, 13.726], naam: "Jektvik–Kilboghamn",   duur: "1u",      tip: "Kystriksveien (FV17) · dag 29" },
+  { from: [62.740,  7.183], to: [62.717,  7.114], naam: "Aukra–Hollingsholmen", duur: "15 min",  tip: "E39 · onderdeel Kårvåg→Ålesund (dag 38)" },
+  { from: [61.290,  5.735], to: [61.177,  5.628], naam: "Lavik–Oppedal",        duur: "25 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
+  { from: [60.393,  5.322], to: [59.390,  5.268], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
+];
+
 // ─── STOP CONTENT DATA ─────────────────────────────────────────────────────
 // Sleutel = stop.fase. Top-3 campings per stop (niet te groot, hoge beoordeling, natuur, kind+hond OK).
 // P4N-links alleen voor wildkamp; reguliere campings: geen P4N-link (wordt onderweg zelf opgezocht).
@@ -1077,6 +1094,47 @@ async function loadRoute() {
   document.getElementById('routeStatus').textContent = '✓ Route geladen';
   document.getElementById('routeStatus').classList.add('done');
   document.getElementById('mapLoading').style.opacity = '0';
+
+  drawFerryRoutes();
+}
+
+// ─── FERRY ROUTE VISUALISATIE ────────────────────────────────────────────────
+let ferryLayers = [];
+
+function drawFerryRoutes() {
+  ferryLayers.forEach(l => map.removeLayer(l));
+  ferryLayers = [];
+
+  ferryRoutes.forEach(fr => {
+    // Stippellijn in amber
+    const line = L.polyline([fr.from, fr.to], {
+      color: '#c9873a', weight: 3, opacity: 0.85,
+      dashArray: '8, 7'
+    }).addTo(map);
+    line.bindPopup(`
+      <div style="font-family:'DM Sans',sans-serif;min-width:180px;">
+        <div style="font-size:0.68rem;color:#8a8070;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">⚓ Ferry</div>
+        <div style="font-size:0.95rem;font-weight:600;margin-bottom:2px;">${fr.naam}</div>
+        <div style="font-size:0.78rem;color:#666;">${fr.duur} · ${fr.tip}</div>
+      </div>
+    `, { maxWidth: 260 });
+    ferryLayers.push(line);
+
+    // ⚓ icoon op vertrekpunt
+    const icon = L.divIcon({
+      html: `<div style="background:#fff3cd;border:1.5px solid #c9873a;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,0.2);cursor:pointer;" title="${fr.naam}">⚓</div>`,
+      className: '', iconSize: [22, 22], iconAnchor: [11, 11]
+    });
+    const marker = L.marker(fr.from, { icon, zIndexOffset: 500 }).addTo(map);
+    marker.bindPopup(`
+      <div style="font-family:'DM Sans',sans-serif;min-width:180px;">
+        <div style="font-size:0.68rem;color:#8a8070;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">⚓ Ferry vertrek</div>
+        <div style="font-size:0.95rem;font-weight:600;margin-bottom:2px;">${fr.naam}</div>
+        <div style="font-size:0.78rem;color:#666;">${fr.duur} · ${fr.tip}</div>
+      </div>
+    `, { maxWidth: 260 });
+    ferryLayers.push(marker);
+  });
 }
 
 // ─── WEATHER MARKERS ────────────────────────────────────────────────────────

@@ -1070,27 +1070,53 @@ function getUniqueLocationStops() {
 async function loadRoute() {
   const unique = getUniqueLocationStops();
   const CHUNK = 13;
-  const allPoints = [];
 
-  for (let i = 0; i < unique.length - 1; i += CHUNK - 1) {
-    const chunk = unique.slice(i, i + CHUNK);
-    if (chunk.length < 2) break;
-    const coordStr = chunk.map(s => `${s.lng.toFixed(5)},${s.lat.toFixed(5)}`).join(';');
-    try {
-      const resp = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`);
-      const data = await resp.json();
-      if (data.routes && data.routes[0]) {
-        const pts = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-        if (allPoints.length > 0) pts.shift();
-        allPoints.push(...pts);
-      }
-    } catch (e) {
-      chunk.forEach(s => allPoints.push([s.lat, s.lng]));
+  // Dagnummers waarop een zuivere veerbootoversteek aankomt (geen wegverbinding mogelijk).
+  // OSRM kan hier geen rijroute berekenen — de ferry-stippellijn vult de gap visueel.
+  const FERRY_ARRIVALS = new Set([18, 27]); // Andenes (Gryllefjord-ferry), Bodø (Moskenes-ferry)
+
+  // Splits in rijsegmenten: nieuw segment begint na elke ferry-aankomst
+  const segments = [];
+  let current = [unique[0]];
+  for (let i = 1; i < unique.length; i++) {
+    if (FERRY_ARRIVALS.has(unique[i].dag)) {
+      segments.push(current);
+      current = [unique[i]];
+    } else {
+      current.push(unique[i]);
     }
+  }
+  segments.push(current);
+
+  // Route elk rijsegment apart via OSRM
+  const allPolylines = [];
+  for (const seg of segments) {
+    const segPoints = [];
+    for (let i = 0; i < seg.length - 1; i += CHUNK - 1) {
+      const chunk = seg.slice(i, i + CHUNK);
+      if (chunk.length < 2) break;
+      const coordStr = chunk.map(s => `${s.lng.toFixed(5)},${s.lat.toFixed(5)}`).join(';');
+      try {
+        const resp = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`);
+        const data = await resp.json();
+        if (data.routes && data.routes[0]) {
+          const pts = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          if (segPoints.length > 0) pts.shift();
+          segPoints.push(...pts);
+        }
+      } catch (e) {
+        chunk.forEach(s => segPoints.push([s.lat, s.lng]));
+      }
+    }
+    if (segPoints.length > 0) allPolylines.push(segPoints);
   }
 
   if (routeLayer) map.removeLayer(routeLayer);
-  routeLayer = L.polyline(allPoints, { color: '#2d6a8f', weight: 3.5, opacity: 0.65 }).addTo(map);
+  routeLayer = L.layerGroup().addTo(map);
+  allPolylines.forEach(pts =>
+    L.polyline(pts, { color: '#2d6a8f', weight: 3.5, opacity: 0.65 }).addTo(routeLayer)
+  );
+
   document.getElementById('routeStatus').textContent = '✓ Route geladen';
   document.getElementById('routeStatus').classList.add('done');
   document.getElementById('mapLoading').style.opacity = '0';

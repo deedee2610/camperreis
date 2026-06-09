@@ -1071,22 +1071,25 @@ async function loadRoute() {
   const unique = getUniqueLocationStops();
   const CHUNK = 13;
 
-  // Dagnummers waarop een zuivere veerbootoversteek aankomt (geen wegverbinding mogelijk).
-  // OSRM kan hier geen rijroute berekenen — de ferry-stippellijn vult de gap visueel.
-  const FERRY_ARRIVALS = new Set([18, 27]); // Andenes (Gryllefjord-ferry), Bodø (Moskenes-ferry)
+  // Ferry-eindpunten als virtuele routepunten (niet in stops-array)
+  const PUTTGARDEN = { lat: 54.497, lng: 11.209 };
+  const RODBY      = { lat: 54.652, lng: 11.356 };
 
-  // Splits in rijsegmenten: nieuw segment begint na elke ferry-aankomst
-  const segments = [];
-  let current = [unique[0]];
-  for (let i = 1; i < unique.length; i++) {
-    if (FERRY_ARRIVALS.has(unique[i].dag)) {
-      segments.push(current);
-      current = [unique[i]];
-    } else {
-      current.push(unique[i]);
-    }
-  }
-  segments.push(current);
+  // Indices in unique waar een water-only ferry aankomt
+  const iAndenes = unique.findIndex(s => s.dag === 18);
+  const iBodo    = unique.findIndex(s => s.dag === 27);
+
+  // Vier rijsegmenten, gescheiden door de drie hoofdferries:
+  // 1. Utrecht → Puttgarden
+  // 2. Rødby → Møns Klint → … → laatste Senja-stop
+  // 3. Andenes → … → laatste Lofoten-stop
+  // 4. Bodø → … → Kristiansand
+  const segments = [
+    [unique[0], PUTTGARDEN],
+    [RODBY, ...unique.slice(1, iAndenes)],
+    unique.slice(iAndenes, iBodo),
+    unique.slice(iBodo),
+  ].filter(seg => seg.length >= 2);
 
   // Route elk rijsegment apart via OSRM
   const allPolylines = [];

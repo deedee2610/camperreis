@@ -1219,6 +1219,17 @@ const ferryInfo = [
 // Sleutel = stop.fase. Top-3 campings per stop (niet te groot, hoge beoordeling, natuur, kind+hond OK).
 // P4N-links alleen voor wildkamp; reguliere campings: geen P4N-link (wordt onderweg zelf opgezocht).
 const stopData = {
+  "Heenreis": {
+    isVertrekpunt: true,
+    activiteiten: [
+      { icon: "⏰", naam: "Vroeg vertrekken (uiterlijk 07:00)", desc: "Lange rijdag: ~5u45 naar Møns Klint incl. Puttgarden–Rødby ferry. Bij Keulen geldt avondspits — haal die voor 16:00 voorbij.", duur: "Hele dag", kosten: "—", tags: ["dag 1", "⚠ vroeg weg"], link: null },
+      { icon: "⛴", naam: "Ferry Puttgarden–Rødby", desc: "Scandlines ferry, ~45 min oversteek. Walk-on is mogelijk maar in zomerpiek aanbevolen te boeken. Vertrekken elke 30 min. Honden mogen mee aan dek.", duur: "45 min", kosten: "meegenomen in boekingsprijs", tags: ["🐕 hond aan dek", "geen reservering verplicht"], link: "https://www.scandlines.com/en" },
+      { icon: "🐕", naam: "Hond-papieren checken", desc: "EU-paspoort hond + rabiës-vaccinatie (geldig). Voor Noorwegen geen extra papieren nodig (Schengen). Tip: foto van alle documenten op telefoon zetten als backup.", duur: "5 min", kosten: "gratis", tags: ["🐕 verplicht"], link: null },
+      { icon: "🚐", naam: "Camper check voor vertrek", desc: "LPG/gasflessen dicht voor de tunnel (Oresund). Water bijgevuld. Banden en trekhaak gecheckt. Navigatie ingesteld op Hamburg A7 → E47 Puttgarden.", duur: "15 min", kosten: "gratis", tags: ["verplicht"], link: null },
+    ],
+    campings: [],
+  },
+
   "Møns Klint": {
     activiteiten: [
       { icon: "🏔", naam: "GeoCenter Møns Klint", desc: "Interactief museum over de geologische geschiedenis van de krijtrotsen. Uitstekend voor kinderen: fossielen zoeken, dino-zaal, microscopen.", duur: "2u", kosten: "€15 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: "https://geocentermonsklint.dk" },
@@ -2144,6 +2155,10 @@ function renderTab(tabName, stop) {
 
   else if (tabName === 'campings') {
     const camps = data.campings || [];
+    if (data.isVertrekpunt) {
+      body.innerHTML = `<div class="empty-state"><span class="big">🏠</span><strong>Vertrekpunt</strong><br>Je vertrekt hier — geen camping nodig.<br><span style="font-size:0.75rem;color:var(--muted);">Overnacht thuis en vertrek vroeg.</span></div>`;
+      return;
+    }
     if (camps.length === 0) {
       body.innerHTML = `<div class="empty-state"><span class="big">🏕</span>De campings voor <strong>${getStopDisplayName(stop)}</strong> worden later ingevuld.</div>`;
       return;

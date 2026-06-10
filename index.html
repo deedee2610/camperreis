@@ -681,6 +681,82 @@
   }
   .reset-offset-btn:hover { border-color: var(--fjord); color: var(--fjord); }
 
+  /* ── Vrije tussenstop ───────────────────────────────────────── */
+  .vrijestop-btn {
+    display: block; width: 100%; margin-top: 6px;
+    min-height: 40px; border-radius: 8px;
+    border: 1.5px dashed #cbd5e1;
+    background: transparent; font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; cursor: pointer; color: var(--muted);
+    touch-action: manipulation; transition: border-color 0.15s, color 0.15s;
+  }
+  .vrijestop-btn:hover { border-color: #16a34a; color: #16a34a; }
+  .vrijestop-badge {
+    margin-top: 6px; padding: 5px 10px;
+    background: #dcfce7; border: 1px solid #86efac;
+    border-radius: 6px; font-size: 0.72rem; color: #166534;
+    font-family: 'DM Mono', monospace; line-height: 1.4;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .vrijestop-clear-btn {
+    background: none; border: none; cursor: pointer;
+    color: #dc2626; font-size: 0.85rem; padding: 0 4px;
+    min-height: 24px; touch-action: manipulation; flex-shrink: 0;
+  }
+  .vrijestop-overlay-bg {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26,26,46,0.55); z-index: 3000;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .vrijestop-overlay-bg.open { display: flex; }
+  .vrijestop-panel {
+    background: var(--paper); width: 100%; max-width: 560px;
+    border-radius: 20px 20px 0 0; padding: 24px 20px 32px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+  }
+  .vrijestop-panel-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  .vrijestop-panel-title { font-size: 1rem; font-weight: 600; color: var(--ink); }
+  .vrijestop-panel-close {
+    background: none; border: none; font-size: 1.2rem;
+    cursor: pointer; color: var(--muted); min-height: 44px; padding: 0 8px;
+    touch-action: manipulation;
+  }
+  .vrijestop-naam-input {
+    width: 100%; box-sizing: border-box;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif; color: var(--ink);
+    background: var(--paper2); margin-bottom: 14px; min-height: 44px;
+  }
+  .vrijestop-naam-input:focus { outline: none; border-color: var(--fjord); }
+  .vrijestop-nights-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .vrijestop-nights-label { font-size: 0.82rem; color: var(--muted); }
+  .vrijestop-nights-ctrl { display: flex; align-items: center; gap: 14px; }
+  .vrijestop-nights-btn {
+    min-width: 44px; min-height: 44px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--paper2);
+    font-size: 1.1rem; cursor: pointer; touch-action: manipulation;
+  }
+  .vrijestop-nights-btn:hover { border-color: var(--fjord); }
+  .vrijestop-nights-val {
+    font-family: 'DM Mono', monospace; font-size: 1.3rem;
+    font-weight: 500; min-width: 24px; text-align: center;
+  }
+  .vrijestop-confirm-btn {
+    display: block; width: 100%; min-height: 48px;
+    background: #16a34a; color: white; border: none; border-radius: 10px;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; touch-action: manipulation;
+    transition: background 0.15s;
+  }
+  .vrijestop-confirm-btn:hover { background: #15803d; }
+
   /* ── A4: Simuleer-knop in scenarios header ──────────────────── */
   .sim-trigger-btn {
     font-size: 0.72rem; padding: 5px 10px; border-radius: 20px;
@@ -850,6 +926,11 @@
       </div>
       <div id="offsetBadge" class="offset-badge" style="display:none"></div>
       <button id="resetOffsetBtn" class="reset-offset-btn" onclick="resetOffset()" style="display:none">↩ Terug op schema</button>
+      <button class="vrijestop-btn" onclick="openFreeStopPanel()">📍 Vrije tussenstop invoeren…</button>
+      <div id="vrijestopBadge" class="vrijestop-badge" style="display:none">
+        <span id="vrijestopBadgeText"></span>
+        <button class="vrijestop-clear-btn" onclick="clearFreeStop(true)" title="Wis vrije stop">✕</button>
+      </div>
     </div>
 
     <div class="buffer-meter">
@@ -877,9 +958,9 @@
     </div>
 
     <div class="reistijd-box" id="reistijdBox">
-      <span class="reistijd-label-top">🚗 Reistijd</span>
+      <span class="reistijd-label-top" id="reistijdLabelTop">🚗 Reistijd</span>
       <div class="reistijd-inner">
-        <div class="reistijd-icon">🏁</div>
+        <div class="reistijd-icon" id="reistijdIcon">🏁</div>
         <div>
           <div class="reistijd-num" id="reistijdNum">—</div>
           <div class="reistijd-sub" id="reistijdSub">rijden naar eindpunt</div>
@@ -988,6 +1069,31 @@
   </div>
 </div>
 
+<!-- ── Vrije tussenstop overlay ────────────────────────────────────────────── -->
+<div class="vrijestop-overlay-bg" id="vrijestopOverlay" onclick="if(event.target===this)closeFreeStopPanel()">
+  <div class="vrijestop-panel">
+    <div class="vrijestop-panel-header">
+      <span class="vrijestop-panel-title">📍 Vrije tussenstop</span>
+      <button class="vrijestop-panel-close" onclick="closeFreeStopPanel()">✕</button>
+    </div>
+    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
+      Sla een stop in die niet in de route staat — bijv. spontaan ergens naartoe rijden.<br>
+      De nachten tellen mee in de offset en de buffer herberekent automatisch.
+    </p>
+    <input class="vrijestop-naam-input" type="text" id="vrijestopNaam"
+      placeholder="Bijv. Trondheim spontaan, wildkamp bij fjord…" maxlength="60">
+    <div class="vrijestop-nights-row">
+      <span class="vrijestop-nights-label">Aantal nachten</span>
+      <div class="vrijestop-nights-ctrl">
+        <button class="vrijestop-nights-btn" onclick="changeFreeStopNights(-1)">−</button>
+        <span class="vrijestop-nights-val" id="vrijestopNachten">1</span>
+        <button class="vrijestop-nights-btn" onclick="changeFreeStopNights(+1)">+</button>
+      </div>
+    </div>
+    <button class="vrijestop-confirm-btn" onclick="confirmFreeStop()">✓ Instellen als huidige stop</button>
+  </div>
+</div>
+
 <script>
 // ─── DATA ──────────────────────────────────────────────────────────────────
 const TOTAL_DAYS = 50;
@@ -1047,7 +1153,7 @@ const stops = [
   { dag: 15, naam: "Botnhamn (Senja)",           lat: 69.1550, lng: 17.4500, type: "rij",  fase: "Senja",             tips: "5u via E10 door Riksgränsen, Narvik, Senja-brug. Indrukwekkend fjordenlandschap." },
   { dag: 16, naam: "Senja (dag 1)",              lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Tungeneset boardwalk (devil's teeth), Bergsbotn viewpoint, Ersfjordstrand wit zandstrand." },
   { dag: 17, naam: "Senja (dag 2)",              lat: 69.2100, lng: 17.5000, type: "rust", fase: "Senja",             tips: "Husøy klein eilanddorp, Hesten wandeling voor Segla uitzicht (3–4u, stevig!)." },
-  { dag: 18, naam: "Andenes",                    lat: 69.3249, lng: 16.1274, type: "rij",  fase: "Andøya",            tips: "3u07 incl. ferry Gryllefjord–Andenes (1u45). VOORAF RESERVEREN via senjafergene.no.", ferry: true },
+  { dag: 18, naam: "Andenes",                    lat: 69.3249, lng: 16.1274, type: "rij",  fase: "Andøya",            tips: "3u07 incl. ferry Gryllefjord–Andenes (1u45). VOORAF RESERVEREN via torghatten.no.", ferry: true },
   { dag: 19, naam: "Andøya (rust)",              lat: 69.2500, lng: 16.1000, type: "rust", fase: "Andøya",            tips: "Walvis-safari RIB (reserveren!), Bleik wit zandstrand, papegaaiduikers Bleiksøya." },
   { dag: 20, naam: "Henningsvær (Lofoten)",      lat: 68.1468, lng: 14.1888, type: "rij",  fase: "Lofoten",           tips: "3u15 via Fv82 + E10, door Vesterålen. Schilderachtige aankomst Henningsvær." },
   { dag: 21, naam: "Lofoten (dag 2)",            lat: 68.1100, lng: 13.9000, type: "rust", fase: "Lofoten",           tips: "Henningsvær: vissersdorp, voetbalveld op rotsen, lokale stokvis, galleries." },
@@ -1057,7 +1163,7 @@ const stops = [
   { dag: 25, naam: "Å (zuidpunt Lofoten)",       lat: 67.8819, lng: 12.9714, type: "rust", fase: "Lofoten",           tips: "Å vissersdorpmuseum, Moskenstraumen maalstroom bekijken, einde van de E10." },
   { dag: 26, naam: "Lofoten (dag 7)",            lat: 67.9000, lng: 13.0000, type: "rust", fase: "Lofoten",           tips: "Zeearend RIB-tour (book vooraf in Svolvær/Reine!), of extra rustige dag." },
   // ── Fase C: Noorwegen kust terug ─────────────────────────────────
-  { dag: 27, naam: "Bodø",                       lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø (3u30). VOORAF RESERVEREN via torghatten-nord.no.", ferry: true },
+  { dag: 27, naam: "Bodø",                       lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø (3u30). VOORAF RESERVEREN via torghatten.no.", ferry: true },
   { dag: 28, naam: "Bodø (rust)",                lat: 67.2804, lng: 14.4049, type: "rust", fase: "Bodø",              tips: "Saltstraumen (sterkste maalstroom ter wereld), Kjerringøy handelspost dagtrip." },
   { dag: 29, naam: "Mo i Rana (Helgeland)",      lat: 66.3126, lng: 14.1421, type: "rij",  fase: "Helgeland",         tips: "Fv17 Kystriksveien start. Engenbreen gletsjer uitzicht. Ferry Jektvik–Kilboghamn.", ferry: true },
   { dag: 30, naam: "Brønnøysund",                lat: 65.4748, lng: 12.2134, type: "rij",  fase: "Helgeland",         tips: "Fv17 verder. Svartisen gletsjer. 1–2 kleine ferries onderweg.", ferry: true },
@@ -1087,8 +1193,8 @@ const stops = [
 // Expliciete ferry-oversteken als coördinatenparen voor kaartvisualisatie
 const ferryRoutes = [
   { from: [54.497, 11.209], to: [54.652, 11.356], naam: "Puttgarden–Rødby",     duur: "45 min",  tip: "Vooraf reserveren · dag 1" },
-  { from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u45",    tip: "VOORAF RESERVEREN senjafergene.no · dag 18" },
-  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u30",    tip: "VOORAF RESERVEREN torghatten-nord.no · dag 27" },
+  { from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u45",    tip: "VOORAF RESERVEREN torghatten.no · dag 18" },
+  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u30",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
   { from: [66.077, 13.672], to: [66.031, 13.726], naam: "Jektvik–Kilboghamn",   duur: "1u",      tip: "Kystriksveien (FV17) · dag 29" },
   { from: [62.740,  7.183], to: [62.717,  7.114], naam: "Aukra–Hollingsholmen", duur: "15 min",  tip: "E39 · onderdeel Kårvåg→Ålesund (dag 38)" },
   { from: [61.290,  5.735], to: [61.177,  5.628], naam: "Lavik–Oppedal",        duur: "25 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
@@ -1099,12 +1205,12 @@ const ferryRoutes = [
 // 9 ferries totaal, 3 verplicht te reserveren (dag 18, 27, 50)
 const ferryInfo = [
   { dag: 1,  naam: "Puttgarden–Rødby",       duur: "~45 min",    verplicht: false, link: "https://www.scandlines.com/en",     tip: "Walk-on mogelijk; aanbevolen te boeken in zomerpiek" },
-  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u45",        verplicht: true,  link: "https://senjafergene.no",           tip: "Weinig capaciteit — zo vroeg mogelijk boeken!" },
-  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u30",        verplicht: true,  link: "https://www.torghatten-nord.no/en", tip: "Populairste ferry van de route, snel vol in zomer" },
-  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten-nord.no/en", tip: "Kystriksveien (Fv17), frequente dienst" },
+  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u45",        verplicht: true,  link: "https://www.torghatten.no/en/our-routes/180", tip: "Weinig capaciteit — vroeg reserveren (kenteken nodig)" },
+  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u30",        verplicht: true,  link: "https://www.torghatten.no/en",                tip: "Populairste ferry van de route, snel vol in zomer" },
+  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten.no/en",                tip: "Kystriksveien (Fv17), frequente dienst" },
   { dag: 30, naam: "Fv17 kleine ferries",    duur: "variabel",    verplicht: false, link: null,                                tip: "2–3 walk-on ferries langs Kystriksveien, geen reservering" },
-  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/en",          tip: "E39 route Kårvåg→Ålesund, frequente dienst" },
-  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://www.norled.no/en",          tip: "E39 route Loen→Bergen, frequente verbinding" },
+  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/eng/",        tip: "E39 route Kårvåg→Ålesund, frequente dienst" },
+  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://booking.norled.no/",        tip: "E39 route Loen→Bergen, frequente verbinding" },
   { dag: 48, naam: "E39 Stavanger-ferries",  duur: "variabel",    verplicht: false, link: null,                                tip: "Meerdere walk-on ferries langs E39 richting Stavanger" },
   { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u15–3u30",   verplicht: true,  link: "https://www.fjordline.com/en",      tip: "Terugreis — camper check-in 1.5u voor vertrek" },
 ];
@@ -1742,38 +1848,64 @@ stops.forEach((s, i) => {
 });
 
 // ─── REISTIJD ────────────────────────────────────────────────────────────────
+// FIX: toont vandaag's rit op rijdagen, en volgende rijdag op rustdagen.
 function updateReistijd(stopIdx) {
-  const senjaPassedIdx = stops.findIndex(s => s.fase === 'Senja' && s.type === 'rust');
-  const senjaPassed = stopIdx > senjaPassedIdx;
+  const stop    = stops[stopIdx];
+  const box     = document.getElementById('reistijdBox');
+  const labelEl = document.getElementById('reistijdLabelTop');
+  const iconEl  = document.getElementById('reistijdIcon');
+  const numEl   = document.getElementById('reistijdNum');
+  const subEl   = document.getElementById('reistijdSub');
 
-  let targetLabel, targetRijArray;
-  if (!senjaPassed) {
-    const senjaFirstIdx = stops.findIndex(s => s.fase === 'Senja');
-    targetRijArray = stops.slice(stopIdx + 1, senjaFirstIdx + 1).filter(s => s.type === 'rij');
-    targetLabel = 'rijden naar Senja';
-  } else {
-    targetRijArray = stops.slice(stopIdx + 1).filter(s => s.type === 'rij');
-    targetLabel = 'rijden naar Kristiansand';
+  function formatRijTijd(t) {
+    const h = Math.floor(t);
+    const m = Math.round((t - h) * 60);
+    return m > 0 ? `${h}u${String(m).padStart(2, '0')}` : `${h}u`;
   }
 
-  const estH = sumRijTijd(targetRijArray);
-  document.getElementById('reistijdNum').textContent = `~${estH}u`;
-  document.getElementById('reistijdSub').textContent = targetLabel;
-  document.getElementById('reistijdBox').style.display = 'block';
+  if (stop.type === 'rij') {
+    // Rijdag: toon de rit van vandaag
+    const t = getRijTijd(stop);
+    if (labelEl) labelEl.textContent = '🚗 Vandaag rijden';
+    if (iconEl)  iconEl.textContent  = '🚗';
+    numEl.textContent = `~${formatRijTijd(t)}`;
+    subEl.textContent = `naar ${getStopDisplayName(stop)}`;
+  } else {
+    // Rustdag: toon volgende rijdag als preview
+    const nextRij = stops.slice(stopIdx + 1).find(s => s.type === 'rij');
+    if (nextRij) {
+      const t = getRijTijd(nextRij);
+      if (labelEl) labelEl.textContent = '🚗 Volgende rijdag';
+      if (iconEl)  iconEl.textContent  = '🚗';
+      numEl.textContent = `~${formatRijTijd(t)}`;
+      subEl.textContent = `dag ${nextRij.dag} — ${getStopDisplayName(nextRij)}`;
+    } else {
+      // Laatste stop
+      if (labelEl) labelEl.textContent = '📍 Locatie';
+      if (iconEl)  iconEl.textContent  = '🏁';
+      numEl.textContent = '—';
+      subEl.textContent = 'Eindbestemming bereikt';
+    }
+  }
+  box.style.display = 'block';
 }
 
 // ─── DASHBOARD UPDATE ────────────────────────────────────────────────────────
 async function updateDashboard() {
-  const idx = parseInt(document.getElementById('locationSelect').value);
-  if (isNaN(idx)) return;
+  const rawIdx = parseInt(document.getElementById('locationSelect').value);
+  if (isNaN(rawIdx)) return;
+
+  // Als vrije stop actief is (value = -1), gebruik basisstop voor berekeningen
+  const idx = (rawIdx === -1 && freeStop) ? freeStop.baseStopIdx : rawIdx;
 
   const stop = stops[idx];
   const daysLeft = TOTAL_DAYS - stop.dag;
   const stopsLeft = stops.slice(idx + 1).filter(s => s.type === 'rij').length;
-  const flexDays = daysLeft - stopsLeft;
+  const flexDays = daysLeft - stopsLeft - dayOffset; // dayOffset verlaagt de buffer
 
   const pill = document.getElementById('headerPill');
-  document.getElementById('headerText').textContent = `Dag ${stop.dag} · ${stop.naam}`;
+  const headerNaam = (rawIdx === -1 && freeStop) ? ('📍 Vrije stop: ' + freeStop.naam) : `Dag ${stop.dag} · ${stop.naam}`;
+  document.getElementById('headerText').textContent = headerNaam;
   const fillColor = flexDays <= 2 ? 'var(--danger)' : flexDays <= 5 ? 'var(--warn)' : 'var(--ok)';
   pill.className = 'status-pill' + (flexDays <= 2 ? ' danger' : flexDays <= 5 ? ' warn' : '');
   pill.querySelector('.dot').style.background = fillColor;
@@ -2007,13 +2139,13 @@ function renderTab(tabName, stop) {
         </div>
         <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
       </div>
-    `).join('') + wildkampCamps.filter(c => c.p4nId !== null).map(c => `
+    `).join('') + wildkampCamps.map(c => `
         <div class="wildkamp-box" style="margin-top:12px;">
           <div class="wildkamp-icon">⛺</div>
           <div class="wildkamp-text">
             <strong>Wildkampen mogelijk</strong><br>
             ${c.wildkampTip || 'Geschikt voor wildkamp in dit gebied.'}<br>
-            <a href="https://park4night.com/place/${c.p4nId}" target="_blank" style="color:#2e7d32;font-size:0.72rem;margin-top:4px;display:inline-block;">↗ Bekijk P4N-plek</a>
+            ${c.p4nId ? '<a href="https://park4night.com/place/' + c.p4nId + '" target="_blank" style="color:#2e7d32;font-size:0.72rem;margin-top:4px;display:inline-block;">↗ Bekijk P4N-plek</a>' : ''}
           </div>
         </div>
     `).join('') + `
@@ -2028,7 +2160,7 @@ function renderTab(tabName, stop) {
     const daysLeft = TOTAL_DAYS - stop.dag;
     const rijLeftArr = stops.slice(idx + 1).filter(s => s.type === 'rij');
     const rijLeft = rijLeftArr.length;
-    const flex = Math.max(0, daysLeft - rijLeft);
+    const flex = Math.max(0, daysLeft - rijLeft - dayOffset);
     const estH = sumRijTijd(rijLeftArr);
     const nextRij = stops.slice(idx + 1).find(s => s.type === 'rij');
     const senjaIdx = stops.findIndex(s => s.fase === 'Senja');
@@ -2164,7 +2296,7 @@ function getTodayStopIdx() {
   const msPerDay = 1000 * 60 * 60 * 24;
   const diffDays = Math.floor((now - TRIP_START_DATE) / msPerDay);
   // Dag 1 = 8 juli. diffDays=0 → dag 1, diffDays=1 → dag 2, etc.
-  const targetDay = Math.max(1, Math.min(TOTAL_DAYS, diffDays + 1 + dayOffset));
+  const targetDay = Math.max(1, Math.min(TOTAL_DAYS, diffDays + 1)); // dayOffset beïnvloedt positie NIET, alleen de buffer
 
   // Zoek de stop waarvan dag het dichtst bij targetDay ligt.
   // Bij gelijkstand: prefereer de stop op of vóór targetDay.
@@ -2212,21 +2344,24 @@ function updateAutoStatus() {
 }
 
 // ─── A2: Offset aanpassen (±1 dag) ───────────────────────────────────────────
+// FIX: dropdown springt NIET mee — huidige stop blijft geselecteerd.
+// Alleen de offset-teller stijgt/daalt en de buffer herberekent.
 function changeOffset(delta) {
   dayOffset = Math.max(-(TOTAL_DAYS - 1), Math.min(TOTAL_DAYS - 1, dayOffset + delta));
   try { localStorage.setItem('camperreis_dayoffset_v1', String(dayOffset)); } catch(e) {}
-  const idx = getTodayStopIdx();
-  document.getElementById('locationSelect').value = String(idx);
   updateAutoStatus();
   updateOffsetUI();
-  updatePastStopMarkers(idx);
-  updateDashboard();
+  updateDashboard(); // herberekent buffer inclusief nieuwe dayOffset
 }
 
 // ─── A2: Reset offset → terug op schema ──────────────────────────────────────
+// Reset brengt wél de auto-datum terug (positie herberekend op kalenderdag).
 function resetOffset() {
   dayOffset = 0;
   try { localStorage.setItem('camperreis_dayoffset_v1', '0'); } catch(e) {}
+  // Wis ook eventuele vrije stop
+  if (freeStop) clearFreeStop(false);
+  // Zet dropdown terug op schema (kalenderdag)
   const idx = getTodayStopIdx();
   document.getElementById('locationSelect').value = String(idx);
   updateAutoStatus();
@@ -2235,23 +2370,45 @@ function resetOffset() {
   updateDashboard();
 }
 
-// ─── A2: Update offset badge + reset-knop ────────────────────────────────────
+/// ─── A2: Update offset badge + reset-knop ────────────────────────────────────
 function updateOffsetUI() {
-  const badge     = document.getElementById('offsetBadge');
-  const resetBtn  = document.getElementById('resetOffsetBtn');
+  const badge       = document.getElementById('offsetBadge');
+  const resetBtn    = document.getElementById('resetOffsetBtn');
+  const fsBadge     = document.getElementById('vrijestopBadge');
+  const fsBadgeText = document.getElementById('vrijestopBadgeText');
   if (!badge || !resetBtn) return;
 
-  if (dayOffset === 0) {
+  const hasAnything = dayOffset !== 0 || !!freeStop;
+
+  if (!hasAnything) {
     badge.style.display    = 'none';
     resetBtn.style.display = 'none';
   } else {
-    badge.style.display    = '';
     resetBtn.style.display = '';
-    const abs = Math.abs(dayOffset);
-    const dagLabel = abs === 1 ? 'dag' : 'dagen';
-    badge.textContent = dayOffset > 0
-      ? `+${abs} ${dagLabel} langer gebleven`
-      : `${abs} ${dagLabel} eerder vertrokken`;
+    // Offset badge: toon alleen het niet-vrije-stop gedeelte van de offset
+    const freeNachten = freeStop ? freeStop.nachten : 0;
+    const manualOffset = dayOffset - freeNachten;
+    if (manualOffset !== 0) {
+      badge.style.display = '';
+      const abs = Math.abs(manualOffset);
+      const dagLabel = abs === 1 ? 'dag' : 'dagen';
+      badge.textContent = manualOffset > 0
+        ? `+${abs} ${dagLabel} langer gebleven`
+        : `${abs} ${dagLabel} eerder vertrokken`;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  // Vrije stop badge
+  if (freeStop) {
+    if (fsBadge) fsBadge.style.display = '';
+    if (fsBadgeText) {
+      const dl = freeStop.nachten === 1 ? 'nacht' : 'nachten';
+      fsBadgeText.textContent = '\u{1F4CD} ' + freeStop.naam + ' (' + freeStop.nachten + ' ' + dl + ')';
+    }
+  } else {
+    if (fsBadge) fsBadge.style.display = 'none';
   }
 }
 
@@ -2344,10 +2501,10 @@ function updateSimImpact() {
   const currentStop = stops[currentIdx];
   const simTarget   = stops[simTargetIdx];
 
-  // Huidige situatie
+  // Huidige situatie (dayOffset verlaagt ook de simulatie-startbuffer)
   const daysLeft    = TOTAL_DAYS - currentStop.dag;
   const stopsLeft   = stops.slice(currentIdx + 1).filter(s => s.type === 'rij').length;
-  const currentFlex = daysLeft - stopsLeft;
+  const currentFlex = daysLeft - stopsLeft - dayOffset;
 
   // Na simulatie: simExtraNights extra nachten bij simTarget
   const newFlex     = currentFlex - simExtraNights;
@@ -2363,7 +2520,9 @@ function updateSimImpact() {
     const stopsUntilFerry = stops.filter(
       s => s.type === 'rij' && s.dag > currentStop.dag && s.dag <= ferryDag
     ).length;
-    const daysAvailable   = daysUntilFerry - simExtraNights;
+    // FIX: extra nachten alleen aftrekken als de gesimuleerde stop VÓÓR deze ferry ligt
+    const relevantNights  = (simTarget.dag <= ferryDag) ? simExtraNights : 0;
+    const daysAvailable   = daysUntilFerry - relevantNights;
     const isAtRisk        = daysAvailable < stopsUntilFerry;
     const ferryNaam       = (ferryInfo.find(f => f.dag === ferryDag) || {}).naam || `Ferry dag ${ferryDag}`;
 
@@ -2399,11 +2558,114 @@ function updateSimImpact() {
   `;
 }
 
+// ─── VRIJE STOP ──────────────────────────────────────────────────────────────
+let freeStop = null;
+try {
+  const fs = localStorage.getItem('camperreis_vrijestop_v1');
+  if (fs) freeStop = JSON.parse(fs);
+} catch(e) {}
+
+let freeStopNachtenInput = 1;
+
+function openFreeStopPanel() {
+  freeStopNachtenInput = freeStop ? freeStop.nachten : 1;
+  document.getElementById('vrijestopNachten').textContent = freeStopNachtenInput;
+  document.getElementById('vrijestopNaam').value = freeStop ? freeStop.naam : '';
+  document.getElementById('vrijestopOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('vrijestopNaam').focus(), 150);
+}
+
+function closeFreeStopPanel() {
+  document.getElementById('vrijestopOverlay').classList.remove('open');
+}
+
+function changeFreeStopNights(delta) {
+  freeStopNachtenInput = Math.max(1, Math.min(14, freeStopNachtenInput + delta));
+  document.getElementById('vrijestopNachten').textContent = freeStopNachtenInput;
+}
+
+function confirmFreeStop() {
+  const naam = (document.getElementById('vrijestopNaam').value || '').trim();
+  if (!naam) { document.getElementById('vrijestopNaam').focus(); return; }
+  const nachten = freeStopNachtenInput;
+
+  // Verwijder vorige vrije stop uit offset (als die er was)
+  if (freeStop) dayOffset -= freeStop.nachten;
+
+  // Sla huidige basisstop op
+  const sel = document.getElementById('locationSelect');
+  const rawVal = parseInt(sel.value);
+  const baseIdx = (!isNaN(rawVal) && rawVal >= 0) ? rawVal : 0;
+
+  // Sla nieuwe vrije stop op
+  freeStop = { naam, nachten, baseStopIdx: baseIdx };
+  try { localStorage.setItem('camperreis_vrijestop_v1', JSON.stringify(freeStop)); } catch(e) {}
+
+  // Voeg nachten toe aan offset
+  dayOffset += nachten;
+  if (dayOffset < 0) dayOffset = 0;
+  try { localStorage.setItem('camperreis_dayoffset_v1', String(dayOffset)); } catch(e) {}
+
+  // Voeg tijdelijke optie toe aan dropdown
+  let opt = document.getElementById('freeStopOption');
+  if (!opt) {
+    opt = document.createElement('option');
+    opt.id = 'freeStopOption';
+    opt.value = '-1';
+    sel.insertBefore(opt, sel.firstChild);
+  }
+  opt.textContent = '\u{1F4CD} Vrije stop: ' + naam;
+  sel.value = '-1';
+
+  closeFreeStopPanel();
+  updateAutoStatus();
+  updateOffsetUI();
+  updateDashboard();
+}
+
+function clearFreeStop(andUpdate = true) {
+  if (!freeStop) return;
+  const fs = freeStop;
+  dayOffset -= fs.nachten;
+  if (dayOffset < 0) dayOffset = 0;
+  freeStop = null;
+  try { localStorage.removeItem('camperreis_vrijestop_v1'); } catch(e) {}
+  try { localStorage.setItem('camperreis_dayoffset_v1', String(dayOffset)); } catch(e) {}
+
+  const sel = document.getElementById('locationSelect');
+  const opt = document.getElementById('freeStopOption');
+  if (opt) sel.removeChild(opt);
+  sel.value = String(fs.baseStopIdx);
+
+  if (andUpdate) {
+    updateAutoStatus();
+    updateOffsetUI();
+    updatePastStopMarkers(fs.baseStopIdx);
+    updateDashboard();
+  }
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 updateFerryHeaderBadge();
 loadRoute();
 loadWeatherMarkers();
 initAutoDate();
+
+// Herstel eventuele vrije stop na pagina-herlaad
+if (freeStop) {
+  const sel = document.getElementById('locationSelect');
+  let opt = document.getElementById('freeStopOption');
+  if (!opt) {
+    opt = document.createElement('option');
+    opt.id = 'freeStopOption';
+    opt.value = '-1';
+    sel.insertBefore(opt, sel.firstChild);
+  }
+  opt.textContent = '\u{1F4CD} Vrije stop: ' + freeStop.naam;
+  sel.value = '-1';
+  updateOffsetUI();
+  updateDashboard();
+}
 </script>
 </body>
 </html>

@@ -529,6 +529,41 @@
 // ─── DATA ──────────────────────────────────────────────────────────────────
 const TOTAL_DAYS = 50;
 
+// Geverifieerde rijtijden per dag (Google Maps, juni 2026). Sleutel = stop.dag.
+// Alleen rij-stops hebben een waarde; 4.5 als fallback voor onbekende etappes.
+const rijTijden = {
+  1:  5.75, // Utrecht → Møns Klint (5u + 45min Puttgarden-Rødby ferry)
+  4:  5.2,  // Møns Klint → Jönköping (5u09 via Øresundbrug + E4)
+  6:  4.0,  // Jönköping → Uppsala-wildkamp (~4u via E4)
+  7:  4.0,  // Uppsala → Härnösand / Höga Kusten (~4u via E4 noord)
+  9:  3.0,  // Härnösand → Umeå (~3u via E4)
+  10: 4.0,  // Umeå → Jokkmokk (~4u via Luleå: 2u01 + 2u01 Route 97)
+  13: 2.6,  // Jokkmokk → Kiruna (2u37 via E45 + E10)
+  15: 5.0,  // Kiruna → Senja/Botnhamn (5u via E10, Narvik)
+  18: 3.1,  // Senja → Andenes (3u07 incl. Gryllefjord-Andenes ferry 1u45)
+  20: 3.25, // Andenes → Henningsvær/Lofoten (3u15 via Fv82 + E10)
+  27: 3.5,  // Lofoten → Bodø (Moskenes-Bodø ferry 3u30)
+  29: 3.0,  // Bodø → Mo i Rana (Fv17 Kystriksveien, ~3u)
+  30: 3.0,  // Mo i Rana → Brønnøysund (Fv17 verder, ~3u)
+  32: 3.5,  // Brønnøysund → Namsskogan (~3u30 via kust + Namsos)
+  33: 2.5,  // Namsskogan → Trondheim (~2u30 via E6)
+  36: 3.3,  // Trondheim → Kårvåg/Atlanterhavsvegen (3u20 via E39 + Fv64)
+  38: 2.4,  // Kårvåg → Ålesund (2u26 incl. ferry Fv64 + E136/E39)
+  40: 1.9,  // Ålesund → Geiranger (1u52 via Ørnesvingen Fv63)
+  43: 1.6,  // Geiranger → Loen (1u34 via Grotli Rv15)
+  45: 4.8,  // Loen → Bergen (4u46 via E39 incl. ferry + tol)
+  48: 4.3,  // Bergen → Stavanger (4u17 via E39)
+  50: 3.1,  // Stavanger → Kristiansand (3u07 via E39)
+};
+
+function getRijTijd(stop) {
+  return rijTijden[stop.dag] ?? 4.5; // 4.5u als fallback
+}
+
+function sumRijTijd(rijStops) {
+  return Math.round(rijStops.reduce((sum, s) => sum + getRijTijd(s), 0) * 10) / 10;
+}
+
 const stops = [
   // ── Fase A: Positionering via Zweden ──────────────────────────────────────
   { dag: 1,  naam: "Utrecht (vertrek)",          lat: 52.0907, lng:  5.1214, type: "rij",  fase: "Heenreis",          tips: "Vroeg vertrekken. Lange dag via Puttgarden–Rødby ferry (~45min). Hamburg tussenstop.", ferry: true },
@@ -594,7 +629,7 @@ const ferryRoutes = [
   { from: [66.077, 13.672], to: [66.031, 13.726], naam: "Jektvik–Kilboghamn",   duur: "1u",      tip: "Kystriksveien (FV17) · dag 29" },
   { from: [62.740,  7.183], to: [62.717,  7.114], naam: "Aukra–Hollingsholmen", duur: "15 min",  tip: "E39 · onderdeel Kårvåg→Ålesund (dag 38)" },
   { from: [61.290,  5.735], to: [61.177,  5.628], naam: "Lavik–Oppedal",        duur: "25 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
-  { from: [60.393,  5.322], to: [59.390,  5.268], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
+  { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
 ];
 
 // ─── STOP CONTENT DATA ─────────────────────────────────────────────────────
@@ -846,33 +881,6 @@ const stopData = {
     ]
   },
 
-  "Sognefjord": {
-    activiteiten: [
-      { icon: "🚂", naam: "Flåmsbana treinrit", desc: "Spectaculaire bergtrein van Flåm naar Myrdal. 1u enkele reis door watervallen en tunnels. VOORAF RESERVEREN in zomer.", duur: "2u retour", kosten: "€40–50 p.p.", tags: ["🧒 kind-OK", "reserveren!", "aanbevolen!"], link: "https://flamsbana.no" },
-      { icon: "🚢", naam: "Nærøyfjord cruise (UNESCO)", desc: "2u cruise door het smalste fjord van Noorwegen (UNESCO). Vanuit Flåm of Gudvangen.", duur: "2u", kosten: "€35–45 p.p.", tags: ["🧒 kind-OK", "aanbevolen!"], link: null },
-      { icon: "👁", naam: "Stegastein viewpoint", desc: "Modern uitzichtplatform 30m boven het fjord. 5 min autorit van Flåm. Gratis.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
-      { icon: "⛪", naam: "Urnes stavkirke (UNESCO)", desc: "Oudste houten kerk van Noorwegen, via korte bootje over het fjord.", duur: "1.5u", kosten: "€12 p.p.", tags: [], link: null },
-    ],
-    campings: [
-      { naam: "Flåm Camping & Vandrehjem", score: 8.2, tags: ["🐕 hond", "🏙 station nabij", "📶 wifi", "🌊 fjordview"], p4nId: null, lat: 60.8632, lng: 7.1167, wildkamp: false },
-      { naam: "Aurland Fjordhotel Camping", score: 8.0, tags: ["🐕 hond", "🌊 fjord", "🕊 rustig"], p4nId: null, lat: 60.9100, lng: 7.1900, wildkamp: false },
-      { naam: "Lærdal Ferie & Fritidspark", score: 7.7, tags: ["🐕 hond", "🧒 activiteiten", "🏊 zwemmen"], p4nId: null, lat: 61.1000, lng: 7.4800, wildkamp: false },
-    ]
-  },
-
-  "Hardangerfjord": {
-    activiteiten: [
-      { icon: "🌊", naam: "Vøringsfossen waterval", desc: "Een van de beroemdste watervallen van Noorwegen (182m). Nieuwe brug-trap voor close-up.", duur: "1–2u", kosten: "gratis (parkeren €5)", tags: ["🧒 kind-OK"], link: null },
-      { icon: "🏛", naam: "Hardangervidda Natursenter", desc: "Natuur- en cultuurcentrum over het Hardangerplateau. Goed bij regen. Kinderactiviteiten.", duur: "1.5u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 indoor"], link: null },
-      { icon: "🍎", naam: "Fruitboomgaarden Hardanger", desc: "Lokale boerderijen verkopen producten langs de weg. In zomer ook zelfplukkopties.", duur: "vrij", kosten: "gratis (producten kopen)", tags: ["🧒 kind-OK"], link: null },
-    ],
-    campings: [
-      { naam: "Eidfjord Camping", score: 8.2, tags: ["🐕 hond", "🌊 fjordview", "📶 wifi", "🌿 natuur"], p4nId: null, lat: 60.4660, lng: 7.0740, wildkamp: false },
-      { naam: "Ulvik Fjord Camping", score: 8.0, tags: ["🐕 hond", "🍎 fruitstreek", "🕊 rustig"], p4nId: null, lat: 60.5670, lng: 6.9140, wildkamp: false },
-      { naam: "Kinsarvik Camping", score: 7.8, tags: ["🐕 hond", "🌊 fjord", "🧒 speeltuin"], p4nId: null, lat: 60.3700, lng: 6.7300, wildkamp: false },
-    ]
-  },
-
   "Bergen": {
     activiteiten: [
       { icon: "🏛", naam: "Bryggen (UNESCO)", desc: "Middeleeuwse houten pakhuizen, nu winkels en restaurants. Werelderfgoed. Wandelbaar in elk weer.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK", "🌧 OK bij regen"], link: null },
@@ -989,14 +997,6 @@ const alternatieven = {
     { naam: "Stryn", lat: 61.9040, lng: 6.7230, beschrijving: "Actieve zomerskigebied op gletsjer, Briksdalsbreen nabij", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
     { naam: "Nordfjordeid", lat: 61.9230, lng: 6.0050, beschrijving: "Rustig fjorddorp, Sagastad Vikingen museum — goed bij regen", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 }
   ],
-  "Sognefjord": [
-    { naam: "Lærdal", lat: 61.1010, lng: 7.4830, beschrijving: "Borgund stavkirke (UNESCO), oude houten stad, prachtig ook bij grijs", geschiktBij: "regen", maxRij: "1u", bufImpact: 0 },
-    { naam: "Voss", lat: 60.6280, lng: 6.4170, beschrijving: "Avontuurssport hub (raft/paragliding), treinverbinding Flåm, goed kindvriendelijk", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 }
-  ],
-  "Hardangerfjord": [
-    { naam: "Ulvik", lat: 60.5670, lng: 6.9140, beschrijving: "Rustiger Hardangerdorp, fruitboomgaarden, serene sfeer", geschiktBij: "altijd", maxRij: "0.5u", bufImpact: 0 },
-    { naam: "Odda", lat: 60.0690, lng: 6.5450, beschrijving: "Buarbreen gletsjer, vertrekpunt Trolltunga (4h wandeling)", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
-  ],
   "Bergen": [
     { naam: "Hardanger (Lofthus)", lat: 60.3280, lng: 6.7180, beschrijving: "Rustiger dan Bergen bij slecht fjord-weer, kleine campings", geschiktBij: "altijd", maxRij: "1.5u", bufImpact: 0 },
     { naam: "Voss", lat: 60.6280, lng: 6.4170, beschrijving: "Actief alternatief voor Bergen-stad-dag, trein Bergen↔Voss", geschiktBij: "altijd", maxRij: "1u", bufImpact: 0 }
@@ -1033,13 +1033,14 @@ async function fetchWeather(lat, lng) {
   const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
   if (weatherCache[key]) return weatherCache[key];
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=3`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=3`;
     const resp = await fetch(url);
     const data = await resp.json();
     const result = {
       codes: data.daily.weathercode.slice(0, 3),
       maxTemps: data.daily.temperature_2m_max.slice(0, 3),
       minTemps: data.daily.temperature_2m_min.slice(0, 3),
+      precipProb: (data.daily.precipitation_probability_max || [null, null, null]).slice(0, 3),
       dominantCode: Math.max(...data.daily.weathercode.slice(0, 3)),
       maxTemp: Math.round(Math.max(...data.daily.temperature_2m_max.slice(0, 3)))
     };
@@ -1181,7 +1182,7 @@ async function loadWeatherMarkers() {
     if (!w) return;
 
     const stopIdx = stops.indexOf(stop);
-    const ic = wmoToIcon(w.codes[1]);
+    const ic = wmoToIcon(w.codes[0]); // index 0 = vandaag
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${stop.lat.toFixed(4)},${stop.lng.toFixed(4)}`;
     const dayLabels = ['Vandaag', 'Morgen', 'Overmorgen'];
     const hasContent = !!stopData[stop.fase];
@@ -1189,18 +1190,20 @@ async function loadWeatherMarkers() {
     const divIcon = L.divIcon({
       html: `<div style="background:${ic.bg};border:1.5px solid ${ic.border};border-radius:8px;padding:3px 5px;display:flex;flex-direction:column;align-items:center;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.18);font-family:sans-serif;min-width:38px;">
         <span style="font-size:17px;line-height:1.1;">${ic.emoji}</span>
-        <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[1])}°</span>
-        <span style="font-size:9px;color:#666;">${Math.round(w.minTemps[1])}°</span>
+        <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[0])}°</span>
+        <span style="font-size:9px;color:#666;">${Math.round(w.minTemps[0])}°</span>
       </div>`,
-      className: '', iconSize: [42, 48], iconAnchor: [21, 24]
+      className: '', iconSize: [44, 52], iconAnchor: [22, 26]
     });
 
     const threeDayHtml = w.codes.map((code, di) => {
       const dic = wmoToIcon(code);
+      const pp = w.precipProb && w.precipProb[di] != null ? w.precipProb[di] : null;
       return `<div class="weather-day-cell" style="background:${dic.bg};border-color:${dic.border}">
         <span class="wdc-icon">${dic.emoji}</span>
         <span class="wdc-temp">${Math.round(w.maxTemps[di])}°</span>
         <span class="wdc-tempmin">↓${Math.round(w.minTemps[di])}°</span>
+        ${pp != null ? `<span class="wdc-precip" style="font-size:0.58rem;color:${pp >= 60 ? '#2980b9' : '#aaa'};display:block;">💧${pp}%</span>` : ''}
         <span class="wdc-label">${dayLabels[di]}</span>
       </div>`;
     }).join('');
@@ -1263,17 +1266,17 @@ function updateReistijd(stopIdx) {
   const senjaPassedIdx = stops.findIndex(s => s.fase === 'Senja' && s.type === 'rust');
   const senjaPassed = stopIdx > senjaPassedIdx;
 
-  let targetLabel, targetRijStops;
+  let targetLabel, targetRijArray;
   if (!senjaPassed) {
     const senjaFirstIdx = stops.findIndex(s => s.fase === 'Senja');
-    targetRijStops = stops.slice(stopIdx + 1, senjaFirstIdx + 1).filter(s => s.type === 'rij').length;
+    targetRijArray = stops.slice(stopIdx + 1, senjaFirstIdx + 1).filter(s => s.type === 'rij');
     targetLabel = 'rijden naar Senja';
   } else {
-    targetRijStops = stops.slice(stopIdx + 1).filter(s => s.type === 'rij').length;
+    targetRijArray = stops.slice(stopIdx + 1).filter(s => s.type === 'rij');
     targetLabel = 'rijden naar Kristiansand';
   }
 
-  const estH = Math.round(targetRijStops * 4.5);
+  const estH = sumRijTijd(targetRijArray);
   document.getElementById('reistijdNum').textContent = `~${estH}u`;
   document.getElementById('reistijdSub').textContent = targetLabel;
   document.getElementById('reistijdBox').style.display = 'block';
@@ -1330,15 +1333,16 @@ async function updateDashboard() {
   nextUniqueStops.forEach((ns, i) => {
     const w = weerResults[i];
     if (!w) return;
-    const ic = wmoToIcon(w.codes[1]);
+    const ic = wmoToIcon(w.codes[0]); // index 0 = vandaag
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${ns.lat.toFixed(4)},${ns.lng.toFixed(4)}`;
     const shortName = ns.naam.replace(/ \(.*\)/, '').split(' ').slice(0, 2).join(' ');
+    const pp = w.precipProb && w.precipProb[0] != null ? w.precipProb[0] : null;
     const el = document.createElement('div');
     el.className = 'weer-strip-item';
     el.style.background = ic.bg;
     el.style.borderColor = i === 0 ? '#c9873a' : ic.border;
     el.title = ns.naam;
-    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[1])}°</span><span class="wi-tempmin">↓${Math.round(w.minTemps[1])}°</span><span class="wi-name">${shortName}</span>`;
+    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[0])}°</span><span class="wi-tempmin">↓${Math.round(w.minTemps[0])}°</span>${pp != null ? `<span style="font-size:0.56rem;color:${pp >= 60 ? '#2980b9' : 'var(--muted)'};display:block;margin-top:1px;">💧${pp}%</span>` : ''}<span class="wi-name">${shortName}</span>`;
     el.onclick = () => window.open(yrUrl, '_blank');
     weerItems.appendChild(el);
   });
@@ -1352,15 +1356,16 @@ async function updateDashboard() {
   const nextStop = stops.slice(idx + 1).find(s => s.type === 'rij');
   if (nextStop) {
     const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] || await fetchWeather(nextStop.lat, nextStop.lng);
-    const nIc = nw ? wmoToIcon(nw.codes[1]) : null;
+    const nIc = nw ? wmoToIcon(nw.codes[0]) : null; // index 0 = vandaag
     const bufAfter = flexDays;
     const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
     const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+    const nPp = nw && nw.precipProb && nw.precipProb[0] != null ? nw.precipProb[0] : null;
     list.appendChild(makeCard({
       label: 'Gepland', kleur: '#2d6a8f', description: 'Volgende stop zoals gepland',
       naam: nextStop.naam, sub: `Dag ${nextStop.dag} · ${nextStop.fase}${nextStop.ferry ? ' · ⚓ Ferry' : ''}`,
       tips: nextStop.tips,
-      weerHtml: nw && nIc ? `<div class="scenario-weather-row"><div class="weather-badge">${nIc.emoji} max ${Math.round(nw.maxTemps[1])}° — ${nIc.label}</div></div>` : '',
+      weerHtml: nw && nIc ? `<div class="scenario-weather-row"><div class="weather-badge">${nIc.emoji} max ${Math.round(nw.maxTemps[0])}°${nPp != null ? ` · 💧${nPp}%` : ''} — ${nIc.label}</div></div>` : '',
       bufAfter, bufColor, bufPct,
       onClick: () => {
         if (currentHighlight) map.removeLayer(currentHighlight);
@@ -1542,9 +1547,10 @@ function renderTab(tabName, stop) {
   else if (tabName === 'route') {
     const idx = currentDetailStopIdx;
     const daysLeft = TOTAL_DAYS - stop.dag;
-    const rijLeft = stops.slice(idx + 1).filter(s => s.type === 'rij').length;
+    const rijLeftArr = stops.slice(idx + 1).filter(s => s.type === 'rij');
+    const rijLeft = rijLeftArr.length;
     const flex = Math.max(0, daysLeft - rijLeft);
-    const estH = Math.round(rijLeft * 4.5);
+    const estH = sumRijTijd(rijLeftArr);
     const nextRij = stops.slice(idx + 1).find(s => s.type === 'rij');
     const senjaIdx = stops.findIndex(s => s.fase === 'Senja');
     const senjaPassed = idx > senjaIdx;

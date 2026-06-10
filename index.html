@@ -1406,7 +1406,7 @@ function drawFerryRoutes() {
       html: `<div style="background:#fff3cd;border:1.5px solid #c9873a;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,0.2);cursor:pointer;" title="${fr.naam}">⚓</div>`,
       className: '', iconSize: [22, 22], iconAnchor: [11, 11]
     });
-    const marker = L.marker(fr.from, { icon, zIndexOffset: 500 }).addTo(map);
+    const marker = L.marker(fr.from, { icon, zIndexOffset: -200 }).addTo(map);
     marker.bindPopup(`
       <div style="font-family:'DM Sans',sans-serif;min-width:180px;">
         <div style="font-size:0.68rem;color:#8a8070;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">⚓ Ferry vertrek</div>

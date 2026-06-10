@@ -1459,7 +1459,7 @@ function showCurrentMarker(stop) {
     html: `<div style="width:16px;height:16px;background:#c9873a;border:2.5px solid white;border-radius:50%;box-shadow:0 0 0 3px rgba(201,135,58,0.35), 0 2px 6px rgba(0,0,0,0.3);"></div>`,
     className: '', iconSize: [16, 16], iconAnchor: [8, 8]
   });
-  currentMarker = L.marker([stop.lat, stop.lng], { icon: divIcon, zIndexOffset: 2000 }).addTo(map);
+  currentMarker = L.marker([stop.lat, stop.lng], { icon: divIcon, zIndexOffset: -500 }).addTo(map);
 }
 
 // ─── POPULATE DROPDOWN ──────────────────────────────────────────────────────
@@ -1723,11 +1723,10 @@ function renderTab(tabName, stop) {
     // Top-3 reguliere campings (op score), wildkamp apart
     const regularCamps = camps.filter(c => !c.wildkamp).sort((a, b) => b.score - a.score).slice(0, 3);
     const wildkampCamps = camps.filter(c => c.wildkamp);
-    const areaP4nUrl = `https://park4night.com/map#${stop.lat}/${stop.lng}/11`;
+    const p4nDeepLink = `park4night://map?lat=${stop.lat.toFixed(4)}&lng=${stop.lng.toFixed(4)}`;
     body.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <span style="font-size:0.65rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);">Top 3 aanbevolen</span>
-        <a href="${areaP4nUrl}" target="_blank" style="font-size:0.72rem;color:var(--fjord);text-decoration:none;">↗ Meer opties op P4N</a>
       </div>
     ` + regularCamps.map(c => `
       <div class="camping-card">
@@ -1737,21 +1736,20 @@ function renderTab(tabName, stop) {
         </div>
         <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
       </div>
-    `).join('') + wildkampCamps.map(c => {
-      const p4nWildUrl = c.p4nId
-        ? `https://park4night.com/place/${c.p4nId}`
-        : `https://park4night.com/map#${c.lat}/${c.lng}/12`;
-      return `
+    `).join('') + wildkampCamps.filter(c => c.p4nId !== null).map(c => `
         <div class="wildkamp-box" style="margin-top:12px;">
           <div class="wildkamp-icon">⛺</div>
           <div class="wildkamp-text">
             <strong>Wildkampen mogelijk</strong><br>
             ${c.wildkampTip || 'Geschikt voor wildkamp in dit gebied.'}<br>
-            <a href="${p4nWildUrl}" target="_blank" style="color:#2e7d32;font-size:0.72rem;margin-top:4px;display:inline-block;">↗ Wildkampplekken op Park4Night</a>
+            <a href="https://park4night.com/place/${c.p4nId}" target="_blank" style="color:#2e7d32;font-size:0.72rem;margin-top:4px;display:inline-block;">↗ Bekijk P4N-plek</a>
           </div>
         </div>
-      `;
-    }).join('');
+    `).join('') + `
+      <a href="${p4nDeepLink}" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:12px 16px;background:var(--fjord);color:white;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;min-height:44px;">
+        🔍 Zoek in Park4Night app
+      </a>
+    `;
   }
 
   else if (tabName === 'route') {

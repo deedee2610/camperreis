@@ -420,10 +420,176 @@
 
   @media (max-width: 700px) {
     main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-    sidebar { max-height: 55vh; }
+    /* Sidebar kleiner → kaart krijgt ~55vh+ */
+    sidebar { max-height: 42vh; }
     header { padding: 10px 14px; }
     header h1 { font-size: 1rem; }
+    /* Verberg geladen status-badges om ruimte te sparen */
+    .loading-badge.done { display: none; }
   }
+
+  /* ── Sidebar collapsed (volledige kaart) ─────────────────── */
+  sidebar.collapsed {
+    max-height: 0 !important; overflow: hidden;
+    border-bottom: none;
+  }
+
+  /* ── Map fullscreen toggle knop ──────────────────────────── */
+  .map-fullscreen-btn {
+    display: none;
+    position: absolute; top: 12px; right: 46px; z-index: 1001;
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(245,240,232,0.95); border: 1px solid var(--border);
+    font-size: 1.1rem; cursor: pointer;
+    align-items: center; justify-content: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+    touch-action: manipulation; line-height: 1;
+  }
+  @media (max-width: 700px) { .map-fullscreen-btn { display: flex; } }
+
+  /* ── Weather-strip scroll fade ───────────────────────────── */
+  .weer-strip-scroll-wrap {
+    position: relative;
+  }
+  .weer-strip-scroll-wrap::after {
+    content: '';
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 36px;
+    background: linear-gradient(to right, transparent, var(--paper));
+    pointer-events: none; z-index: 2;
+  }
+
+  /* ── Scenarios scroll fade ────────────────────────────────── */
+  .scenarios-wrapper {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .scenarios-wrapper::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 44px;
+    background: linear-gradient(to bottom, transparent, var(--paper2));
+    pointer-events: none; z-index: 10;
+  }
+
+  /* ── Ferry header-knop ───────────────────────────────────── */
+  .ferry-header-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    padding: 4px 10px; border-radius: 20px;
+    border: 1px solid rgba(201,135,58,0.5);
+    background: rgba(201,135,58,0.1); color: var(--amber);
+    cursor: pointer; touch-action: manipulation; white-space: nowrap;
+  }
+  .ferry-header-btn:hover { background: rgba(201,135,58,0.2); }
+  .ferry-header-btn.all-done {
+    border-color: rgba(39,174,96,0.5);
+    background: rgba(39,174,96,0.1); color: var(--ok);
+  }
+
+  /* ── Ferry panel overlay ─────────────────────────────────── */
+  .ferry-panel-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26,26,46,0.5); z-index: 2000;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .ferry-panel-overlay.open { display: flex; }
+
+  .ferry-panel {
+    background: var(--paper); width: 100%; max-width: 560px;
+    border-radius: 16px 16px 0 0; max-height: 88vh;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.25);
+    animation: ferrySlideUp 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes ferrySlideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .ferry-panel-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    background: var(--paper);
+  }
+  .ferry-panel-title {
+    font-family: 'DM Serif Display', serif; font-size: 1.1rem; flex: 1;
+  }
+  .ferry-close-btn {
+    background: var(--paper2); border: 1px solid var(--border);
+    border-radius: 50%; width: 32px; height: 32px; min-width: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 0.9rem; touch-action: manipulation;
+  }
+  .ferry-close-btn:hover { background: var(--border); }
+
+  .ferry-progress-bar-area {
+    padding: 10px 20px 12px; border-bottom: 1px solid var(--border);
+    background: var(--paper2);
+  }
+  .ferry-progress-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block;
+  }
+  .ferry-progress-track {
+    height: 5px; background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .ferry-progress-fill {
+    height: 100%; background: var(--ok); border-radius: 3px;
+    transition: width 0.35s ease;
+  }
+
+  .ferry-list { flex: 1; overflow-y: auto; padding: 8px 16px 20px; }
+  .ferry-list::-webkit-scrollbar { width: 4px; }
+  .ferry-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .ferry-section-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 12px 0 6px; display: block;
+  }
+
+  .ferry-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .ferry-row:last-child { border-bottom: none; }
+
+  .ferry-dag {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    padding: 2px 7px; border-radius: 12px;
+    background: var(--paper2); border: 1px solid var(--border);
+    flex-shrink: 0; color: var(--muted);
+  }
+  .ferry-dag.verplicht {
+    background: #fff3cd; border-color: var(--amber); color: #7c5000;
+  }
+
+  .ferry-row-info { flex: 1; min-width: 0; }
+  .ferry-row-naam { font-size: 0.87rem; font-weight: 500; line-height: 1.3; }
+  .ferry-row-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  .ferry-book-btn {
+    font-size: 0.7rem; color: var(--fjord);
+    background: none; border: 1px solid var(--fjord-light);
+    border-radius: 6px; padding: 5px 8px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0; white-space: nowrap;
+    text-decoration: none; touch-action: manipulation;
+    display: inline-flex; align-items: center;
+  }
+  .ferry-book-btn:hover { background: var(--fjord); color: white; border-color: var(--fjord); }
+
+  .ferry-check {
+    width: 32px; height: 32px; min-width: 32px; border-radius: 50%;
+    border: 2px solid var(--border); background: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+    touch-action: manipulation;
+  }
+  .ferry-check.checked { background: var(--ok); border-color: var(--ok); color: white; }
+  .ferry-check:hover:not(.checked) { border-color: var(--fjord); }
 </style>
 </head>
 <body>
@@ -433,6 +599,9 @@
   <div class="header-status">
     <div class="loading-badge" id="routeStatus">⏳ Route laden…</div>
     <div class="loading-badge" id="weerStatus">⏳ Weer laden…</div>
+    <button class="ferry-header-btn" id="ferryHeaderBtn" onclick="openFerryPanel()" title="Ferries & reserveringen">
+      ⚓ <span id="ferryHeaderCount">0/3</span>
+    </button>
     <div class="status-pill" id="headerPill">
       <div class="dot"></div>
       <span id="headerText">Selecteer huidige locatie</span>
@@ -486,16 +655,20 @@
 
     <div class="weer-strip" id="weerStripContainer" style="display:none;">
       <span class="weer-strip-label">🌤 Komende stops — weersoverzicht</span>
-      <div class="weer-strip-items" id="weerStripItems"></div>
+      <div class="weer-strip-scroll-wrap">
+        <div class="weer-strip-items" id="weerStripItems"></div>
+      </div>
     </div>
 
     <div class="scenarios-header">
       <h2>🗺 Route-alternatieven</h2>
     </div>
 
-    <div class="scenarios-list" id="scenariosList">
-      <div style="padding:20px 4px; color:var(--muted); font-size:0.82rem; line-height:1.6;">
-        Kies een locatie om weergebaseerde route-alternatieven te zien.
+    <div class="scenarios-wrapper">
+      <div class="scenarios-list" id="scenariosList">
+        <div style="padding:20px 4px; color:var(--muted); font-size:0.82rem; line-height:1.6;">
+          Kies een locatie om weergebaseerde route-alternatieven te zien.
+        </div>
       </div>
     </div>
   </sidebar>
@@ -503,6 +676,7 @@
   <div style="position:relative; width:100%; height:100%;">
     <div id="map"></div>
     <div class="map-loading" id="mapLoading">Rijroute wordt berekend…</div>
+    <button class="map-fullscreen-btn" id="mapFullscreenBtn" onclick="toggleSidebarMobile()" title="Kaart vergroten">⛶</button>
     <div style="position:absolute;bottom:28px;left:10px;z-index:1000;background:rgba(245,240,232,0.92);border:1px solid #d4cfc3;border-radius:8px;padding:7px 11px;font-family:'DM Sans',sans-serif;font-size:0.72rem;line-height:1.8;pointer-events:none;">
       <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:3px;background:#2d6a8f;border-radius:2px;"></span> Rijroute</div>
       <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:0;border-top:2.5px dashed #c9873a;"></span> ⚓ Ferry</div>
@@ -524,6 +698,28 @@
     </div>
   </div>
 </main>
+
+<!-- Ferry reserverings-panel (bottom sheet) -->
+<div class="ferry-panel-overlay" id="ferryPanelOverlay" onclick="if(event.target===this)closeFerryPanel()">
+  <div class="ferry-panel">
+    <div class="ferry-panel-header">
+      <div class="ferry-panel-title">⚓ Ferries &amp; Reserveringen</div>
+      <button class="ferry-close-btn" onclick="closeFerryPanel()">✕</button>
+    </div>
+    <div class="ferry-progress-bar-area">
+      <span class="ferry-progress-label" id="ferryProgressLabel">0 van 3 verplichte ferries gereserveerd</span>
+      <div class="ferry-progress-track">
+        <div class="ferry-progress-fill" id="ferryProgressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="ferry-list">
+      <span class="ferry-section-label">🔴 Verplicht reserveren (3)</span>
+      <div id="ferryVerplichtList"></div>
+      <span class="ferry-section-label">⚫ Walk-on / optioneel (6)</span>
+      <div id="ferryOptioneelList"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ─── DATA ──────────────────────────────────────────────────────────────────
@@ -630,6 +826,20 @@ const ferryRoutes = [
   { from: [62.740,  7.183], to: [62.717,  7.114], naam: "Aukra–Hollingsholmen", duur: "15 min",  tip: "E39 · onderdeel Kårvåg→Ålesund (dag 38)" },
   { from: [61.290,  5.735], to: [61.177,  5.628], naam: "Lavik–Oppedal",        duur: "25 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
   { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
+];
+
+// ─── FERRY RESERVERINGSDATA ────────────────────────────────────────────────
+// 9 ferries totaal, 3 verplicht te reserveren (dag 18, 27, 50)
+const ferryInfo = [
+  { dag: 1,  naam: "Puttgarden–Rødby",       duur: "~45 min",    verplicht: false, link: "https://www.scandlines.com/en",     tip: "Walk-on mogelijk; aanbevolen te boeken in zomerpiek" },
+  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u45",        verplicht: true,  link: "https://senjafergene.no",           tip: "Weinig capaciteit — zo vroeg mogelijk boeken!" },
+  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u30",        verplicht: true,  link: "https://www.torghatten-nord.no/en", tip: "Populairste ferry van de route, snel vol in zomer" },
+  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten-nord.no/en", tip: "Kystriksveien (Fv17), frequente dienst" },
+  { dag: 30, naam: "Fv17 kleine ferries",    duur: "variabel",    verplicht: false, link: null,                                tip: "2–3 walk-on ferries langs Kystriksveien, geen reservering" },
+  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/en",          tip: "E39 route Kårvåg→Ålesund, frequente dienst" },
+  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://www.norled.no/en",          tip: "E39 route Loen→Bergen, frequente verbinding" },
+  { dag: 48, naam: "E39 Stavanger-ferries",  duur: "variabel",    verplicht: false, link: null,                                tip: "Meerdere walk-on ferries langs E39 richting Stavanger" },
+  { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u15–3u30",   verplicht: true,  link: "https://www.fjordline.com/en",      tip: "Terugreis — camper check-in 1.5u voor vertrek" },
 ];
 
 // ─── STOP CONTENT DATA ─────────────────────────────────────────────────────
@@ -1193,7 +1403,7 @@ async function loadWeatherMarkers() {
         <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[1])}°</span>
         <span style="font-size:9px;color:#666;">${Math.round(w.minTemps[1])}°</span>
       </div>`,
-      className: '', iconSize: [44, 52], iconAnchor: [22, 26]
+      className: '', iconSize: [46, 52], iconAnchor: [23, 26]
     });
 
     const threeDayHtml = w.codes.map((code, di) => {
@@ -1578,7 +1788,98 @@ function renderTab(tabName, stop) {
   }
 }
 
+// ─── MOBILE SIDEBAR TOGGLE ───────────────────────────────────────────────────
+function toggleSidebarMobile() {
+  const sb = document.querySelector('sidebar');
+  const btn = document.getElementById('mapFullscreenBtn');
+  const isNowCollapsed = sb.classList.toggle('collapsed');
+  btn.textContent = isNowCollapsed ? '☰' : '⛶';
+  btn.title = isNowCollapsed ? 'Zijbalk tonen' : 'Kaart vergroten';
+  setTimeout(() => map.invalidateSize(), 320);
+}
+
+// ─── FERRY PANEL ─────────────────────────────────────────────────────────────
+// Reserveringsstatus opslaan in localStorage (persiste over sessies)
+let ferryReservations = {};
+try {
+  const saved = localStorage.getItem('camperreis_ferry_v1');
+  if (saved) ferryReservations = JSON.parse(saved);
+} catch(e) {}
+
+function saveFerryState() {
+  try { localStorage.setItem('camperreis_ferry_v1', JSON.stringify(ferryReservations)); } catch(e) {}
+}
+
+function getVerplichtDone() {
+  return ferryInfo.filter(f => f.verplicht && ferryReservations[f.dag]).length;
+}
+
+function updateFerryHeaderBadge() {
+  const done = getVerplichtDone();
+  const total = ferryInfo.filter(f => f.verplicht).length;
+  const btn = document.getElementById('ferryHeaderBtn');
+  const countEl = document.getElementById('ferryHeaderCount');
+  if (!btn || !countEl) return;
+  countEl.textContent = `${done}/${total}`;
+  btn.classList.toggle('all-done', done === total);
+}
+
+function openFerryPanel() {
+  renderFerryPanel();
+  document.getElementById('ferryPanelOverlay').classList.add('open');
+}
+
+function closeFerryPanel() {
+  document.getElementById('ferryPanelOverlay').classList.remove('open');
+}
+
+function toggleFerry(dag) {
+  ferryReservations[dag] = !ferryReservations[dag];
+  saveFerryState();
+  renderFerryPanel();
+  updateFerryHeaderBadge();
+}
+
+function renderFerryPanel() {
+  const done = getVerplichtDone();
+  const total = ferryInfo.filter(f => f.verplicht).length;
+  const pct = total > 0 ? (done / total) * 100 : 0;
+
+  document.getElementById('ferryProgressFill').style.width = pct + '%';
+  document.getElementById('ferryProgressLabel').textContent =
+    done === total
+      ? `✓ Alle ${total} verplichte reserveringen klaar!`
+      : `${done} van ${total} verplichte ferries gereserveerd`;
+
+  function renderRow(f) {
+    const isChecked = !!ferryReservations[f.dag];
+    const bookBtn = f.link
+      ? `<a class="ferry-book-btn" href="${f.link}" target="_blank" rel="noopener">↗ Boek</a>`
+      : '';
+    return `
+      <div class="ferry-row">
+        <span class="ferry-dag ${f.verplicht ? 'verplicht' : ''}">Dag ${f.dag}</span>
+        <div class="ferry-row-info">
+          <div class="ferry-row-naam">${f.naam}</div>
+          <div class="ferry-row-meta">${f.duur} · ${f.tip}</div>
+        </div>
+        ${bookBtn}
+        <div class="ferry-check ${isChecked ? 'checked' : ''}"
+             onclick="toggleFerry(${f.dag})"
+             title="${isChecked ? 'Reservering terugnemen' : 'Markeer als gereserveerd'}">
+          ${isChecked ? '✓' : ''}
+        </div>
+      </div>`;
+  }
+
+  const verplicht = ferryInfo.filter(f => f.verplicht);
+  const optioneel = ferryInfo.filter(f => !f.verplicht);
+  document.getElementById('ferryVerplichtList').innerHTML = verplicht.map(renderRow).join('');
+  document.getElementById('ferryOptioneelList').innerHTML = optioneel.map(renderRow).join('');
+}
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
+updateFerryHeaderBadge();
 loadRoute();
 loadWeatherMarkers();
 </script>

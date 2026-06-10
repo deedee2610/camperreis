@@ -420,12 +420,53 @@
 
   @media (max-width: 700px) {
     main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-    /* Sidebar kleiner → kaart krijgt ~55vh+ */
-    sidebar { max-height: 42vh; }
+
+    /* Sidebar: scrollbaar zodat content na 42vh bereikbaar blijft */
+    sidebar { max-height: 42vh; overflow-y: auto; }
+
+    /* Header */
     header { padding: 10px 14px; }
-    header h1 { font-size: 1rem; }
-    /* Verberg geladen status-badges om ruimte te sparen */
+    header h1 { font-size: 1rem; white-space: nowrap; }
+    /* Loading badges verbergen op mobiel — ze verdwijnen toch snel en maken header te vol */
+    .loading-badge { display: none; }
     .loading-badge.done { display: none; }
+    /* Header-status: kleinere gap zodat ferry-knop + status pill netjes op één rij passen */
+    .header-status { gap: 8px; }
+    /* Status pill iets compacter */
+    .status-pill { font-size: 0.7rem; padding: 3px 8px; }
+
+    /* Detail panel: VOLLEDIG SCHERM op mobiel (was position:absolute binnen kaart-div,
+       waardoor het panel maar half het scherm dekte) */
+    .detail-panel { position: fixed; z-index: 1500; }
+
+    /* Detail header: iets kleinere padding */
+    .detail-header { padding: 12px 14px 10px; }
+
+    /* Tabs: minimale 44px touch target, tekst iets kleiner zodat alles past */
+    .detail-tab { min-height: 44px; padding: 10px 8px; font-size: 0.78rem; }
+
+    /* Tab body: kleinere padding voor maximale leesbaarheid */
+    .tab-body { padding: 12px; }
+
+    /* Open-detail knop in popup: 44px touch target */
+    .open-detail-btn { min-height: 44px; display: flex; align-items: center; }
+
+    /* Activity links: ruimere touch zone */
+    .activity-link { min-height: 36px; display: inline-flex; align-items: center; }
+
+    /* Buffer label: testa uppercase + letter-spacing, mag gewoon wrappen op smal scherm */
+    .buffer-label { white-space: normal; line-height: 1.4; }
+
+    /* Scenarios wrapper: niet flex:1 (anders geen ruimte meer voor scenarios op mobiel) */
+    .scenarios-wrapper { flex: none; }
+    /* Scenarios lijst: volledig uitvouwen op mobiel, geen eigen scroll —
+       de sidebar (overflow-y: auto) handelt alles af (geen nested-scroll probleem) */
+    .scenarios-list { max-height: none; overflow-y: visible; flex: none; }
+    /* Verberg de bottom-fade van de scenarios wrapper (werkt niet in scroll-context) */
+    .scenarios-wrapper::after { display: none; }
+
+    /* Ferry panel: knop compacter op klein scherm */
+    .ferry-book-btn { font-size: 0.68rem; padding: 4px 6px; }
   }
 
   /* ── Sidebar collapsed (volledige kaart) ─────────────────── */

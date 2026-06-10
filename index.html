@@ -1876,6 +1876,18 @@ function updateReistijd(stopIdx) {
     return m > 0 ? `${h}u${String(m).padStart(2, '0')}` : `${h}u`;
   }
 
+  // Vóór vertrek: toon afteller in plaats van rijdag
+  const nowCheck = new Date();
+  if (nowCheck < TRIP_START_DATE) {
+    const daysUntil = Math.ceil((TRIP_START_DATE - nowCheck) / (1000 * 60 * 60 * 24));
+    if (labelEl) labelEl.textContent = '🏕 Vertrek';
+    if (iconEl)  iconEl.textContent  = '📅';
+    numEl.textContent = `${daysUntil}d`;
+    subEl.textContent = `tot vertrek op 8 juli`;
+    box.style.display = 'block';
+    return;
+  }
+
   if (stop.type === 'rij') {
     // Rijdag: toon de rit van vandaag
     const t = getRijTijd(stop);

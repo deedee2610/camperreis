@@ -1545,14 +1545,14 @@ async function updateDashboard() {
 
   const pill = document.getElementById('headerPill');
   document.getElementById('headerText').textContent = `Dag ${stop.dag} · ${stop.naam}`;
-  const fillColor = flexDays <= 1 ? 'var(--danger)' : flexDays <= 3 ? 'var(--warn)' : 'var(--ok)';
-  pill.className = 'status-pill' + (flexDays <= 1 ? ' danger' : flexDays <= 3 ? ' warn' : '');
+  const fillColor = flexDays <= 2 ? 'var(--danger)' : flexDays <= 5 ? 'var(--warn)' : 'var(--ok)';
+  pill.className = 'status-pill' + (flexDays <= 2 ? ' danger' : flexDays <= 5 ? ' warn' : '');
   pill.querySelector('.dot').style.background = fillColor;
 
-  const pct = Math.max(0, Math.min(100, (flexDays / 10) * 100));
+  const pct = Math.max(0, Math.min(100, (flexDays / 12) * 100));
   document.getElementById('bufferFill').style.width = pct + '%';
   document.getElementById('bufferFill').style.background = fillColor;
-  document.getElementById('bufferLabel').textContent = flexDays <= 1 ? '⚠ Krap' : flexDays <= 3 ? '~ Comfortabel' : '✓ Ruim';
+  document.getElementById('bufferLabel').textContent = flexDays <= 2 ? '⚠ Krap' : flexDays <= 5 ? '~ Comfortabel' : '✓ Ruim';
   document.getElementById('bufferLabel').style.color = fillColor;
   document.getElementById('statDagen').textContent = daysLeft;
   document.getElementById('statStops').textContent = stopsLeft;
@@ -1609,8 +1609,8 @@ async function updateDashboard() {
     const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] || await fetchWeather(nextStop.lat, nextStop.lng);
     const nIc = nw ? wmoToIcon(nw.codes[1]) : null; // index 1 = morgen
     const bufAfter = flexDays;
-    const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
-    const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+    const bufColor = bufAfter <= 2 ? 'var(--danger)' : bufAfter <= 5 ? 'var(--warn)' : 'var(--ok)';
+    const bufPct = Math.max(0, Math.min(100, (bufAfter / 12) * 100));
     const nPp = nw && nw.precipProb && nw.precipProb[1] != null ? nw.precipProb[1] : null;
     list.appendChild(makeCard({
       label: 'Gepland', kleur: '#2d6a8f', description: 'Volgende stop zoals gepland',
@@ -1629,8 +1629,8 @@ async function updateDashboard() {
   if (alts.length > 0) {
     alts.slice(0, 2).forEach((alt, ai) => {
       const bufAfter = flexDays + alt.bufImpact;
-      const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
-      const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+      const bufColor = bufAfter <= 2 ? 'var(--danger)' : bufAfter <= 5 ? 'var(--warn)' : 'var(--ok)';
+      const bufPct = Math.max(0, Math.min(100, (bufAfter / 12) * 100));
       const kleur = ai === 0 ? '#4a7c59' : '#8e44ad';
       const yrUrl = `https://www.yr.no/en/forecast/daily-table/${alt.lat.toFixed(4)},${alt.lng.toFixed(4)}`;
       const bufLabel = alt.bufImpact > 0 ? `+${alt.bufImpact}d buffer gewonnen` : alt.bufImpact < 0 ? `${alt.bufImpact}d buffer gebruikt` : 'Geen buffer-impact';
@@ -1651,8 +1651,8 @@ async function updateDashboard() {
     });
   } else {
     const bufAfter = flexDays - 1;
-    const bufColor = bufAfter <= 1 ? 'var(--danger)' : bufAfter <= 3 ? 'var(--warn)' : 'var(--ok)';
-    const bufPct = Math.max(0, Math.min(100, (bufAfter / 10) * 100));
+    const bufColor = bufAfter <= 2 ? 'var(--danger)' : bufAfter <= 5 ? 'var(--warn)' : 'var(--ok)';
+    const bufPct = Math.max(0, Math.min(100, (bufAfter / 12) * 100));
     list.appendChild(makeCard({
       label: 'Wachten', kleur: '#c9873a', description: 'Extra rustdag op huidige plek',
       naam: stop.naam + ' (+1 dag)', sub: `Dag ${stop.dag + 1} — 1 flexdag gebruikt`,

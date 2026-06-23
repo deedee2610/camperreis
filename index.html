@@ -543,6 +543,42 @@
     pointer-events: none; z-index: 10;
   }
 
+  /* ── Camping-sectie in sidebar ──────────────────────────── */
+  .camping-sb-section {
+    padding: 12px 16px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--paper);
+    flex-shrink: 0;
+  }
+  .camping-sb-header {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .camping-sb-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.82rem; min-height: 32px;
+  }
+  .camping-sb-item:last-of-type { border-bottom: none; }
+  .camping-sb-naam {
+    flex: 1; font-weight: 500; color: var(--ink); line-height: 1.3;
+  }
+  .camping-sb-naam a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(0,0,0,0.25); text-underline-offset: 2px; }
+  .camping-sb-score {
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    color: var(--amber); white-space: nowrap;
+  }
+  .camping-sb-wasserij { font-size: 1rem; flex-shrink: 0; }
+  .camping-sb-p4n {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 10px; padding: 10px 14px;
+    background: var(--fjord); color: white; border-radius: 8px;
+    font-size: 0.82rem; font-weight: 600; text-decoration: none;
+    min-height: 44px; cursor: pointer; border: none; width: 100%;
+    touch-action: manipulation;
+  }
+  .camping-sb-p4n:hover { background: var(--fjord-light); }
+
   /* ── Ferry header-knop ───────────────────────────────────── */
   .ferry-header-btn {
     display: flex; align-items: center; gap: 5px;
@@ -1017,6 +1053,11 @@
           Kies een locatie om weergebaseerde route-alternatieven te zien.
         </div>
       </div>
+    </div>
+
+    <div class="camping-sb-section" id="campingSbSection" style="display:none;">
+      <div class="camping-sb-header">🏕 Campings voor deze stop</div>
+      <div id="campingSbList"></div>
     </div>
   </sidebar>
 
@@ -2230,6 +2271,40 @@ async function updateDashboard() {
       bufAfter, bufColor, bufPct, onClick: () => {}
     }));
   }
+
+  // ── Camping-sectie in sidebar ──────────────────────────────────────────────
+  renderCampingSidebar(stop);
+}
+
+function renderCampingSidebar(stop) {
+  const section = document.getElementById('campingSbSection');
+  const listEl  = document.getElementById('campingSbList');
+  if (!section || !listEl) return;
+
+  const data = stopDataByDag[stop.dag] || stopData[stop.fase] || {};
+  const camps = (data.campings || []).filter(c => !c.wildkamp);
+
+  if (data.isVertrekpunt || camps.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  const p4nDeepLink = `park4night://map?lat=${stop.lat.toFixed(4)}&lng=${stop.lng.toFixed(4)}`;
+
+  listEl.innerHTML = camps.map(c => {
+    const naamHtml = c.link
+      ? `<a href="${c.link}" target="_blank" rel="noopener">${c.naam} ↗</a>`
+      : c.naam;
+    return `
+      <div class="camping-sb-item">
+        ${c.wasserij ? `<span class="camping-sb-wasserij" title="Wasserij aanwezig">🧺</span>` : ''}
+        <span class="camping-sb-naam">${naamHtml}</span>
+        <span class="camping-sb-score">★ ${c.score}</span>
+      </div>`;
+  }).join('') + `
+    <a href="${p4nDeepLink}" class="camping-sb-p4n">🔍 Zoek in Park4Night app</a>`;
+
+  section.style.display = 'block';
 }
 
 function makeCard({ label, kleur, description, naam, sub, tips, weerHtml, bufAfter, bufColor, bufPct, onClick }) {

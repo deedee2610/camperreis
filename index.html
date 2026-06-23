@@ -407,6 +407,35 @@
     line-height: 1.5;
   }
 
+  /* Navigatie + supermarkt in Route tab */
+  .nav-gmaps-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #1a73e8; color: #fff; border-radius: 10px;
+    padding: 13px 16px; margin-bottom: 12px; text-decoration: none;
+    font-size: 0.88rem; font-weight: 600; line-height: 1.3;
+    min-height: 44px; transition: background 0.15s;
+  }
+  .nav-gmaps-btn:hover { background: #1558b0; }
+  .nav-scenic-badge {
+    margin-left: auto; background: rgba(255,255,255,0.2);
+    border-radius: 5px; padding: 2px 7px; font-size: 0.68rem;
+    font-weight: 500; white-space: nowrap;
+  }
+  .supermarkt-section { margin-bottom: 12px; }
+  .section-label {
+    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 6px;
+  }
+  .supermarkt-card {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--paper2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 6px;
+    text-decoration: none; color: var(--ink); min-height: 44px;
+  }
+  .supermarkt-card:hover { border-color: #1a73e8; }
+  .supermarkt-naam { font-size: 0.82rem; flex: 1; }
+  .supermarkt-arrow { color: #1a73e8; font-size: 0.88rem; margin-left: auto; }
+
   /* Empty state */
   .empty-state {
     text-align: center; padding: 32px 16px;
@@ -1200,6 +1229,49 @@ const ferryRoutes = [
   { from: [61.290,  5.735], to: [61.177,  5.628], naam: "Lavik–Oppedal",        duur: "25 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
   { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
 ];
+
+// ─── NAVIGATIE DATA PER RIJDAG ─────────────────────────────────────────────
+// waypoints: forceert scenic route in Google Maps (leeg = Google Maps kiest vanzelf goed)
+// supermarkten: ruime parkeerplaats langs de route, geschikt voor grote camper
+const navData = {
+  1:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Jönköping", lat: 57.7719, lng: 14.1764 }] },
+  4:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Jönköping", lat: 57.7719, lng: 14.1764 }] },
+  6:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Uppsala Boländerna", lat: 59.8569, lng: 17.6711 }] },
+  7:  { waypoints: [[62.5190,17.7260],[62.7190,18.0210]], supermarkten: [{ naam: "ICA Maxi Härnösand", lat: 62.6248, lng: 17.9373 }] },
+  9:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Umeå Avion", lat: 63.8354, lng: 20.3497 }] },
+  10: { waypoints: [[65.5842,22.1547],[65.9230,21.4870]], supermarkten: [{ naam: "ICA Maxi Luleå", lat: 65.5900, lng: 22.1610 }] },
+  13: { waypoints: [], supermarkten: [{ naam: "ICA Supermarket Kiruna", lat: 67.8528, lng: 20.2253 }] },
+  15: { waypoints: [[68.4384,17.4272],[69.1550,17.4500]], supermarkten: [{ naam: "REMA 1000 Narvik", lat: 68.4330, lng: 17.4285 }] },
+  18: { waypoints: [[69.3630,17.0528]], supermarkten: [] },
+  20: { waypoints: [[68.9207,15.5340],[68.6957,15.4050],[68.5200,14.8900]], supermarkten: [{ naam: "REMA 1000 Sortland", lat: 68.6944, lng: 15.4112 }] },
+  27: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Stormyra Bodø", lat: 67.2823, lng: 14.4137 }] },
+  29: { waypoints: [[67.2252,14.6068],[67.0156,14.0932],[66.8078,13.8920],[66.5860,13.3890],[66.4284,13.0340]], supermarkten: [{ naam: "REMA 1000 Mo i Rana", lat: 66.3039, lng: 14.1279 }] },
+  30: { waypoints: [[66.0870,13.9540],[65.8540,13.4870],[65.6640,12.9960],[65.4808,12.2207]], supermarkten: [{ naam: "REMA 1000 Brønnøysund", lat: 65.4807, lng: 12.2207 }] },
+  32: { waypoints: [[65.3990,12.1540],[65.1150,12.0210]], supermarkten: [{ naam: "REMA 1000 Namsos", lat: 64.4652, lng: 11.4911 }] },
+  33: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Steinkjer", lat: 64.0190, lng: 11.4915 }] },
+  36: { waypoints: [[63.0165,7.3525]], supermarkten: [{ naam: "ICA Maxi Moholt Trondheim", lat: 63.4097, lng: 10.4439 }] },
+  38: { waypoints: [[62.7369,7.1582],[62.6440,7.1580]], supermarkten: [{ naam: "REMA 1000 Molde", lat: 62.7359, lng: 7.1638 }] },
+  40: { waypoints: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290]], supermarkten: [] },
+  43: { waypoints: [[62.0117,7.6438]], supermarkten: [] },
+  45: { waypoints: [[60.3692,6.1017]], supermarkten: [{ naam: "REMA 1000 Norheimsund", lat: 60.3750, lng: 6.1456 }] },
+  48: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Mariero Stavanger", lat: 58.9346, lng: 5.7533 }] },
+  50: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Kristiansand", lat: 58.1067, lng: 7.9599 }] },
+};
+
+function buildGMapsUrl(fromLat, fromLng, toLat, toLng, waypoints) {
+  const origin = `${fromLat},${fromLng}`;
+  const dest   = `${toLat},${toLng}`;
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`;
+  if (waypoints && waypoints.length > 0) {
+    const wps = waypoints.map(wp => `${wp[0]},${wp[1]}`).join('|');
+    url += `&waypoints=${encodeURIComponent(wps)}`;
+  }
+  return url;
+}
+
+function buildGMapsNavUrl(lat, lng) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+}
 
 // ─── FERRY RESERVERINGSDATA ────────────────────────────────────────────────
 // 9 ferries totaal, 3 verplicht te reserveren (dag 18, 27, 50)
@@ -2210,7 +2282,30 @@ function renderTab(tabName, stop) {
     const senjaIdx = stops.findIndex(s => s.fase === 'Senja');
     const senjaPassed = idx > senjaIdx;
 
+    // Navigatie naar deze stop
+    const nav = navData[stop.dag] || null;
+    const prevStop = idx > 0 ? stops[idx - 1] : null;
+    let navSection = '';
+    if (stop.type === 'rij' && nav && prevStop) {
+      const gUrl = buildGMapsUrl(prevStop.lat, prevStop.lng, stop.lat, stop.lng, nav.waypoints);
+      const scenic = nav.waypoints.length > 0 ? '<span class="nav-scenic-badge">✓ scenic route</span>' : '';
+      navSection = `<a href="${gUrl}" target="_blank" rel="noopener" class="nav-gmaps-btn">🗺 Navigeer naar ${stop.naam}${scenic}</a>`;
+    }
+
+    // Supermarkten onderweg
+    let supermarktSection = '';
+    if (nav && nav.supermarkten && nav.supermarkten.length > 0) {
+      const cards = nav.supermarkten.map(s =>
+        `<a href="${buildGMapsNavUrl(s.lat, s.lng)}" target="_blank" rel="noopener" class="supermarkt-card">
+          <span>🛒</span><span class="supermarkt-naam">${s.naam}</span><span class="supermarkt-arrow">→</span>
+        </a>`
+      ).join('');
+      supermarktSection = `<div class="supermarkt-section"><div class="section-label">Supermarkt onderweg</div>${cards}</div>`;
+    }
+
     body.innerHTML = `
+      ${navSection}
+      ${supermarktSection}
       <div class="route-stat-grid">
         <div class="route-stat"><span class="rv">${daysLeft}</span><span class="rl">Dagen over</span></div>
         <div class="route-stat"><span class="rv">${rijLeft}</span><span class="rl">Rit-etappes</span></div>

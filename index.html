@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camperreis Scandinavië 2026</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a1a2e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -1310,9 +1312,9 @@ const stopData = {
       { icon: "🏖", naam: "Strand Møns Klint", desc: "Aan de voet van de krijtrotsen ligt een smal kiezelstrand. Goed voor fossielen zoeken. Bereikbaar via steile trap.", duur: "1u", kosten: "gratis", tags: ["⚠ steile afdaling"], link: null },
     ],
     campings: [
-      { naam: "Møns Klint Camping", score: 8.4, tags: ["🐕 hond", "🌲 bos", "🧒 speeltuin", "⭐ kleine camping"], p4nId: null, lat: 54.9600, lng: 12.5400, wildkamp: false, link: "https://www.moensklintresort.dk/en/" },
-      { naam: "Klintholm Havn Camping", score: 8.0, tags: ["🐕 hond", "⚓ haven nabij", "🏖 strand"], p4nId: null, lat: 54.9700, lng: 12.4800, wildkamp: false, link: null },
-      { naam: "Camp Møns Klint", score: 7.8, tags: ["🐕 hond", "🌿 natuur", "🧒 kind-OK"], p4nId: null, lat: 54.9750, lng: 12.5200, wildkamp: false, link: "https://www.moensklintresort.dk/en/" },
+      { naam: "Møns Klint Camping", score: 8.4, tags: ["🐕 hond", "🌲 bos", "🧒 speeltuin", "⭐ kleine camping"], p4nId: null, lat: 54.9600, lng: 12.5400, wildkamp: false, wasserij: false, link: "https://www.moensklintresort.dk/en/" },
+      { naam: "Klintholm Havn Camping", score: 8.0, tags: ["🐕 hond", "⚓ haven nabij", "🏖 strand"], p4nId: null, lat: 54.9700, lng: 12.4800, wildkamp: false, wasserij: false, link: null },
+      { naam: "Camp Møns Klint", score: 7.8, tags: ["🐕 hond", "🌿 natuur", "🧒 kind-OK"], p4nId: null, lat: 54.9750, lng: 12.5200, wildkamp: false, wasserij: false, link: "https://www.moensklintresort.dk/en/" },
     ]
   },
 
@@ -1324,9 +1326,9 @@ const stopData = {
       { icon: "🚶", naam: "Huskvarna vallei wandeling", desc: "Langs de rivier Huskvarna naar de Vättern-kust. Mooi groen pad, wandelwagens kunnen mee.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Vätternsiden Camping", score: 8.6, tags: ["🐕 hond", "🏖 meer strand", "🌿 natuur", "🧒 speeltuin"], p4nId: null, lat: 57.7800, lng: 14.1600, wildkamp: false, link: null },
-      { naam: "Villa Björkhagen", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🧒 kind-OK"], p4nId: null, lat: 57.8000, lng: 14.1400, wildkamp: false, link: "https://villabjorkhagen.se/en/" },
-      { naam: "Huskvarna Camping", score: 7.8, tags: ["🐕 hond", "⚓ meer nabij"], p4nId: null, lat: 57.7900, lng: 14.2800, wildkamp: false, link: null },
+      { naam: "Vätternsiden Camping", score: 8.6, tags: ["🐕 hond", "🏖 meer strand", "🌿 natuur", "🧒 speeltuin"], p4nId: null, lat: 57.7800, lng: 14.1600, wildkamp: false, wasserij: true, link: null },
+      { naam: "Villa Björkhagen", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🧒 kind-OK"], p4nId: null, lat: 57.8000, lng: 14.1400, wildkamp: false, wasserij: false, link: "https://villabjorkhagen.se/en/" },
+      { naam: "Huskvarna Camping", score: 7.8, tags: ["🐕 hond", "⚓ meer nabij"], p4nId: null, lat: 57.7900, lng: 14.2800, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1338,9 +1340,9 @@ const stopData = {
       { icon: "🌲", naam: "Wildkamp in de bossen", desc: "Rondom Uppsala uitgestrekte naaldbossen. Zweeds allemannsrecht (allemansrätten): vrij kamperen op onbewerkt land. Goede plekken langs de Fyrisån-rivier of richting Storvreta.", duur: "vrij", kosten: "gratis", tags: ["🐕 hond", "🌿 natuur"], link: null },
     ],
     campings: [
-      { naam: "Uppsala Camping (Fyrishov)", score: 7.9, tags: ["🐕 hond", "🏊 zwembad nabij", "📶 wifi"], p4nId: null, lat: 59.8600, lng: 17.6400, wildkamp: true, wildkampTip: "Rondom Uppsala zijn uitstekende wildkampplekken in de bossen. Zweeds allemannsrecht (allemansrätten) van toepassing.", link: "https://fyrishov.se/infor-besoket/boende/" },
-      { naam: "Graneberg Camping", score: 7.5, tags: ["🐕 hond", "🌲 bos"], p4nId: null, lat: 59.9000, lng: 17.5000, wildkamp: false, link: null },
-      { naam: "Lövstalöt Camping", score: 7.3, tags: ["🐕 hond", "🌊 meer nabij"], p4nId: null, lat: 59.8000, lng: 17.4500, wildkamp: false, link: null },
+      { naam: "Uppsala Camping (Fyrishov)", score: 7.9, tags: ["🐕 hond", "🏊 zwembad nabij", "📶 wifi"], p4nId: null, lat: 59.8600, lng: 17.6400, wildkamp: true, wasserij: true, wildkampTip: "Rondom Uppsala zijn uitstekende wildkampplekken in de bossen. Zweeds allemannsrecht (allemansrätten) van toepassing.", link: "https://fyrishov.se/infor-besoket/boende/" },
+      { naam: "Graneberg Camping", score: 7.5, tags: ["🐕 hond", "🌲 bos"], p4nId: null, lat: 59.9000, lng: 17.5000, wildkamp: false, wasserij: false, link: null },
+      { naam: "Lövstalöt Camping", score: 7.3, tags: ["🐕 hond", "🌊 meer nabij"], p4nId: null, lat: 59.8000, lng: 17.4500, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1352,9 +1354,9 @@ const stopData = {
       { icon: "🏊", naam: "Zwemmen in de Bothnische Golf", desc: "In de zomer warmt het water op tot 20°C. Prachtige rotsige kustlijn. Honden welkom.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Norrfällsviken Camping", score: 8.3, tags: ["🐕 hond", "🏊 zwemmen", "⚓ haven", "🌿 natuur"], p4nId: null, lat: 62.9500, lng: 18.4000, wildkamp: false, link: "https://norrfallsvikenscamping.com/" },
-      { naam: "Skuleskogen Camping", score: 7.9, tags: ["🐕 hond", "🌲 NP-rand", "🏕 rustig"], p4nId: null, lat: 63.0900, lng: 18.3500, wildkamp: true, wildkampTip: "Buiten het nationaal park is wildkampen goed mogelijk langs de Höga Kusten. Mooie rotsige plekken aan zee.", link: "https://www.skulebergethavscamping.se/en/camping" },
-      { naam: "Härnösands Camping", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij", "🌊 zeezicht"], p4nId: null, lat: 62.6330, lng: 17.9399, wildkamp: false, link: "https://campingsalsten.se/" },
+      { naam: "Norrfällsviken Camping", score: 8.3, tags: ["🐕 hond", "🏊 zwemmen", "⚓ haven", "🌿 natuur"], p4nId: null, lat: 62.9500, lng: 18.4000, wildkamp: false, wasserij: false, link: "https://norrfallsvikenscamping.com/" },
+      { naam: "Skuleskogen Camping", score: 7.9, tags: ["🐕 hond", "🌲 NP-rand", "🏕 rustig"], p4nId: null, lat: 63.0900, lng: 18.3500, wildkamp: true, wasserij: false, wildkampTip: "Buiten het nationaal park is wildkampen goed mogelijk langs de Höga Kusten. Mooie rotsige plekken aan zee.", link: "https://www.skulebergethavscamping.se/en/camping" },
+      { naam: "Härnösands Camping", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij", "🌊 zeezicht"], p4nId: null, lat: 62.6330, lng: 17.9399, wildkamp: false, wasserij: false, link: "https://campingsalsten.se/" },
     ]
   },
 
@@ -1366,9 +1368,9 @@ const stopData = {
       { icon: "☕", naam: "Umeå fika-cultuur", desc: "Umeå staat bekend om zijn caféscene. Langs de Umeälven-oever zijn terrasfavorietjes. Goed om even te stoppen voor je naar het noorden rijdt. Honden op de terassen welkom.", duur: "30–60min", kosten: "€5–10", tags: ["🐕 hond terras"], link: null },
     ],
     campings: [
-      { naam: "Umeå Camping (Nydalasjön)", score: 8.1, tags: ["🐕 hond", "🏊 meer zwemmen", "🌲 bos"], p4nId: null, lat: 63.8500, lng: 20.3200, wildkamp: true, wildkampTip: "Uitstekende wildkampplekken in de bossen rondom Umeå. Check de Nydalasjön-omgeving. Zweeds allemannsrecht van toepassing.", link: "https://firstcamp.se/destinationer/nydala-umea" },
-      { naam: "Grössjön Camping", score: 7.7, tags: ["🐕 hond", "🌿 natuur", "🕊 stil"], p4nId: null, lat: 63.7800, lng: 20.1500, wildkamp: false, link: null },
-      { naam: "Sörmjöle Havscamping", score: 7.9, tags: ["🐕 hond", "🌊 zee nabij", "🏖 strand"], p4nId: null, lat: 63.7600, lng: 20.3800, wildkamp: false, link: null },
+      { naam: "Umeå Camping (Nydalasjön)", score: 8.1, tags: ["🐕 hond", "🏊 meer zwemmen", "🌲 bos"], p4nId: null, lat: 63.8500, lng: 20.3200, wildkamp: true, wasserij: true, wildkampTip: "Uitstekende wildkampplekken in de bossen rondom Umeå. Check de Nydalasjön-omgeving. Zweeds allemannsrecht van toepassing.", link: "https://firstcamp.se/destinationer/nydala-umea" },
+      { naam: "Grössjön Camping", score: 7.7, tags: ["🐕 hond", "🌿 natuur", "🕊 stil"], p4nId: null, lat: 63.7800, lng: 20.1500, wildkamp: false, wasserij: false, link: null },
+      { naam: "Sörmjöle Havscamping", score: 7.9, tags: ["🐕 hond", "🌊 zee nabij", "🏖 strand"], p4nId: null, lat: 63.7600, lng: 20.3800, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1380,9 +1382,9 @@ const stopData = {
       { icon: "🌿", naam: "Polarcirkel monument foto", desc: "Jokkmokk ligt precies op de poolcirkel. Monument en infobord. Leuk voor kinderen: officieel de Arctische cirkel bereikt!", duur: "15min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Jokkmokk Camping (Storholmen)", score: 8.1, tags: ["🐕 hond", "🛁 sauna", "🌲 bos", "🏊 zwemmen"], p4nId: null, lat: 66.6044, lng: 19.8300, wildkamp: true, wildkampTip: "Ruim aanbod wildkampen in het Jokkmokk-gebied langs de Luleälven. Zweeds allemannsrecht (allemansrätten) van toepassing.", link: "https://arcticcampjokkmokk.se/" },
-      { naam: "Camp Vittjåkk", score: 7.8, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 66.5900, lng: 19.8100, wildkamp: false, link: null },
-      { naam: "Gasskas Camping", score: 7.5, tags: ["🐕 hond", "🌊 meer nabij"], p4nId: null, lat: 66.6200, lng: 19.7800, wildkamp: false, link: null },
+      { naam: "Jokkmokk Camping (Storholmen)", score: 8.1, tags: ["🐕 hond", "🛁 sauna", "🌲 bos", "🏊 zwemmen"], p4nId: null, lat: 66.6044, lng: 19.8300, wildkamp: true, wasserij: true, wildkampTip: "Ruim aanbod wildkampen in het Jokkmokk-gebied langs de Luleälven. Zweeds allemannsrecht (allemansrätten) van toepassing.", link: "https://arcticcampjokkmokk.se/" },
+      { naam: "Camp Vittjåkk", score: 7.8, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 66.5900, lng: 19.8100, wildkamp: false, wasserij: false, link: null },
+      { naam: "Gasskas Camping", score: 7.5, tags: ["🐕 hond", "🌊 meer nabij"], p4nId: null, lat: 66.6200, lng: 19.7800, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1394,9 +1396,9 @@ const stopData = {
       { icon: "🏙", naam: "Kiruna nieuwe stadscentrum", desc: "Kiruna wordt letterlijk verplaatst vanwege de mijn. Het nieuwe centrum (2023) is modern en interessant. Infocentrum gratis.", duur: "1u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Camp Ripan Kiruna", score: 8.5, tags: ["🐕 hond", "🏕 cabins", "🌲 natuur", "🧒 activiteiten"], p4nId: null, lat: 67.8600, lng: 20.2100, wildkamp: false, link: "https://ripan.se/en" },
-      { naam: "Abisko Turiststation (camping)", score: 8.2, tags: ["🐕 hond", "🏔 NP-rand", "🌿 spectaculair"], p4nId: null, lat: 68.3500, lng: 18.8300, wildkamp: false, link: "https://www.swedishtouristassociation.com/facilities/stf-abisko-turiststation/" },
-      { naam: "Jukkasjärvi Camping", score: 7.7, tags: ["🐕 hond", "🏔 ICEHOTEL nabij", "🌊 rivier"], p4nId: null, lat: 67.8600, lng: 20.6000, wildkamp: false, link: null },
+      { naam: "Camp Ripan Kiruna", score: 8.5, tags: ["🐕 hond", "🏕 cabins", "🌲 natuur", "🧒 activiteiten"], p4nId: null, lat: 67.8600, lng: 20.2100, wildkamp: false, wasserij: true, link: "https://ripan.se/en" },
+      { naam: "Abisko Turiststation (camping)", score: 8.2, tags: ["🐕 hond", "🏔 NP-rand", "🌿 spectaculair"], p4nId: null, lat: 68.3500, lng: 18.8300, wildkamp: false, wasserij: false, link: "https://www.swedishtouristassociation.com/facilities/stf-abisko-turiststation/" },
+      { naam: "Jukkasjärvi Camping", score: 7.7, tags: ["🐕 hond", "🏔 ICEHOTEL nabij", "🌊 rivier"], p4nId: null, lat: 67.8600, lng: 20.6000, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1409,9 +1411,9 @@ const stopData = {
       { icon: "🔭", naam: "Bergsbotn viewpoint", desc: "Spectaculair uitzichtpunt over de fjorden vanuit een ronde platform. Goede weg tot vlakbij.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Hamn i Senja Resort", score: 9.1, tags: ["🐕 hond", "🍽 restaurant", "⚓ haventje", "🌿 natuur"], p4nId: null, lat: 69.1900, lng: 17.5200, wildkamp: false, link: "https://www.hamnisenja.no/en" },
-      { naam: "Senja Camping Botnhamn", score: 8.2, tags: ["🐕 hond", "🌊 zeezicht", "🏕 rustig"], p4nId: null, lat: 69.1550, lng: 17.4500, wildkamp: false, link: "https://www.fjordbotn.no/en/home" },
-      { naam: "Ersfjord Camping", score: 7.8, tags: ["🐕 hond", "🏖 strand nabij", "🌿 natuur"], p4nId: null, lat: 69.2400, lng: 17.6200, wildkamp: true, wildkampTip: "Goede wildkampplekken langs de rotskust bij Ersfjordbotn en Bergsfjorden. Let op: in hoogseizoen zijn sommige volkstoeristische spots beperkt — kies rustige zijwegen. Allemannsrett van toepassing: 150m van bebouwing, max 2 nachten.", link: null },
+      { naam: "Hamn i Senja Resort", score: 9.1, tags: ["🐕 hond", "🍽 restaurant", "⚓ haventje", "🌿 natuur"], p4nId: null, lat: 69.1900, lng: 17.5200, wildkamp: false, wasserij: true, link: "https://www.hamnisenja.no/en" },
+      { naam: "Senja Camping Botnhamn", score: 8.2, tags: ["🐕 hond", "🌊 zeezicht", "🏕 rustig"], p4nId: null, lat: 69.1550, lng: 17.4500, wildkamp: false, wasserij: false, link: "https://www.fjordbotn.no/en/home" },
+      { naam: "Ersfjord Camping", score: 7.8, tags: ["🐕 hond", "🏖 strand nabij", "🌿 natuur"], p4nId: null, lat: 69.2400, lng: 17.6200, wildkamp: true, wasserij: false, wildkampTip: "Goede wildkampplekken langs de rotskust bij Ersfjordbotn en Bergsfjorden. Let op: in hoogseizoen zijn sommige volkstoeristische spots beperkt — kies rustige zijwegen. Allemannsrett van toepassing: 150m van bebouwing, max 2 nachten.", link: null },
     ]
   },
 
@@ -1423,9 +1425,9 @@ const stopData = {
       { icon: "🚀", naam: "Andøya Space (buitenkant/bezoekerscentrum)", desc: "Raketlanceerplatform — Noorwegen's nationale ruimtevaartlocatie. Begeleide tours niet altijd beschikbaar maar buitenterrein is vrij toegankelijk. Indrukwekkend voor kinderen.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Bleik Camping", score: 8.4, tags: ["🐕 hond", "🏖 strand nabij", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 69.2600, lng: 16.0400, wildkamp: false, link: "https://www.midnattsolcamping.com/" },
-      { naam: "Andenes Camping", score: 7.9, tags: ["🐕 hond", "🌊 zeezicht", "🏙 dorp nabij"], p4nId: null, lat: 69.3249, lng: 16.1274, wildkamp: false, link: null },
-      { naam: "Nordmela Camping", score: 7.6, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 69.2000, lng: 15.9800, wildkamp: true, wildkampTip: "Langs de westkust van Andøya zijn goede wildkampplekken op de rotsen bij zee. Allemannsrecht van toepassing.", link: "https://www.stavecamping.no" },
+      { naam: "Bleik Camping", score: 8.4, tags: ["🐕 hond", "🏖 strand nabij", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 69.2600, lng: 16.0400, wildkamp: false, wasserij: false, link: "https://www.midnattsolcamping.com/" },
+      { naam: "Andenes Camping", score: 7.9, tags: ["🐕 hond", "🌊 zeezicht", "🏙 dorp nabij"], p4nId: null, lat: 69.3249, lng: 16.1274, wildkamp: false, wasserij: false, link: null },
+      { naam: "Nordmela Camping", score: 7.6, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 69.2000, lng: 15.9800, wildkamp: true, wasserij: false, wildkampTip: "Langs de westkust van Andøya zijn goede wildkampplekken op de rotsen bij zee. Allemannsrecht van toepassing.", link: "https://www.stavecamping.no" },
     ]
   },
 
@@ -1440,9 +1442,9 @@ const stopData = {
       { icon: "🏘", naam: "Nusfjord oud vissersdorp", desc: "Een van de best bewaarde vissersdorpjes van Noorwegen. Fotogeniek, klein museum.", duur: "1–2u", kosten: "€15 toegang", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false, link: "https://www.rambergresort.no/campsite" },
-      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false, link: "https://rorbuer.no/" },
-      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wildkampTip: "Meerdere geschikte wildkampplekken langs de Lofotenkust. Norsk allemannsrett van toepassing.", link: "https://lofoten-bobilcamping.no/en-hjemmeside/" },
+      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false, wasserij: false, link: "https://www.rambergresort.no/campsite" },
+      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false, wasserij: false, link: "https://rorbuer.no/" },
+      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wasserij: false, wildkampTip: "Meerdere geschikte wildkampplekken langs de Lofotenkust. Norsk allemannsrett van toepassing.", link: "https://lofoten-bobilcamping.no/en-hjemmeside/" },
     ]
   },
 
@@ -1455,9 +1457,9 @@ const stopData = {
       { icon: "🏘", naam: "Kjerringøy handelspost", desc: "~1u rijden. 19e-eeuwse handelspost prachtig geconserveerd aan het water: pakhuizen, studeerkamers, stallen. Ideaal voor kinderen die 'vroeger' kunnen aanraken. Scenic rit langs de kust.", duur: "2–3u", kosten: "€12 p.p.", tags: ["🧒 kind-OK", "🌧 gedeeltelijk indoor"], link: null },
     ],
     campings: [
-      { naam: "Saltstraumen Camping", score: 8.3, tags: ["🐕 hond", "🌊 maalstroom nabij", "🌿 natuur"], p4nId: null, lat: 67.2200, lng: 14.6200, wildkamp: true, wildkampTip: "Mjelle strand (20 min rijden) heeft goede wildkampplekken op het strand en in de omliggende heide. Norsk allemannsrett van toepassing — 150m van bewoonde percelen.", link: "https://saltstraumen-camping.no/" },
-      { naam: "Bodø Camping (Hunstad)", score: 7.8, tags: ["🐕 hond", "🏙 stad nabij", "📶 wifi"], p4nId: null, lat: 67.2804, lng: 14.4049, wildkamp: false, link: "https://www.bodocamp.no/" },
-      { naam: "Kjerringøy Camping", score: 7.6, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 67.4800, lng: 14.9800, wildkamp: false, link: null },
+      { naam: "Saltstraumen Camping", score: 8.3, tags: ["🐕 hond", "🌊 maalstroom nabij", "🌿 natuur"], p4nId: null, lat: 67.2200, lng: 14.6200, wildkamp: true, wasserij: true, wildkampTip: "Mjelle strand (20 min rijden) heeft goede wildkampplekken op het strand en in de omliggende heide. Norsk allemannsrett van toepassing — 150m van bewoonde percelen.", link: "https://saltstraumen-camping.no/" },
+      { naam: "Bodø Camping (Hunstad)", score: 7.8, tags: ["🐕 hond", "🏙 stad nabij", "📶 wifi"], p4nId: null, lat: 67.2804, lng: 14.4049, wildkamp: false, wasserij: true, link: "https://www.bodocamp.no/" },
+      { naam: "Kjerringøy Camping", score: 7.6, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 67.4800, lng: 14.9800, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1469,10 +1471,10 @@ const stopData = {
       { icon: "🛥", naam: "Kystriksveien (Fv17) — de route zelf", desc: "De scenic coastal route is de attractie: watervallen bij de weg, kleine eilandjes, 5 kleine ferries. Rij rustig, stop spontaan. Wegen zijn goed voor campers.", duur: "meerdere dagen", kosten: "ferrykosten (€5–15/keer)", tags: ["scenic route", "🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Sjøbakken Gårdsferie Camping", score: 8.0, tags: ["🐕 hond", "🚣 bootjes huren", "🎣 vissen", "⭐ Cindy tipt"], p4nId: null, lat: 66.0560, lng: 13.0930, wildkamp: false, link: "https://maps.app.goo.gl/vcDpaN2gRuA5JEzY8", wildkampTip: "Cindy tipt: Iets van de route af, maar heel leuke camping met bootjesverhuur. Bootjes vooraf reserveren — waren vol bij aankomst. Vriendelijk en rustig." },
-      { naam: "Skogmo Familiecamping", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🧒 kind-OK", "🕊 rustig"], p4nId: null, lat: 65.3500, lng: 12.1200, wildkamp: false, link: "https://skogmofamiliecamping.no/" },
-      { naam: "Torghatten Camping", score: 7.9, tags: ["🐕 hond", "🏔 berg nabij", "🌿 natuur"], p4nId: null, lat: 65.3900, lng: 12.0200, wildkamp: false, link: "https://torghatten.net/" },
-      { naam: "Kystriksveien wildkamp (eilanden)", score: 8.5, tags: ["🐕 hond", "🌊 zee", "⛺ wild"], p4nId: null, lat: 65.5000, lng: 12.0000, wildkamp: true, wildkampTip: "De eilanden langs de Kystriksveien zijn ideaal voor wildkamp — kom 's avonds vroeg langs bij de veerpont zodat je een eilandje kunt bereiken. Norsk allemannsrett: 150m van woningen, max 2 nachten.", link: null },
+      { naam: "Sjøbakken Gårdsferie Camping", score: 8.0, tags: ["🐕 hond", "🚣 bootjes huren", "🎣 vissen", "⭐ Cindy tipt"], p4nId: null, lat: 66.0560, lng: 13.0930, wildkamp: false, wasserij: false, link: "https://maps.app.goo.gl/vcDpaN2gRuA5JEzY8", wildkampTip: "Cindy tipt: Iets van de route af, maar heel leuke camping met bootjesverhuur. Bootjes vooraf reserveren — waren vol bij aankomst. Vriendelijk en rustig." },
+      { naam: "Skogmo Familiecamping", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🧒 kind-OK", "🕊 rustig"], p4nId: null, lat: 65.3500, lng: 12.1200, wildkamp: false, wasserij: false, link: "https://skogmofamiliecamping.no/" },
+      { naam: "Torghatten Camping", score: 7.9, tags: ["🐕 hond", "🏔 berg nabij", "🌿 natuur"], p4nId: null, lat: 65.3900, lng: 12.0200, wildkamp: false, wasserij: false, link: "https://torghatten.net/" },
+      { naam: "Kystriksveien wildkamp (eilanden)", score: 8.5, tags: ["🐕 hond", "🌊 zee", "⛺ wild"], p4nId: null, lat: 65.5000, lng: 12.0000, wildkamp: true, wasserij: false, wildkampTip: "De eilanden langs de Kystriksveien zijn ideaal voor wildkamp — kom 's avonds vroeg langs bij de veerpont zodat je een eilandje kunt bereiken. Norsk allemannsrett: 150m van woningen, max 2 nachten.", link: null },
     ]
   },
 
@@ -1483,9 +1485,9 @@ const stopData = {
       { icon: "🌲", naam: "Bos en vogels Namsskogan", desc: "De bossen hier zijn stil en uitgestrekt. Rode eekhoorns, reeën, vogels — goede kans op wildlife buiten het park. Wandelpaden vertrekken vanuit de camping.", duur: "1u", kosten: "gratis", tags: ["🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Namsskogan Familiepark Camping", score: 8.5, tags: ["🐕 hond", "🌲 bos", "🐺 dierenpark nabij", "🧒 kind-OK"], p4nId: null, lat: 64.9200, lng: 13.2700, wildkamp: false, link: "https://en.familieparken.no/overnatting/camping" },
-      { naam: "Namsos Camping", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij"], p4nId: null, lat: 64.4663, lng: 11.4963, wildkamp: false, link: "https://www.namsos-camping.no" },
-      { naam: "Namsfjord wildkamp (langs de rivier)", score: 8.5, tags: ["🐕 hond", "🌿 natuur", "🕊 eenzaam"], p4nId: null, lat: 64.9800, lng: 13.1000, wildkamp: true, wildkampTip: "Langs de Namsen-rivier zijn uitstekende wildkampplekken in het bos. Norsk allemannsrett van toepassing — 150m van bewoning, max 2 nachten. Weinig andere campers.", link: null },
+      { naam: "Namsskogan Familiepark Camping", score: 8.5, tags: ["🐕 hond", "🌲 bos", "🐺 dierenpark nabij", "🧒 kind-OK"], p4nId: null, lat: 64.9200, lng: 13.2700, wildkamp: false, wasserij: true, link: "https://en.familieparken.no/overnatting/camping" },
+      { naam: "Namsos Camping", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij"], p4nId: null, lat: 64.4663, lng: 11.4963, wildkamp: false, wasserij: true, link: "https://www.namsos-camping.no" },
+      { naam: "Namsfjord wildkamp (langs de rivier)", score: 8.5, tags: ["🐕 hond", "🌿 natuur", "🕊 eenzaam"], p4nId: null, lat: 64.9800, lng: 13.1000, wildkamp: true, wasserij: false, wildkampTip: "Langs de Namsen-rivier zijn uitstekende wildkampplekken in het bos. Norsk allemannsrett van toepassing — 150m van bewoning, max 2 nachten. Weinig andere campers.", link: null },
     ]
   },
 
@@ -1500,9 +1502,9 @@ const stopData = {
       { icon: "🚐", naam: "Camperparking Nyhavna", desc: "Cindy tipt: Parkeer in de wijk Nyhavna, net buiten het centrum. Niet idyllisch maar prima — fiets vandaar makkelijk naar het centrum. Aparte camperparking beschikbaar.", duur: null, kosten: "variabel", tags: ["🚐 camper-friendly", "🚲 fiets naar centrum", "⭐ Cindy tipt"], link: "https://maps.app.goo.gl/fgTCf69zBWs1Raco9" },
     ],
     campings: [
-      { naam: "Trondheim Camping (Nedre Leirfoss)", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🌊 rivier nabij", "🧒 speeltuin"], p4nId: null, lat: 63.3700, lng: 10.4500, wildkamp: false, link: "https://campingen.no" },
-      { naam: "Flakk Camping", score: 7.9, tags: ["🐕 hond", "🌊 fjordview", "⛴ ferry nabij"], p4nId: null, lat: 63.4800, lng: 10.2200, wildkamp: false, link: "https://www.flakk-camping.no/" },
-      { naam: "Byneset Camping", score: 7.7, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 63.4100, lng: 10.2400, wildkamp: false, link: null },
+      { naam: "Trondheim Camping (Nedre Leirfoss)", score: 8.2, tags: ["🐕 hond", "🌲 bos", "🌊 rivier nabij", "🧒 speeltuin"], p4nId: null, lat: 63.3700, lng: 10.4500, wildkamp: false, wasserij: false, link: "https://campingen.no" },
+      { naam: "Flakk Camping", score: 7.9, tags: ["🐕 hond", "🌊 fjordview", "⛴ ferry nabij"], p4nId: null, lat: 63.4800, lng: 10.2200, wildkamp: false, wasserij: false, link: "https://www.flakk-camping.no/" },
+      { naam: "Byneset Camping", score: 7.7, tags: ["🐕 hond", "🌿 natuur", "🕊 rustig"], p4nId: null, lat: 63.4100, lng: 10.2400, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1513,9 +1515,9 @@ const stopData = {
       { icon: "🏘", naam: "Bud vissersdorp", desc: "Authentiek Noors vissersdorp met kleine haventje. Vis kopen, koffie, wandelen langs de kust.", duur: "1u", kosten: "gratis", tags: ["🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Kårvåg Camping", score: 8.4, tags: ["🐕 hond", "🌊 zeezicht", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 63.0200, lng: 7.5800, wildkamp: false, link: "https://www.atlanterhavsveien.org/" },
-      { naam: "Atlantic Ocean Road Camping", score: 8.0, tags: ["🐕 hond", "🌊 brug nabij", "🕊 rustig"], p4nId: null, lat: 63.0100, lng: 7.3400, wildkamp: false, link: null },
-      { naam: "Bud Camping", score: 7.6, tags: ["🐕 hond", "⚓ haven", "🏘 dorp nabij"], p4nId: null, lat: 62.9100, lng: 7.0100, wildkamp: true, wildkampTip: "Langs de scheren bij de Atlanterhavsvegen zijn mooie wildkampplekken op de rotsen bij zee. Norsk allemannsrett.", link: "https://budcamping.no/en/frontpage/" },
+      { naam: "Kårvåg Camping", score: 8.4, tags: ["🐕 hond", "🌊 zeezicht", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 63.0200, lng: 7.5800, wildkamp: false, wasserij: false, link: "https://www.atlanterhavsveien.org/" },
+      { naam: "Atlantic Ocean Road Camping", score: 8.0, tags: ["🐕 hond", "🌊 brug nabij", "🕊 rustig"], p4nId: null, lat: 63.0100, lng: 7.3400, wildkamp: false, wasserij: false, link: null },
+      { naam: "Bud Camping", score: 7.6, tags: ["🐕 hond", "⚓ haven", "🏘 dorp nabij"], p4nId: null, lat: 62.9100, lng: 7.0100, wildkamp: true, wasserij: false, wildkampTip: "Langs de scheren bij de Atlanterhavsvegen zijn mooie wildkampplekken op de rotsen bij zee. Norsk allemannsrett.", link: "https://budcamping.no/en/frontpage/" },
     ]
   },
 
@@ -1527,9 +1529,9 @@ const stopData = {
       { icon: "🏝", naam: "Godøy eiland dagtrip", desc: "20 min rijden + tunneltje. Alnes vuurtoren met café aan zee. Wandel naar de top voor Atlantisch uitzicht. Surfers op het strand — leuk voor de kinderen om te kijken. Honden welkom op de paden.", duur: "3–4u", kosten: "gratis", tags: ["🐕 hond", "🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Ålesund Camping (Tørla)", score: 8.1, tags: ["🐕 hond", "🌊 fjordview", "🧒 speeltuin", "🌿 natuur"], p4nId: null, lat: 62.4900, lng: 6.1800, wildkamp: false, link: "https://volsdalencamping.no/" },
-      { naam: "Borgund Camping", score: 7.8, tags: ["🐕 hond", "🕊 rustig", "🌲 groen"], p4nId: null, lat: 62.4400, lng: 6.0400, wildkamp: false, link: null },
-      { naam: "Urke Camping (Hjørundfjord)", score: 8.3, tags: ["🐕 hond", "🌊 fjord", "🌿 natuur", "⭐ klein"], p4nId: null, lat: 62.2300, lng: 6.4900, wildkamp: false, link: "https://www.urkecamping.no/" },
+      { naam: "Ålesund Camping (Tørla)", score: 8.1, tags: ["🐕 hond", "🌊 fjordview", "🧒 speeltuin", "🌿 natuur"], p4nId: null, lat: 62.4900, lng: 6.1800, wildkamp: false, wasserij: false, link: "https://volsdalencamping.no/" },
+      { naam: "Borgund Camping", score: 7.8, tags: ["🐕 hond", "🕊 rustig", "🌲 groen"], p4nId: null, lat: 62.4400, lng: 6.0400, wildkamp: false, wasserij: false, link: null },
+      { naam: "Urke Camping (Hjørundfjord)", score: 8.3, tags: ["🐕 hond", "🌊 fjord", "🌿 natuur", "⭐ klein"], p4nId: null, lat: 62.2300, lng: 6.4900, wildkamp: false, wasserij: false, link: "https://www.urkecamping.no/" },
     ]
   },
 
@@ -1542,9 +1544,9 @@ const stopData = {
       { icon: "🚣", naam: "Kayak in het fjord", desc: "Verhuur in het dorp. Paddle tussen de watervallen door. Schitterend bij mooi weer.", duur: "2–3u", kosten: "€40–55 p.p.", tags: [], link: null },
     ],
     campings: [
-      { naam: "Geiranger Camping", score: 8.7, tags: ["🐕 hond", "📶 wifi", "🌊 fjordview", "⭐ beste plek"], p4nId: null, lat: 62.1004, lng: 7.2050, wildkamp: false, link: "https://www.geirangercamping.no/" },
-      { naam: "Grande Hytteutleige & Camping", score: 8.2, tags: ["🐕 hond", "🍽 restaurant nabij", "🌊 uitzicht"], p4nId: null, lat: 62.0980, lng: 7.2100, wildkamp: false, link: "https://www.grande-hytteutleige.no" },
-      { naam: "Vinje Camping (Geiranger)", score: 7.9, tags: ["🐕 hond", "🕊 rustig", "🌿 groen"], p4nId: null, lat: 62.1100, lng: 7.1800, wildkamp: false, link: "https://vinjecamping.no/" },
+      { naam: "Geiranger Camping", score: 8.7, tags: ["🐕 hond", "📶 wifi", "🌊 fjordview", "⭐ beste plek"], p4nId: null, lat: 62.1004, lng: 7.2050, wildkamp: false, wasserij: true, link: "https://www.geirangercamping.no/" },
+      { naam: "Grande Hytteutleige & Camping", score: 8.2, tags: ["🐕 hond", "🍽 restaurant nabij", "🌊 uitzicht"], p4nId: null, lat: 62.0980, lng: 7.2100, wildkamp: false, wasserij: false, link: "https://www.grande-hytteutleige.no" },
+      { naam: "Vinje Camping (Geiranger)", score: 7.9, tags: ["🐕 hond", "🕊 rustig", "🌿 groen"], p4nId: null, lat: 62.1100, lng: 7.1800, wildkamp: false, wasserij: false, link: "https://vinjecamping.no/" },
     ]
   },
 
@@ -1556,9 +1558,9 @@ const stopData = {
       { icon: "🚣", naam: "Kayak op Lovatnet", desc: "Het smaragdgroene meer onder de gletsjer is ideaal voor kanoën. Verhuur bij de camping. Het water heeft die specifieke blauwe gletsjerkleur — indrukwekkend.", duur: "2u", kosten: "€25–35", tags: ["🐕 hond mee"], link: null },
     ],
     campings: [
-      { naam: "Loen Aktivhotel Camping", score: 8.5, tags: ["🐕 hond", "🏊 zwembad", "📶 wifi", "🌊 meerView"], p4nId: null, lat: 61.8741, lng: 6.8430, wildkamp: false, link: null },
-      { naam: "Sande Camping (Loen)", score: 8.0, tags: ["🐕 hond", "🌲 bos", "🕊 rustig"], p4nId: null, lat: 61.8800, lng: 6.8600, wildkamp: false, link: "https://sande-camping.no/en/" },
-      { naam: "Olden Fjordhotel Camping", score: 7.7, tags: ["🐕 hond", "🌊 fjord", "⭐ kleine camping"], p4nId: null, lat: 61.8500, lng: 6.8000, wildkamp: false, link: null },
+      { naam: "Loen Aktivhotel Camping", score: 8.5, tags: ["🐕 hond", "🏊 zwembad", "📶 wifi", "🌊 meerView"], p4nId: null, lat: 61.8741, lng: 6.8430, wildkamp: false, wasserij: false, link: null },
+      { naam: "Sande Camping (Loen)", score: 8.0, tags: ["🐕 hond", "🌲 bos", "🕊 rustig"], p4nId: null, lat: 61.8800, lng: 6.8600, wildkamp: false, wasserij: false, link: "https://sande-camping.no/en/" },
+      { naam: "Olden Fjordhotel Camping", score: 7.7, tags: ["🐕 hond", "🌊 fjord", "⭐ kleine camping"], p4nId: null, lat: 61.8500, lng: 6.8000, wildkamp: false, wasserij: false, link: null },
     ]
   },
 
@@ -1571,9 +1573,9 @@ const stopData = {
       { icon: "🚌", naam: "Hardangerfjord dagtrip", desc: "1.5u rijden. Langs Steindalsfossen waterval (loop achter het water — gratis, droog). Noor's mooiste fruitstreek. Rustig alternatief voor drukke Bergen-dag.", duur: "Hele dag", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
     ],
     campings: [
-      { naam: "Bratland Camping", score: 8.2, tags: ["🐕 hond", "🏊 zwemmen", "🚌 bus naar centrum", "🌿 natuur"], p4nId: null, lat: 60.3280, lng: 5.2900, wildkamp: false, link: "https://www.bratlandcamping.no/" },
-      { naam: "Lone Camping", score: 7.9, tags: ["🐕 hond", "🍽 winkel", "📶 wifi", "🕊 rustig"], p4nId: null, lat: 60.3560, lng: 5.4290, wildkamp: false, link: "https://www.lonecamping.no/en/home-en/" },
-      { naam: "Bergen Camping Park", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij", "⛴ ferry nabij"], p4nId: null, lat: 60.4050, lng: 5.3200, wildkamp: false, link: "https://bcp.no/en/" },
+      { naam: "Bratland Camping", score: 8.2, tags: ["🐕 hond", "🏊 zwemmen", "🚌 bus naar centrum", "🌿 natuur"], p4nId: null, lat: 60.3280, lng: 5.2900, wildkamp: false, wasserij: false, link: "https://www.bratlandcamping.no/" },
+      { naam: "Lone Camping", score: 7.9, tags: ["🐕 hond", "🍽 winkel", "📶 wifi", "🕊 rustig"], p4nId: null, lat: 60.3560, lng: 5.4290, wildkamp: false, wasserij: false, link: "https://www.lonecamping.no/en/home-en/" },
+      { naam: "Bergen Camping Park", score: 7.7, tags: ["🐕 hond", "🏙 stad nabij", "⛴ ferry nabij"], p4nId: null, lat: 60.4050, lng: 5.3200, wildkamp: false, wasserij: false, link: "https://bcp.no/en/" },
     ]
   },
 
@@ -1586,9 +1588,9 @@ const stopData = {
       { icon: "⚓", naam: "Haven en Fiskebrygga", desc: "Levendig haventje met uitstekende visrestaurants (Fiskebrygga-kade). Verse garnalen, sushi, lokale specialiteiten. Honden welkom op terrassen.", duur: "1–2u", kosten: "gratis (eten betaald)", tags: ["🍽 eten", "🐕 hond terras"], link: null },
     ],
     campings: [
-      { naam: "Mosvangen Camping Stavanger", score: 8.3, tags: ["🐕 hond", "🌿 natuur", "🧒 speeltuin", "🏊 meer nabij"], p4nId: null, lat: 58.9800, lng: 5.7100, wildkamp: false, link: "https://www.stavangercamping.no" },
-      { naam: "Sola Strand Camping", score: 8.1, tags: ["🐕 hond", "🏖 strand", "🌿 natuur"], p4nId: null, lat: 58.8900, lng: 5.6300, wildkamp: false, link: null },
-      { naam: "Ølberg Camping", score: 7.9, tags: ["🐕 hond", "🌊 kust", "⭐ kleine camping"], p4nId: null, lat: 58.8400, lng: 5.6700, wildkamp: false, link: "https://olberg.no/en/about-us/" },
+      { naam: "Mosvangen Camping Stavanger", score: 8.3, tags: ["🐕 hond", "🌿 natuur", "🧒 speeltuin", "🏊 meer nabij"], p4nId: null, lat: 58.9800, lng: 5.7100, wildkamp: false, wasserij: false, link: "https://www.stavangercamping.no" },
+      { naam: "Sola Strand Camping", score: 8.1, tags: ["🐕 hond", "🏖 strand", "🌿 natuur"], p4nId: null, lat: 58.8900, lng: 5.6300, wildkamp: false, wasserij: false, link: null },
+      { naam: "Ølberg Camping", score: 7.9, tags: ["🐕 hond", "🌊 kust", "⭐ kleine camping"], p4nId: null, lat: 58.8400, lng: 5.6700, wildkamp: false, wasserij: false, link: "https://olberg.no/en/about-us/" },
     ]
   },
 
@@ -1598,9 +1600,84 @@ const stopData = {
       { icon: "🏖", naam: "Kristiansand centrum", desc: "Gezellige havenstad. Posebyen (historisch centrum), Fiskebrygga haven, markt. Relaxte sfeer na de lange reis.", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
-      { naam: "Kristiansand Camping (Roligheden)", score: 8.0, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "🏙 stad nabij"], p4nId: null, lat: 58.1800, lng: 8.0800, wildkamp: false, link: "https://www.dyreparken.no/overnatting/roligheden-camping/" },
-      { naam: "Hamresanden Camping", score: 8.2, tags: ["🐕 hond", "🏊 zwemmen", "🌊 strand"], p4nId: null, lat: 58.1700, lng: 8.0400, wildkamp: false, link: "https://campingplassen.no/" },
-      { naam: "Dvergsnes Camping", score: 7.7, tags: ["🐕 hond", "⛴ haven nabij", "🕊 rustig"], p4nId: null, lat: 58.1400, lng: 7.9600, wildkamp: false, link: "https://krsferiesenter.no/en/" },
+      { naam: "Kristiansand Camping (Roligheden)", score: 8.0, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "🏙 stad nabij"], p4nId: null, lat: 58.1800, lng: 8.0800, wildkamp: false, wasserij: true, link: "https://www.dyreparken.no/overnatting/roligheden-camping/" },
+      { naam: "Hamresanden Camping", score: 8.2, tags: ["🐕 hond", "🏊 zwemmen", "🌊 strand"], p4nId: null, lat: 58.1700, lng: 8.0400, wildkamp: false, wasserij: true, link: "https://campingplassen.no/" },
+      { naam: "Dvergsnes Camping", score: 7.7, tags: ["🐕 hond", "⛴ haven nabij", "🕊 rustig"], p4nId: null, lat: 58.1400, lng: 7.9600, wildkamp: false, wasserij: false, link: "https://krsferiesenter.no/en/" },
+    ]
+  },
+};
+
+// ─── STOP-DATA PER DAG (overschrijft stopData[fase] voor langere fasen) ────
+// Koppelt activiteiten en campings aan de specifieke dag/locatie i.p.v. de hele fase.
+const stopDataByDag = {
+  // ── LOFOTEN dag 20–26 ──────────────────────────────────────────────────────
+  20: { // Henningsvær (aankomstdag)
+    activiteiten: [
+      { icon: "🏘", naam: "Henningsvær vissersdorp verkennen", desc: "Aankomst en eerste verkenning van het schilderachtige vissersdorp. Voetbalveld op de rotsen (meest fotogenieke veld ter wereld), lokale stokvis-droogrekken, kleine galleries langs de kade.", duur: "1–2u", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+      { icon: "🐟", naam: "Lokale stokvis kopen", desc: "Henningsvær heeft meerdere stokvis-verkopers direct aan de kade. Authentiek product, goede prijs.", duur: "15min", kosten: "€5–15", tags: ["aanrader"], link: null },
+    ],
+    campings: [
+      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wildkampTip: "Meerdere geschikte wildkampplekken langs de Lofotenkust. Norsk allemannsrett van toepassing.", link: "https://lofoten-bobilcamping.no/en-hjemmeside/", wasserij: false },
+    ]
+  },
+  21: { // Lofoten dag 2 — Henningsvær gebied
+    activiteiten: [
+      { icon: "⚽", naam: "Voetbalveld op de rotsen (Henningsvær)", desc: "Het meest gefotografeerde voetbalveld ter wereld — omringd door water en bergtoppen. Geen officiële toegang, maar goed te bekijken vanaf het parkeerterrein naast de brug.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK", "📷 fotogeniek"], link: null },
+      { icon: "🎨", naam: "Galleries in Henningsvær", desc: "Meerdere kunst- en fotoggalerijen in de authentieke vissershuisjes. Goed bij regen. Nordnorsk Kunstnersenter is de bekendste.", duur: "1u", kosten: "gratis–€5", tags: ["🌧 indoor", "🐕 hond buiten"], link: null },
+      { icon: "🛥", naam: "Zeearend RIB-tour (Svolvær)", desc: "VOORAF RESERVEREN. Tocht langs zeearend-nesten vanuit Svolvær (~30 min rijden). Operators: Lofoten Aktiv of Wildlife Svolvær.", duur: "3u", kosten: "€80–110 p.p.", tags: ["reserveren!", "aanbevolen!"], link: null },
+    ],
+    campings: [
+      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wildkampTip: "Meerdere geschikte wildkampplekken langs de Lofotenkust. Norsk allemannsrett van toepassing.", link: "https://lofoten-bobilcamping.no/en-hjemmeside/", wasserij: false },
+    ]
+  },
+  22: { // Lofoten dag 3 — Kvalvika-gebied
+    activiteiten: [
+      { icon: "🏖", naam: "Kvalvika beach", desc: "Beroemd wit zandstrand bereikbaar via 45 min wandeling (beide kanten). Turquoise water, bijna nooit druk. Goed pad, geen buggy. Kleine kinderen zijn wel flink achter de rug.", duur: "2–3u (incl. wandeling)", kosten: "gratis", tags: ["🧒 kind-OK (>3jr)", "⚠ 45 min wandelen"], link: "https://ut.no" },
+      { icon: "🏖", naam: "Ramberg / Skagsanden strand", desc: "Prachtig wit zandstrand met bergpanorama. Goed toegankelijk voor buggy. Zwemmen mogelijk in de zomer. Rustiger dan de Haukland/Utakleiv stranden.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+    ],
+    campings: [
+      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false, link: "https://www.rambergresort.no/campsite", wasserij: true },
+    ]
+  },
+  23: { // Reine
+    activiteiten: [
+      { icon: "🏔", naam: "Reinebringen wandeling", desc: "Iconisch uitzichtpunt over Reine. Shuttlebus beschikbaar vanuit Reine (controleer beschikbaarheid). Steil maar goed begaanbaar. Niet met peuter — laat haar/hem beneden bij de kade spelen.", duur: "3–4u (volwassenen)", kosten: "gratis (shuttle €10)", tags: ["↑ 448m", "⚠ niet met peuters"], link: "https://ut.no" },
+      { icon: "🚣", naam: "Kayakken Reinefjorden", desc: "Verhuur ter plekke in Reine. Rustig fjord, spectaculaire bergtoppen. Geschikt voor beginners bij mooi weer. Hond mee is mogelijk.", duur: "2–4u", kosten: "€45–60 p.p.", tags: ["🐕 hond mee"], link: null },
+      { icon: "📷", naam: "Hamnøy bij zonsondergang", desc: "De meest gefotografeerde plek van Lofoten: rode rorbuer aan het water. Druk overdag — kom rond 21:30–23:00 voor het mooiste licht.", duur: "1u", kosten: "gratis", tags: ["🕘 21:30–23:00"], link: null },
+    ],
+    campings: [
+      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false, link: "https://rorbuer.no/", wasserij: true },
+    ]
+  },
+  24: { // Lofoten dag 5 — Ramberg-gebied
+    activiteiten: [
+      { icon: "🏖", naam: "Ramberg / Skagsanden strand", desc: "Prachtig wit zandstrand met bergpanorama. Zwemmen mogelijk in de zomer. Goed toegankelijk.", duur: "vrij", kosten: "gratis", tags: ["🧒 kind-OK", "🐕 hond"], link: null },
+      { icon: "🏘", naam: "Nusfjord oud vissersdorp", desc: "Een van de best bewaarde vissersdorpjes van Noorwegen. Fotogeniek, klein museum, droogrekken stockvis. Kleine toegangsprijs voor het dorp.", duur: "1–2u", kosten: "€15 toegang", tags: ["🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false, link: "https://www.rambergresort.no/campsite", wasserij: true },
+      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false, link: "https://rorbuer.no/", wasserij: true },
+    ]
+  },
+  25: { // Å (zuidpunt Lofoten)
+    activiteiten: [
+      { icon: "🎣", naam: "Å vissersdorpmuseum", desc: "Geconserveerd vissersdorpje aan het einde van de E10. Stockfish-droogrekken, museum over traditionale kabeljauw-visserij, authentieke sfeer. Einde van de 'Lofoten-weg'.", duur: "1–2u", kosten: "€10 museum", tags: ["🧒 kind-OK"], link: null },
+      { icon: "🌊", naam: "Moskenstraumen maalstroom bekijken", desc: "Vanuit Å zichtbaar bij helder weer: de beroemde Moskenstraumen — een van de sterkste maalsStromen ter wereld. Zie de turbulentie tussen Moskenesøya en Mosken.", duur: "30min", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false, link: "https://rorbuer.no/", wasserij: true },
+      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false, link: "https://www.rambergresort.no/campsite", wasserij: true },
+    ]
+  },
+  26: { // Lofoten dag 7 — flexibele dag
+    activiteiten: [
+      { icon: "🦅", naam: "Zeearend RIB-tour", desc: "VOORAF RESERVEREN. Spectaculaire tocht langs zeearend-nesten. Operators in Svolvær (Lofoten Aktiv, Wildlife Svolvær) en in Reine. Als je dit nog niet gedaan hebt, is dit de laatste kans op de Lofoten.", duur: "3u", kosten: "€80–110 p.p.", tags: ["reserveren!", "aanbevolen!"], link: null },
+      { icon: "😌", naam: "Extra rustdag of vrije verkenning", desc: "Flexdag: rijdt rustig terug over de E10 en stopt waar het mooi is. Haukland strand, Utakleiv, Offersøykammen — alles kan. Of gewoon wasserij en bijkomen.", duur: "vrij", kosten: "gratis", tags: ["🐕 hond", "🧒 kind-OK"], link: null },
+    ],
+    campings: [
+      { naam: "Lyngvær Fjordcamp", score: 7.9, tags: ["🧒 speeltuin", "🐕 hond", "📶 wifi"], p4nId: null, lat: 68.2200, lng: 14.3800, wildkamp: true, wildkampTip: "Meerdere geschikte wildkampplekken langs de Lofotenkust. Norsk allemannsrett van toepassing.", link: "https://lofoten-bobilcamping.no/en-hjemmeside/", wasserij: false },
+      { naam: "Eliassen Rorbuer (Hamnøy)", score: 8.4, tags: ["🐕 hond", "📷 fotogeniek", "🌊 aan water"], p4nId: null, lat: 67.9300, lng: 13.1000, wildkamp: false, link: "https://rorbuer.no/", wasserij: true },
+      { naam: "Ramberg Strand Camping", score: 8.6, tags: ["🐕 hond", "🏖 strand", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 68.0889, lng: 13.1853, wildkamp: false, link: "https://www.rambergresort.no/campsite", wasserij: true },
     ]
   },
 };
@@ -1716,14 +1793,15 @@ async function fetchWeather(lat, lng) {
   const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
   if (weatherCache[key]) return weatherCache[key];
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=3`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
     const resp = await fetch(url);
     const data = await resp.json();
+    const n = data.daily.weathercode.length;
     const result = {
-      codes: data.daily.weathercode.slice(0, 3),
-      maxTemps: data.daily.temperature_2m_max.slice(0, 3),
-      minTemps: data.daily.temperature_2m_min.slice(0, 3),
-      precipProb: (data.daily.precipitation_probability_max || [null, null, null]).slice(0, 3),
+      codes: data.daily.weathercode.slice(0, n),
+      maxTemps: data.daily.temperature_2m_max.slice(0, n),
+      minTemps: data.daily.temperature_2m_min.slice(0, n),
+      precipProb: (data.daily.precipitation_probability_max || []).slice(0, n),
       dominantCode: Math.max(...data.daily.weathercode.slice(0, 3)),
       maxTemp: Math.round(Math.max(...data.daily.temperature_2m_max.slice(0, 3)))
     };
@@ -1732,10 +1810,20 @@ async function fetchWeather(lat, lng) {
   } catch (e) { return null; }
 }
 
+// Bereken de forecast dag-index voor een stop op basis van zijn geplande aankomstdag.
+// dag 1 = 8 juli 2026. Terugkeer: 0–15 = bruikbare index; <0 = al geweest (gebruik 0); >15 = buiten bereik (geen icoon).
+function stopDayIndex(dag) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const arrival = new Date('2026-07-08T00:00:00').getTime() + (dag - 1) * 86400000;
+  return Math.round((arrival - today.getTime()) / 86400000);
+}
+
 // ─── MAP SETUP ──────────────────────────────────────────────────────────────
 const map = L.map('map', { zoomControl: true }).setView([65, 15], 4);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  attribution: '© OpenStreetMap, © CARTO', maxZoom: 18
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19
 }).addTo(map);
 
 // ─── ROUTING (OSRM) ─────────────────────────────────────────────────────────
@@ -1865,29 +1953,32 @@ async function loadWeatherMarkers() {
     if (!w) return;
 
     const stopIdx = stops.indexOf(stop);
-    const ic = wmoToIcon(w.codes[1]); // index 1 = morgen
+    const di = stopDayIndex(stop.dag);
+    if (di > 15) return; // buiten 16-daagse Open-Meteo limiet → geen icoon
+    const safeIdx = Math.max(0, di); // verleden stops: toon huidige dag
+    const ic = wmoToIcon(w.codes[safeIdx]);
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${stop.lat.toFixed(4)},${stop.lng.toFixed(4)}`;
     const dayLabels = ['Vandaag', 'Morgen', 'Overmorgen'];
-    const hasContent = !!stopData[stop.fase];
+    const hasContent = !!(stopDataByDag[stop.dag] || stopData[stop.fase]);
 
     const divIcon = L.divIcon({
       html: `<div style="background:${ic.bg};border:1.5px solid ${ic.border};border-radius:8px;padding:3px 5px;display:flex;flex-direction:column;align-items:center;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.18);font-family:sans-serif;min-width:38px;">
         <span style="font-size:17px;line-height:1.1;">${ic.emoji}</span>
-        <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[1])}°</span>
-        <span style="font-size:9px;color:#666;">${Math.round(w.minTemps[1])}°</span>
+        <span style="font-size:10px;font-weight:600;color:#1a1a2e;">${Math.round(w.maxTemps[safeIdx])}°</span>
+        <span style="font-size:9px;color:#666;">${Math.round(w.minTemps[safeIdx])}°</span>
       </div>`,
       className: '', iconSize: [46, 52], iconAnchor: [23, 26]
     });
 
-    const threeDayHtml = w.codes.map((code, di) => {
+    const threeDayHtml = w.codes.slice(0, 3).map((code, tdi) => {
       const dic = wmoToIcon(code);
-      const pp = w.precipProb && w.precipProb[di] != null ? w.precipProb[di] : null;
+      const pp = w.precipProb && w.precipProb[tdi] != null ? w.precipProb[tdi] : null;
       return `<div class="weather-day-cell" style="background:${dic.bg};border-color:${dic.border}">
         <span class="wdc-icon">${dic.emoji}</span>
-        <span class="wdc-temp">${Math.round(w.maxTemps[di])}°</span>
-        <span class="wdc-tempmin">↓${Math.round(w.minTemps[di])}°</span>
+        <span class="wdc-temp">${Math.round(w.maxTemps[tdi])}°</span>
+        <span class="wdc-tempmin">↓${Math.round(w.minTemps[tdi])}°</span>
         ${pp != null ? `<span class="wdc-precip" style="font-size:0.58rem;color:${pp >= 60 ? '#2980b9' : '#aaa'};display:block;">💧${pp}%</span>` : ''}
-        <span class="wdc-label">${dayLabels[di]}</span>
+        <span class="wdc-label">${dayLabels[tdi]}</span>
       </div>`;
     }).join('');
 
@@ -2058,16 +2149,19 @@ async function updateDashboard() {
   nextUniqueStops.forEach((ns, i) => {
     const w = weerResults[i];
     if (!w) return;
-    const ic = wmoToIcon(w.codes[1]); // index 1 = morgen
+    const nsDi = stopDayIndex(ns.dag);
+    if (nsDi > 15 || !w.codes[nsDi]) return; // buiten Open-Meteo limiet
+    const nsSafeIdx = Math.max(0, nsDi);
+    const ic = wmoToIcon(w.codes[nsSafeIdx]);
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${ns.lat.toFixed(4)},${ns.lng.toFixed(4)}`;
     const shortName = ns.naam.replace(/ \(.*\)/, '').split(' ').slice(0, 2).join(' ');
-    const pp = w.precipProb && w.precipProb[1] != null ? w.precipProb[1] : null;
+    const pp = w.precipProb && w.precipProb[nsSafeIdx] != null ? w.precipProb[nsSafeIdx] : null;
     const el = document.createElement('div');
     el.className = 'weer-strip-item';
     el.style.background = ic.bg;
     el.style.borderColor = i === 0 ? '#c9873a' : ic.border;
     el.title = ns.naam;
-    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[1])}°</span><span class="wi-tempmin">↓${Math.round(w.minTemps[1])}°</span>${pp != null ? `<span style="font-size:0.56rem;color:${pp >= 60 ? '#2980b9' : 'var(--muted)'};display:block;margin-top:1px;">💧${pp}%</span>` : ''}<span class="wi-name">${shortName}</span>`;
+    el.innerHTML = `<span class="wi-emoji">${ic.emoji}</span><span class="wi-temp">${Math.round(w.maxTemps[nsSafeIdx])}°</span><span class="wi-tempmin">↓${Math.round(w.minTemps[nsSafeIdx])}°</span>${pp != null ? `<span style="font-size:0.56rem;color:${pp >= 60 ? '#2980b9' : 'var(--muted)'};display:block;margin-top:1px;">💧${pp}%</span>` : ''}<span class="wi-name">${shortName}</span>`;
     el.onclick = () => window.open(yrUrl, '_blank');
     weerItems.appendChild(el);
   });
@@ -2081,16 +2175,18 @@ async function updateDashboard() {
   const nextStop = stops.slice(idx + 1).find(s => s.type === 'rij');
   if (nextStop) {
     const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] || await fetchWeather(nextStop.lat, nextStop.lng);
-    const nIc = nw ? wmoToIcon(nw.codes[1]) : null; // index 1 = morgen
+    const nextDi = stopDayIndex(nextStop.dag);
+    const nextSafeIdx = Math.max(0, nextDi);
+    const nIc = nw && nextDi <= 15 && nw.codes[nextSafeIdx] !== undefined ? wmoToIcon(nw.codes[nextSafeIdx]) : null;
     const bufAfter = flexDays;
     const bufColor = bufAfter <= 2 ? 'var(--danger)' : bufAfter <= 5 ? 'var(--warn)' : 'var(--ok)';
     const bufPct = Math.max(0, Math.min(100, (bufAfter / 12) * 100));
-    const nPp = nw && nw.precipProb && nw.precipProb[1] != null ? nw.precipProb[1] : null;
+    const nPp = nw && nw.precipProb && nw.precipProb[nextSafeIdx] != null ? nw.precipProb[nextSafeIdx] : null;
     list.appendChild(makeCard({
       label: 'Gepland', kleur: '#2d6a8f', description: 'Volgende stop zoals gepland',
       naam: nextStop.naam, sub: `Dag ${nextStop.dag} · ${nextStop.fase}${nextStop.ferry ? ' · ⚓ Ferry' : ''}`,
       tips: nextStop.tips,
-      weerHtml: nw && nIc ? `<div class="scenario-weather-row"><div class="weather-badge">${nIc.emoji} max ${Math.round(nw.maxTemps[1])}°${nPp != null ? ` · 💧${nPp}%` : ''} — ${nIc.label}</div></div>` : '',
+      weerHtml: nw && nIc ? `<div class="scenario-weather-row"><div class="weather-badge">${nIc.emoji} max ${Math.round(nw.maxTemps[nextSafeIdx])}°${nPp != null ? ` · 💧${nPp}%` : ''} — ${nIc.label}</div></div>` : '',
       bufAfter, bufColor, bufPct,
       onClick: () => {
         if (currentHighlight) map.removeLayer(currentHighlight);
@@ -2204,7 +2300,7 @@ function switchTab(tabName) {
 
 function renderTab(tabName, stop) {
   const body = document.getElementById('tabBody');
-  const data = stopData[stop.fase] || {};
+  const data = stopDataByDag[stop.dag] || stopData[stop.fase] || {};
 
   if (tabName === 'activiteiten') {
     const acts = data.activiteiten || [];
@@ -2251,7 +2347,10 @@ function renderTab(tabName, stop) {
       <div class="camping-card">
         <div class="camping-top">
           <div class="camping-name">${c.link ? `<a href="${c.link}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,0,0,0.3);">${c.naam} ↗</a>` : c.naam}</div>
-          <div class="camping-score">★ ${c.score}</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${c.wasserij ? `<span title="Wasserij aanwezig" style="font-size:1rem;" aria-label="Wasserij">🧺</span>` : ''}
+            <div class="camping-score">★ ${c.score}</div>
+          </div>
         </div>
         <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
       </div>
@@ -2804,6 +2903,12 @@ if (freeStop) {
   sel.value = '-1';
   updateOffsetUI();
   updateDashboard();
+}
+</script>
+<script>
+// ─── SERVICE WORKER REGISTRATIE ──────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 </script>
 </body>

@@ -690,6 +690,16 @@
   .ferry-row-naam { font-size: 0.87rem; font-weight: 500; line-height: 1.3; }
   .ferry-row-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
   .ferry-row-tijden { font-size: 0.68rem; color: var(--fjord); margin-top: 3px; line-height: 1.5; }
+  .ferry-live-ok { color: #1b7a3d; font-weight: 600; }
+  .ferry-live-stale { color: #b25b00; font-weight: 600; }
+  .ferry-live-fallback { color: var(--muted); }
+  .ferry-live-loading { color: var(--muted); font-style: italic; }
+  .ferry-live-meta { display: block; font-size: 0.6rem; color: var(--muted); margin-top: 1px; font-weight: 400; }
+  .turistveg-banner { display: flex; align-items: center; gap: 9px; margin: 0 0 12px; padding: 11px 13px; min-height: 44px;
+    background: linear-gradient(135deg,#e8501f,#bf3318); color: #fff; border-radius: 8px; text-decoration: none;
+    font-size: 0.8rem; font-weight: 600; line-height: 1.3; touch-action: manipulation; }
+  .turistveg-banner .tv-arrow { margin-left: auto; font-size: 1.05rem; }
+  .turistveg-banner small { display: block; font-weight: 400; font-size: 0.68rem; opacity: 0.92; margin-top: 1px; }
 
   .ferry-book-btn {
     font-size: 0.7rem; color: var(--fjord);
@@ -1338,15 +1348,86 @@ function buildGMapsNavUrl(lat, lng) {
 // 9 ferries totaal, 3 verplicht te reserveren (dag 18, 27, 50)
 const ferryInfo = [
   { dag: 1,  naam: "Puttgarden–Rødby",       duur: "~45 min",    verplicht: false, link: "https://www.scandlines.com/en",     tip: "Walk-on mogelijk; aanbevolen te boeken in zomerpiek (Scandlines)", tijden: "Elke 30 min · 06:00–23:00 dagelijks" },
-  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u40",        verplicht: true,  link: "https://www.torghatten.no/en/our-routes/180", tip: "⚠ GEEN online reservering mogelijk! Campers slapen in de rij — vroeg aankomen of zelfs avond ervoor. Slechts 3 afvaarten per dag in hoogseizoen.", tijden: "Van Gryllefjord: 11:00 · 15:00 · 19:00 · Van Andenes: 08:45 · 13:00 · 17:00 (15 jun–23 aug 2026, bron: torghatten.no)" },
-  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u15",        verplicht: true,  link: "https://www.torghatten.no/booking/find-tickets", tip: "Reserveer VOORAF (250 NOK p.p.). Slechts 50% van plekken online — rest walk-on. 2+ weken vooruit boeken in hoogseizoen. Camper: bij 8–10m = 1.677 NOK.", tijden: "Van Moskenes (ma/wo/vr): 05:00 · 08:00 · 09:45 · 11:00 · 14:00 · 15:45 · 20:00 · 21:30 · 23:30 (hoogseizoen mei–sep 2026, wisselend per dag — check torghatten.no)" },
-  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten.no/en",                tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
+  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u40",        verplicht: true,  link: "https://www.torghatten.no/en/our-routes/180", enturId: "NSR:StopPlace:60125", enturDest: "Andenes", tip: "⚠ GEEN online reservering mogelijk! Campers slapen in de rij — vroeg aankomen of zelfs avond ervoor. Slechts 3 afvaarten per dag in hoogseizoen.", tijden: "Van Gryllefjord: 11:00 · 15:00 · 19:00 · Van Andenes: 08:45 · 13:00 · 17:00 (15 jun–23 aug 2026, bron: torghatten.no)" },
+  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u15",        verplicht: true,  link: "https://www.torghatten.no/booking/find-tickets", enturId: "NSR:StopPlace:59362", enturDest: "Bodø", tip: "Reserveer VOORAF (250 NOK p.p.). Slechts 50% van plekken online — rest walk-on. 2+ weken vooruit boeken in hoogseizoen. Camper: bij 8–10m = 1.677 NOK.", tijden: "Van Moskenes (ma/wo/vr): 05:00 · 08:00 · 09:45 · 11:00 · 14:00 · 15:45 · 20:00 · 21:30 · 23:30 (hoogseizoen mei–sep 2026, wisselend per dag — check torghatten.no)" },
+  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten.no/en",                enturId: "NSR:StopPlace:58673", enturDest: "Kilboghamn", tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
   { dag: 30, naam: "Fv17 kleine ferries",    duur: "variabel",    verplicht: false, link: null,                                tip: "2–3 walk-on ferries langs Kystriksveien — geen reservering, gewoon aansluiten", tijden: "Walk-on, frequente dienst overdag" },
-  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/eng/",        tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
-  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://booking.norled.no/",        tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
+  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/eng/",        enturId: "NSR:StopPlace:58741", enturDest: "Hollingsholmen", tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
+  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://booking.norled.no/",        enturId: "NSR:StopPlace:58338", enturDest: "Oppedal", tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
   { dag: 48, naam: "E39 Stavanger-ferries",  duur: "variabel",    verplicht: false, link: null,                                tip: "Meerdere walk-on ferries langs E39 richting Stavanger — geen reservering", tijden: "Frequente dienst overdag, walk-on" },
-  { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u15–3u55",   verplicht: true,  link: "https://fjordline.com/en/timetable", tip: "Fjord Line geboekt ✓ · Catamaran Fjord FSTR (2u15) of cruiseschip (3u55). Check-in camper 1.5u voor vertrek — apart terminal van Color Line!", tijden: "Fjord Line van Kristiansand: check bevestigingsmail voor exacte tijd · fjordline.com" },
+  { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  verplicht: true,  link: "https://fjordline.com/en/timetable", tip: "Fjord Line GEBOEKT ✓ (boeking 13049871) · schip Fjord FSTR · vertrek 26-08-2026. Check-in opent 2u voor vertrek, uiterlijk 60 min ervoor — aparte terminal van Color Line!", tijden: "Vertrek 26-08-2026 · Fjord FSTR-overtocht 2u25. Exacte kloktijd staat op Fjord Line 'My Page'/boarding card (niet in de bevestigingsmail)." },
 ];
+
+// ─── NASJONALE TURISTVEGER (officiële scenic routes) ───────────────────────
+// Per fase gekoppeld. Bron: nasjonaleturistveger.no — aangewezen scenic wegen
+// met officiële uitzichtpunten/rustplaatsen (vaak ruime parkeerplaats, camper-OK).
+const turistvegByFase = {
+  "Senja":             { naam: "Senja",                  weg: "Fv862 Gryllefjord–Botnhamn",     url: "https://www.nasjonaleturistveger.no/en/routes/senja" },
+  "Andøya":            { naam: "Andøya",                 weg: "Andenes–Bjørnskinn",             url: "https://www.nasjonaleturistveger.no/en/routes/andoya" },
+  "Lofoten":           { naam: "Lofoten",                weg: "E10 Å–Raftsundet",               url: "https://www.nasjonaleturistveger.no/en/routes/lofoten" },
+  "Helgeland":         { naam: "Helgelandskysten",       weg: "Fv17 Kystriksveien",             url: "https://www.nasjonaleturistveger.no/en/routes/helgelandskysten" },
+  "Atlanterhavsvegen": { naam: "Atlanterhavsvegen",      weg: "Atlanterhavsvegen (Kårvåg–Bud)", url: "https://www.nasjonaleturistveger.no/en/routes/atlanterhavsvegen" },
+  "Geirangerfjord":    { naam: "Geiranger–Trollstigen",  weg: "Fv63 Ørnesvingen/Geiranger",     url: "https://www.nasjonaleturistveger.no/en/routes/geiranger--trollstigen" },
+  "Loen":              { naam: "Gamle Strynefjellsvegen", weg: "Rv15 Videseter–Grotli",         url: "https://www.nasjonaleturistveger.no/en/routes/gamle-strynefjellsvegen" },
+  "Bergen":            { naam: "Hardanger",              weg: "Hardangerfjord (dagtrip)",       url: "https://www.nasjonaleturistveger.no/en/routes/hardanger" },
+  "Stavanger":         { naam: "Ryfylke",                weg: "Ryfylke / Lysefjord",            url: "https://www.nasjonaleturistveger.no/en/routes/ryfylke" },
+  "Terugreis":         { naam: "Jæren",                  weg: "Kyst Stavanger→Kristiansand",    url: "https://www.nasjonaleturistveger.no/en/routes/jaren" },
+};
+
+// ─── LIVE FERRY-TIJDEN via Entur (Noorse nationale reisplanner) ────────────
+// Haalt de echte dienstregeling voor de geplande reisdatum op. Geen verbinding?
+// → laatst opgehaalde tijden tonen met duidelijke waarschuwing.
+const ENTUR_GQL = 'https://api.entur.io/journey-planner/v3/graphql';
+function ferryDateISO(dag) {
+  const d = new Date(TRIP_START_DATE);
+  d.setDate(d.getDate() + (dag - 1));
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+function fmtNL(ts) {
+  const d = new Date(ts), p = n => String(n).padStart(2, '0');
+  return `${p(d.getDate())}-${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function getFerryCache(dag) {
+  try { return JSON.parse(localStorage.getItem('camperreis_ferrytimes_' + dag)); } catch (e) { return null; }
+}
+function setFerryCache(dag, times) {
+  try { localStorage.setItem('camperreis_ferrytimes_' + dag, JSON.stringify({ times, fetchedAt: Date.now() })); } catch (e) {}
+}
+async function fetchEnturFerry(f) {
+  const dateISO = ferryDateISO(f.dag);
+  const q = `{ stopPlace(id:"${f.enturId}"){ estimatedCalls(numberOfDepartures:50, timeRange:86400, startTime:"${dateISO}T03:00:00+02:00"){ aimedDepartureTime cancellation destinationDisplay{frontText} serviceJourney{line{transportMode}} } } }`;
+  const resp = await fetch(ENTUR_GQL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'ET-Client-Name': 'deedee2610-camperreis' }, body: JSON.stringify({ query: q }) });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  const j = await resp.json();
+  const calls = j?.data?.stopPlace?.estimatedCalls || [];
+  const dest = (f.enturDest || '').toLowerCase();
+  const times = calls
+    .filter(c => c.serviceJourney?.line?.transportMode === 'water' && !c.cancellation && (c.destinationDisplay?.frontText || '').toLowerCase().includes(dest))
+    .map(c => c.aimedDepartureTime.slice(11, 16));
+  return [...new Set(times)];
+}
+function ferryTimesHtml(f, mode, times, fetchedAt) {
+  const dateLbl = ferryDateISO(f.dag).split('-').reverse().slice(0, 2).join('-');
+  if (mode === 'loading') return `<span class="ferry-live-loading">⏳ Live tijden laden…</span>`;
+  if (mode === 'live')    return `<span class="ferry-live-ok">🟢 Live · ${times.join(' · ')} → ${f.enturDest}</span><span class="ferry-live-meta">dienstregeling ${dateLbl} · bijgewerkt ${fmtNL(fetchedAt)}</span>`;
+  if (mode === 'stale')   return `<span class="ferry-live-stale">⚠️ Geen verbinding</span> ${times.join(' · ')} → ${f.enturDest}<span class="ferry-live-meta">laatst opgehaald ${fmtNL(fetchedAt)} — kan verouderd zijn</span>`;
+  return `<span class="ferry-live-fallback">⚠️ Live tijden niet beschikbaar · indicatie: ${f.tijden || 'zie boekingslink'}</span>`;
+}
+async function refreshLiveFerryTimes() {
+  for (const f of ferryInfo.filter(x => x.enturId)) {
+    const el = document.getElementById('ferrytimes-' + f.dag);
+    if (!el) continue;
+    try {
+      const times = await fetchEnturFerry(f);
+      if (times.length) { setFerryCache(f.dag, times); el.innerHTML = ferryTimesHtml(f, 'live', times, Date.now()); }
+      else { const c = getFerryCache(f.dag); el.innerHTML = c ? ferryTimesHtml(f, 'stale', c.times, c.fetchedAt) : ferryTimesHtml(f, 'fallback'); }
+    } catch (e) {
+      const c = getFerryCache(f.dag);
+      el.innerHTML = c ? ferryTimesHtml(f, 'stale', c.times, c.fetchedAt) : ferryTimesHtml(f, 'fallback');
+    }
+  }
+}
 
 // ─── STOP CONTENT DATA ─────────────────────────────────────────────────────
 // Sleutel = stop.fase. Top-3 campings per stop (niet te groot, hoge beoordeling, natuur, kind+hond OK).
@@ -2509,6 +2590,12 @@ function renderTab(tabName, stop) {
       navSection = `<a href="${gUrl}" target="_blank" rel="noopener" class="nav-gmaps-btn">🗺 Navigeer naar ${stop.naam}${scenic}</a>`;
     }
 
+    // Nasjonal turistveg (officiële scenic route voor deze fase)
+    const tv = turistvegByFase[stop.fase];
+    const turistvegSection = tv
+      ? `<a href="${tv.url}" target="_blank" rel="noopener" class="turistveg-banner">🛣️ <span>Nasjonal turistveg: ${tv.naam}<small>${tv.weg} · officiële uitzichtpunten &amp; rustplaatsen</small></span><span class="tv-arrow">↗</span></a>`
+      : '';
+
     // Supermarkten onderweg
     let supermarktSection = '';
     if (nav && nav.supermarkten && nav.supermarkten.length > 0) {
@@ -2522,6 +2609,7 @@ function renderTab(tabName, stop) {
 
     body.innerHTML = `
       ${navSection}
+      ${turistvegSection}
       ${supermarktSection}
       <div class="route-stat-grid">
         <div class="route-stat"><span class="rv">${daysLeft}</span><span class="rl">Dagen over</span></div>
@@ -2613,9 +2701,14 @@ function renderFerryPanel() {
     const bookBtn = f.link
       ? `<a class="ferry-book-btn" href="${f.link}" target="_blank" rel="noopener">↗ Boek</a>`
       : '';
-    const tijdenHtml = f.tijden
-      ? `<div class="ferry-row-tijden">🕐 ${f.tijden}</div>`
-      : '';
+    let tijdenHtml = '';
+    if (f.enturId) {
+      const c = getFerryCache(f.dag);
+      const inner = c ? ferryTimesHtml(f, 'stale', c.times, c.fetchedAt) : ferryTimesHtml(f, 'loading');
+      tijdenHtml = `<div class="ferry-row-tijden" id="ferrytimes-${f.dag}">${inner}</div>`;
+    } else if (f.tijden) {
+      tijdenHtml = `<div class="ferry-row-tijden">🕐 ${f.tijden}</div>`;
+    }
     return `
       <div class="ferry-row">
         <span class="ferry-dag ${f.verplicht ? 'verplicht' : ''}">Dag ${f.dag}</span>
@@ -2637,6 +2730,7 @@ function renderFerryPanel() {
   const optioneel = ferryInfo.filter(f => !f.verplicht);
   document.getElementById('ferryVerplichtList').innerHTML = verplicht.map(renderRow).join('');
   document.getElementById('ferryOptioneelList').innerHTML = optioneel.map(renderRow).join('');
+  refreshLiveFerryTimes();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

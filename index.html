@@ -453,7 +453,7 @@
     main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
 
     /* Sidebar: scrollbaar zodat content na 42vh bereikbaar blijft */
-    sidebar { max-height: 42vh; overflow-y: auto; }
+    sidebar { max-height: 37vh; overflow-y: auto; }
 
     /* Header */
     header { padding: 10px 14px; }
@@ -1218,9 +1218,9 @@ const rijTijden = {
   10: 4.0,  // Umeå → Jokkmokk (~4u via Luleå: 2u01 + 2u01 Route 97)
   13: 2.6,  // Jokkmokk → Kiruna (2u37 via E45 + E10)
   15: 5.0,  // Kiruna → Senja/Botnhamn (5u via E10, Narvik)
-  18: 3.1,  // Senja → Andenes (3u07 incl. Gryllefjord-Andenes ferry 1u45)
+  18: 3.1,  // Senja → Andenes (3u07 incl. Gryllefjord-Andenes ferry 1u40)
   20: 3.25, // Andenes → Henningsvær/Lofoten (3u15 via Fv82 + E10)
-  27: 3.5,  // Lofoten → Bodø (Moskenes-Bodø ferry 3u30)
+  27: 3.5,  // Lofoten → Bodø (Moskenes-Bodø ferry 3u15)
   29: 3.0,  // Bodø → Mo i Rana (Fv17 Kystriksveien, ~3u)
   30: 3.0,  // Mo i Rana → Brønnøysund (Fv17 verder, ~3u)
   32: 3.5,  // Brønnøysund → Namsskogan (~3u30 via kust + Namsos)
@@ -1303,11 +1303,11 @@ const stops = [
 const ferryRoutes = [
   { from: [54.497, 11.209], to: [54.652, 11.356], naam: "Puttgarden–Rødby",     duur: "45 min",  tip: "Vooraf reserveren · dag 1" },
   { from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u40",    tip: "⚠ Geen reservering — vroeg aankomen! · 11:00 · 15:00 · 19:00 van Gryllefjord · dag 18" },
-  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u30",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
+  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u15",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
   { from: [66.554, 13.181], to: [66.428, 13.034], naam: "Jektvik–Kilboghamn",   duur: "1u05",    tip: "Kystriksveien (Fv17) · dag 29" },
   { from: [62.457,  6.572], to: [62.461,  6.607], naam: "Aukra–Hollingsholmen", duur: "12 min",  tip: "Fv64 · onderdeel Kårvåg→Ålesund (dag 38)" },
   { from: [61.107,  5.483], to: [61.145,  5.557], naam: "Lavik–Oppedal",        duur: "20 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
-  { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
+  { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  tip: "Geboekt ✓ (Fjord Line, boeking 13049871) · dag 50" },
 ];
 
 // ─── NAVIGATIE DATA PER RIJDAG ─────────────────────────────────────────────
@@ -1361,10 +1361,10 @@ const ferryInfo = [
   { dag: 1,  naam: "Puttgarden–Rødby",       duur: "~45 min",    verplicht: false, link: "https://www.scandlines.com/en",     tip: "Walk-on mogelijk; aanbevolen te boeken in zomerpiek (Scandlines)", tijden: "Elke 30 min · 06:00–23:00 dagelijks" },
   { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u40",        verplicht: true,  geenReservering: true, link: "https://www.torghatten.no/en/our-routes/180", enturId: "NSR:StopPlace:60125", enturDest: "Andenes", tip: "⚠ GEEN online reservering mogelijk! Campers slapen in de rij — vroeg aankomen of zelfs avond ervoor. Slechts 3 afvaarten per dag in hoogseizoen.", tijden: "Van Gryllefjord: 11:00 · 15:00 · 19:00 · Van Andenes: 08:45 · 13:00 · 17:00 (15 jun–23 aug 2026, bron: torghatten.no)" },
   { dag: 27, naam: "Moskenes–Bodø",          duur: "3u15",        verplicht: true,  link: "https://www.torghatten.no/booking/find-tickets", enturId: "NSR:StopPlace:59362", enturDest: "Bodø", tip: "Reserveer VOORAF (250 NOK p.p.). Slechts 50% van plekken online — rest walk-on. 2+ weken vooruit boeken in hoogseizoen. Camper: bij 8–10m = 1.677 NOK.", tijden: "Van Moskenes (ma/wo/vr): 05:00 · 08:00 · 09:45 · 11:00 · 14:00 · 15:45 · 20:00 · 21:30 · 23:30 (hoogseizoen mei–sep 2026, wisselend per dag — check torghatten.no)" },
-  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten.no/en",                enturId: "NSR:StopPlace:58673", enturDest: "Kilboghamn", tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
+  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "1u05",        verplicht: false, link: "https://www.torghatten.no/en",                enturId: "NSR:StopPlace:58673", enturDest: "Kilboghamn", tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
   { dag: 30, naam: "Fv17 kleine ferries",    duur: "variabel",    verplicht: false, link: null,                                tip: "2–3 walk-on ferries langs Kystriksveien — geen reservering, gewoon aansluiten", tijden: "Walk-on, frequente dienst overdag" },
-  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/eng/",        enturId: "NSR:StopPlace:58741", enturDest: "Hollingsholmen", tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
-  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://booking.norled.no/",        enturId: "NSR:StopPlace:58338", enturDest: "Oppedal", tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
+  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "12 min",      verplicht: false, link: "https://www.fjord1.no/eng/",        enturId: "NSR:StopPlace:58741", enturDest: "Hollingsholmen", tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
+  { dag: 45, naam: "Lavik–Oppedal",          duur: "20 min",      verplicht: false, link: "https://booking.norled.no/",        enturId: "NSR:StopPlace:58338", enturDest: "Oppedal", tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
   { dag: 48, naam: "E39 Stavanger-ferries",  duur: "variabel",    verplicht: false, link: null,                                tip: "Meerdere walk-on ferries langs E39 richting Stavanger — geen reservering", tijden: "Frequente dienst overdag, walk-on" },
   { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  verplicht: true,  geboekt: true, link: "https://fjordline.com/en/timetable", tip: "Fjord Line GEBOEKT ✓ (boeking 13049871) · schip Fjord FSTR · vertrek 26-08-2026. Check-in opent 2u voor vertrek, uiterlijk 60 min ervoor — aparte terminal van Color Line!", tijden: "Vertrek 26-08-2026 · Fjord FSTR-overtocht 2u25. Exacte kloktijd staat op Fjord Line 'My Page'/boarding card (niet in de bevestigingsmail)." },
 ];
@@ -1747,7 +1747,7 @@ const stopData = {
 
   "Terugreis": {
     activiteiten: [
-      { icon: "⛴", naam: "Ferry Kristiansand–Hirtshals", desc: "Fjord Line of Color Line ferry. Oversteek ca. 2u15–3u30. VOORAF RESERVEREN via fjordline.com of colorline.com.", duur: "2.5–3.5u", kosten: "€60–120 camper", tags: ["reserveren!", "⚠ op tijd aanwezig"], link: "https://fjordline.com" },
+      { icon: "⛴", naam: "Ferry Kristiansand–Hirtshals", desc: "Fjord Line — schip Fjord FSTR, overtocht 2u25. GEBOEKT ✓ (boeking 13049871). Aparte terminal van Color Line! Check-in opent 2u voor vertrek, uiterlijk 60 min ervoor aanwezig.", duur: "2u25", kosten: "geboekt", tags: ["✓ geboekt", "⚠ op tijd aanwezig"], link: "https://fjordline.com/en/timetable" },
       { icon: "🏖", naam: "Kristiansand centrum", desc: "Gezellige havenstad. Posebyen (historisch centrum), Fiskebrygga haven, markt. Relaxte sfeer na de lange reis.", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
@@ -2105,7 +2105,7 @@ async function loadWeatherMarkers() {
     if (!w) return;
 
     const stopIdx = stops.indexOf(stop);
-    const di = stopDayIndex(stop.dag);
+    const di = stopDayIndex(stop.dag) + dayOffset; // dayOffset: weer schuift mee met langer/korter blijven
     if (di > 15) return; // buiten 16-daagse Open-Meteo limiet → geen icoon
     const safeIdx = Math.max(0, di); // verleden stops: toon huidige dag
     const ic = wmoToIcon(w.codes[safeIdx]);
@@ -2301,8 +2301,8 @@ async function updateDashboard() {
   nextUniqueStops.forEach((ns, i) => {
     const w = weerResults[i];
     if (!w) return;
-    const nsDi = stopDayIndex(ns.dag);
-    if (nsDi > 15 || !w.codes[nsDi]) return; // buiten Open-Meteo limiet
+    const nsDi = stopDayIndex(ns.dag) + dayOffset; // dayOffset: weer schuift mee
+    if (nsDi > 15 || !w.codes[Math.max(0, nsDi)]) return; // buiten Open-Meteo limiet
     const nsSafeIdx = Math.max(0, nsDi);
     const ic = wmoToIcon(w.codes[nsSafeIdx]);
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${ns.lat.toFixed(4)},${ns.lng.toFixed(4)}`;
@@ -2327,7 +2327,7 @@ async function updateDashboard() {
   const nextStop = stops.slice(idx + 1).find(s => s.type === 'rij');
   if (nextStop) {
     const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] || await fetchWeather(nextStop.lat, nextStop.lng);
-    const nextDi = stopDayIndex(nextStop.dag);
+    const nextDi = stopDayIndex(nextStop.dag) + dayOffset; // dayOffset: weer schuift mee
     const nextSafeIdx = Math.max(0, nextDi);
     const nIc = nw && nextDi <= 15 && nw.codes[nextSafeIdx] !== undefined ? wmoToIcon(nw.codes[nextSafeIdx]) : null;
     const bufAfter = flexDays;

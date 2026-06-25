@@ -453,7 +453,7 @@
     main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
 
     /* Sidebar: scrollbaar zodat content na 42vh bereikbaar blijft */
-    sidebar { max-height: 37vh; overflow-y: auto; }
+    sidebar { max-height: 42vh; overflow-y: auto; }
 
     /* Header */
     header { padding: 10px 14px; }
@@ -690,16 +690,6 @@
   .ferry-row-naam { font-size: 0.87rem; font-weight: 500; line-height: 1.3; }
   .ferry-row-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
   .ferry-row-tijden { font-size: 0.68rem; color: var(--fjord); margin-top: 3px; line-height: 1.5; }
-  .ferry-live-ok { color: #1b7a3d; font-weight: 600; }
-  .ferry-live-stale { color: #b25b00; font-weight: 600; }
-  .ferry-live-fallback { color: var(--muted); }
-  .ferry-live-loading { color: var(--muted); font-style: italic; }
-  .ferry-live-meta { display: block; font-size: 0.6rem; color: var(--muted); margin-top: 1px; font-weight: 400; }
-  .turistveg-banner { display: flex; align-items: center; gap: 9px; margin: 0 0 12px; padding: 11px 13px; min-height: 44px;
-    background: linear-gradient(135deg,#e8501f,#bf3318); color: #fff; border-radius: 8px; text-decoration: none;
-    font-size: 0.8rem; font-weight: 600; line-height: 1.3; touch-action: manipulation; }
-  .turistveg-banner .tv-arrow { margin-left: auto; font-size: 1.05rem; }
-  .turistveg-banner small { display: block; font-weight: 400; font-size: 0.68rem; opacity: 0.92; margin-top: 1px; }
 
   .ferry-book-btn {
     font-size: 0.7rem; color: var(--fjord);
@@ -722,13 +712,6 @@
   }
   .ferry-check.checked { background: var(--ok); border-color: var(--ok); color: white; }
   .ferry-check:hover:not(.checked) { border-color: var(--fjord); }
-  .ferry-check.locked { cursor: default; opacity: 0.95; }
-  .ferry-status-badge {
-    min-width: 96px; max-width: 120px; min-height: 44px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    padding: 6px 8px; border-radius: 8px; font-size: 0.66rem; font-weight: 600; line-height: 1.2;
-    background: #fff3e0; color: #b35900; border: 1px solid #ffcc80;
-  }
 
   /* ══════════════════════════════════════════════════════════════
      FASE A — POSITIE & SIMULATIE
@@ -999,7 +982,7 @@
     <div class="loading-badge" id="routeStatus">⏳ Route laden…</div>
     <div class="loading-badge" id="weerStatus">⏳ Weer laden…</div>
     <button class="ferry-header-btn" id="ferryHeaderBtn" onclick="openFerryPanel()" title="Ferries & reserveringen">
-      ⚓ <span id="ferryHeaderCount">1/2</span>
+      ⚓ <span id="ferryHeaderCount">0/3</span>
     </button>
     <div class="status-pill" id="headerPill">
       <div class="dot"></div>
@@ -1074,7 +1057,7 @@
     </div>
 
     <button class="detail-open-sb-btn" id="detailOpenSbBtn" onclick="openDetailPanelFromSidebar()" style="display:none;">
-      📍 Activiteiten, route &amp; supermarkt →
+      📍 Activiteiten &amp; campings →
     </button>
 
     <div class="scenarios-header">
@@ -1130,16 +1113,14 @@
       <button class="ferry-close-btn" onclick="closeFerryPanel()">✕</button>
     </div>
     <div class="ferry-progress-bar-area">
-      <span class="ferry-progress-label" id="ferryProgressLabel">1 van 2 verplichte ferries gereserveerd</span>
+      <span class="ferry-progress-label" id="ferryProgressLabel">0 van 3 verplichte ferries gereserveerd</span>
       <div class="ferry-progress-track">
         <div class="ferry-progress-fill" id="ferryProgressFill" style="width:0%"></div>
       </div>
     </div>
     <div class="ferry-list">
-      <span class="ferry-section-label">🔴 Reserveren verplicht (2)</span>
+      <span class="ferry-section-label">🔴 Verplicht reserveren (3)</span>
       <div id="ferryVerplichtList"></div>
-      <span class="ferry-section-label">🟠 Geen online reservering (1)</span>
-      <div id="ferryGeenResList"></div>
       <span class="ferry-section-label">⚫ Walk-on / optioneel (6)</span>
       <div id="ferryOptioneelList"></div>
     </div>
@@ -1218,9 +1199,9 @@ const rijTijden = {
   10: 4.0,  // Umeå → Jokkmokk (~4u via Luleå: 2u01 + 2u01 Route 97)
   13: 2.6,  // Jokkmokk → Kiruna (2u37 via E45 + E10)
   15: 5.0,  // Kiruna → Senja/Botnhamn (5u via E10, Narvik)
-  18: 3.1,  // Senja → Andenes (3u07 incl. Gryllefjord-Andenes ferry 1u40)
+  18: 3.1,  // Senja → Andenes (3u07 incl. Gryllefjord-Andenes ferry 1u45)
   20: 3.25, // Andenes → Henningsvær/Lofoten (3u15 via Fv82 + E10)
-  27: 3.5,  // Lofoten → Bodø (Moskenes-Bodø ferry 3u15)
+  27: 3.5,  // Lofoten → Bodø (Moskenes-Bodø ferry 3u30)
   29: 3.0,  // Bodø → Mo i Rana (Fv17 Kystriksveien, ~3u)
   30: 3.0,  // Mo i Rana → Brønnøysund (Fv17 verder, ~3u)
   32: 3.5,  // Brønnøysund → Namsskogan (~3u30 via kust + Namsos)
@@ -1272,7 +1253,7 @@ const stops = [
   { dag: 25, naam: "Å (zuidpunt Lofoten)",       lat: 67.8819, lng: 12.9714, type: "rust", fase: "Lofoten",           tips: "Å vissersdorpmuseum, Moskenstraumen maalstroom bekijken, einde van de E10." },
   { dag: 26, naam: "Lofoten (dag 7)",            lat: 67.9000, lng: 13.0000, type: "rust", fase: "Lofoten",           tips: "Zeearend RIB-tour (book vooraf in Svolvær/Reine!), of extra rustige dag." },
   // ── Fase C: Noorwegen kust terug ─────────────────────────────────
-  { dag: 27, naam: "Bodø",                       lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø (3u15). VOORAF RESERVEREN via torghatten.no.", ferry: true },
+  { dag: 27, naam: "Bodø",                       lat: 67.2804, lng: 14.4049, type: "rij",  fase: "Bodø",              tips: "Ferry Moskenes–Bodø (3u30). VOORAF RESERVEREN via torghatten.no.", ferry: true },
   { dag: 28, naam: "Bodø (rust)",                lat: 67.2804, lng: 14.4049, type: "rust", fase: "Bodø",              tips: "Saltstraumen (sterkste maalstroom ter wereld), Kjerringøy handelspost dagtrip." },
   { dag: 29, naam: "Mo i Rana (Helgeland)",      lat: 66.3126, lng: 14.1421, type: "rij",  fase: "Helgeland",         tips: "Fv17 Kystriksveien start. Engenbreen gletsjer uitzicht. Ferry Jektvik–Kilboghamn.", ferry: true },
   { dag: 30, naam: "Brønnøysund",                lat: 65.4748, lng: 12.2134, type: "rij",  fase: "Helgeland",         tips: "Fv17 verder. Svartisen gletsjer. 1–2 kleine ferries onderweg.", ferry: true },
@@ -1295,7 +1276,7 @@ const stops = [
   { dag: 47, naam: "Bergen (dag 3)",             lat: 60.3913, lng:  5.3221, type: "rust", fase: "Bergen",            tips: "Flexdag: Hardangerfjord dagtrip, Ulriken wandeling, of extra rust in Bergen." },
   { dag: 48, naam: "Stavanger",                  lat: 58.9690, lng:  5.7330, type: "rij",  fase: "Stavanger",         tips: "4u17 via E39 + ferries. Directe kustroute door Rogaland.", ferry: true },
   { dag: 49, naam: "Stavanger (rust)",           lat: 58.9690, lng:  5.7330, type: "rust", fase: "Stavanger",         tips: "Gamle Stavanger (witte houten huizen), Norsk Oljemuseum, haven, verse vis eten." },
-  { dag: 50, naam: "Kristiansand → Hirtshals",  lat: 58.1599, lng:  8.0182, type: "rij",  fase: "Terugreis",         tips: "3u07 via E39. Ferry Kristiansand–Hirtshals GEBOEKT ✓ (Fjord Line, boeking 13049871). Check-in opent 2u voor vertrek.", ferry: true },
+  { dag: 50, naam: "Kristiansand → Hirtshals",  lat: 58.1599, lng:  8.0182, type: "rij",  fase: "Terugreis",         tips: "3u07 via E39. Ferry Kristiansand–Hirtshals. VOORAF RESERVEREN. Tijdig aanwezig zijn.", ferry: true },
 ];
 
 // ─── FERRY ROUTES ──────────────────────────────────────────────────────────
@@ -1303,18 +1284,18 @@ const stops = [
 const ferryRoutes = [
   { from: [54.497, 11.209], to: [54.652, 11.356], naam: "Puttgarden–Rødby",     duur: "45 min",  tip: "Vooraf reserveren · dag 1" },
   { from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u40",    tip: "⚠ Geen reservering — vroeg aankomen! · 11:00 · 15:00 · 19:00 van Gryllefjord · dag 18" },
-  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u15",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
+  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u30",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
   { from: [66.554, 13.181], to: [66.428, 13.034], naam: "Jektvik–Kilboghamn",   duur: "1u05",    tip: "Kystriksveien (Fv17) · dag 29" },
   { from: [62.457,  6.572], to: [62.461,  6.607], naam: "Aukra–Hollingsholmen", duur: "12 min",  tip: "Fv64 · onderdeel Kårvåg→Ålesund (dag 38)" },
   { from: [61.107,  5.483], to: [61.145,  5.557], naam: "Lavik–Oppedal",        duur: "20 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
-  { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  tip: "Geboekt ✓ (Fjord Line, boeking 13049871) · dag 50" },
+  { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u15",  tip: "VOORAF RESERVEREN fjordline.com · dag 50" },
 ];
 
 // ─── NAVIGATIE DATA PER RIJDAG ─────────────────────────────────────────────
 // waypoints: forceert scenic route in Google Maps (leeg = Google Maps kiest vanzelf goed)
 // supermarkten: ruime parkeerplaats langs de route, geschikt voor grote camper
 const navData = {
-  1:  { waypoints: [], supermarkten: [{ naam: "REMA 1000 Vordingborg (onderweg naar Møn)", lat: 55.0105, lng: 11.9118 }] },
+  1:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Jönköping", lat: 57.7719, lng: 14.1764 }] },
   4:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Jönköping", lat: 57.7719, lng: 14.1764 }] },
   6:  { waypoints: [], supermarkten: [{ naam: "ICA Maxi Uppsala Boländerna", lat: 59.8569, lng: 17.6711 }] },
   7:  { waypoints: [[62.5190,17.7260],[62.7190,18.0210]], supermarkten: [{ naam: "ICA Maxi Härnösand", lat: 62.6248, lng: 17.9373 }] },
@@ -1323,18 +1304,17 @@ const navData = {
   13: { waypoints: [], supermarkten: [{ naam: "ICA Supermarket Kiruna", lat: 67.8528, lng: 20.2253 }] },
   15: { waypoints: [[68.4384,17.4272],[69.1550,17.4500]], supermarkten: [{ naam: "REMA 1000 Narvik", lat: 68.4330, lng: 17.4285 }] },
   18: { waypoints: [[69.3600,17.2700]], supermarkten: [] },
-  20: { waypoints: [[68.9207,15.5340],[68.6957,15.4050],[68.5200,14.8900]], supermarkten: [{ naam: "REMA 1000 Sortland (onderweg)", lat: 68.6944, lng: 15.4112 }] },
-  21: { waypoints: [], supermarkten: [{ naam: "Coop Extra Leknes (centraal Lofoten)", lat: 68.1488, lng: 13.6182 }] },
+  20: { waypoints: [[68.9207,15.5340],[68.6957,15.4050],[68.5200,14.8900]], supermarkten: [{ naam: "REMA 1000 Sortland", lat: 68.6944, lng: 15.4112 }] },
   27: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Stormyra Bodø", lat: 67.2823, lng: 14.4137 }] },
   29: { waypoints: [[67.2252,14.6068],[67.0156,14.0932],[66.8078,13.8920],[66.5542,13.1810],[66.4284,13.0340]], supermarkten: [{ naam: "REMA 1000 Mo i Rana", lat: 66.3039, lng: 14.1279 }] },
   30: { waypoints: [[66.0870,13.9540],[65.8540,13.4870],[65.6640,12.9960],[65.4808,12.2207]], supermarkten: [{ naam: "REMA 1000 Brønnøysund", lat: 65.4807, lng: 12.2207 }] },
   32: { waypoints: [[65.3990,12.1540],[65.1150,12.0210]], supermarkten: [{ naam: "REMA 1000 Namsos", lat: 64.4652, lng: 11.4911 }] },
   33: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Steinkjer", lat: 64.0190, lng: 11.4915 }] },
-  36: { waypoints: [[63.0165,7.3525]], supermarkten: [{ naam: "Coop Obs Leangen Trondheim", lat: 63.4435, lng: 10.4464 }] },
+  36: { waypoints: [[63.0165,7.3525]], supermarkten: [{ naam: "ICA Maxi Moholt Trondheim", lat: 63.4097, lng: 10.4439 }] },
   38: { waypoints: [[62.7369,7.1582],[62.6440,7.1580]], supermarkten: [{ naam: "REMA 1000 Molde", lat: 62.7359, lng: 7.1638 }] },
-  40: { waypoints: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290]], supermarkten: [{ naam: "Joker Geiranger (klein — grote winkel: Coop Stranda)", lat: 62.1011, lng: 7.2053 }] },
-  43: { waypoints: [[62.0117,7.6438]], supermarkten: [{ naam: "Rema 1000 Stryn", lat: 61.9037, lng: 6.7186 }] },
-  45: { waypoints: [[60.3692,6.1017]], supermarkten: [{ naam: "REMA 1000 Norheimsund (onderweg)", lat: 60.3750, lng: 6.1456 }, { naam: "Coop Obs Lagunen Bergen", lat: 60.2970, lng: 5.3308 }] },
+  40: { waypoints: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290]], supermarkten: [] },
+  43: { waypoints: [[62.0117,7.6438]], supermarkten: [] },
+  45: { waypoints: [[60.3692,6.1017]], supermarkten: [{ naam: "REMA 1000 Norheimsund", lat: 60.3750, lng: 6.1456 }] },
   48: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Mariero Stavanger", lat: 58.9346, lng: 5.7533 }] },
   50: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Kristiansand", lat: 58.1067, lng: 7.9599 }] },
 };
@@ -1355,90 +1335,18 @@ function buildGMapsNavUrl(lat, lng) {
 }
 
 // ─── FERRY RESERVERINGSDATA ────────────────────────────────────────────────
-// 9 ferries totaal. Te reserveren: dag 27 + dag 50 (dag 50 = Fjord Line al geboekt).
-// Dag 18 Gryllefjord–Andenes is GEEN online reservering → aparte status, telt niet mee in de teller.
+// 9 ferries totaal, 3 verplicht te reserveren (dag 18, 27, 50)
 const ferryInfo = [
   { dag: 1,  naam: "Puttgarden–Rødby",       duur: "~45 min",    verplicht: false, link: "https://www.scandlines.com/en",     tip: "Walk-on mogelijk; aanbevolen te boeken in zomerpiek (Scandlines)", tijden: "Elke 30 min · 06:00–23:00 dagelijks" },
-  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u40",        verplicht: true,  geenReservering: true, link: "https://www.torghatten.no/en/our-routes/180", enturId: "NSR:StopPlace:60125", enturDest: "Andenes", tip: "⚠ GEEN online reservering mogelijk! Campers slapen in de rij — vroeg aankomen of zelfs avond ervoor. Slechts 3 afvaarten per dag in hoogseizoen.", tijden: "Van Gryllefjord: 11:00 · 15:00 · 19:00 · Van Andenes: 08:45 · 13:00 · 17:00 (15 jun–23 aug 2026, bron: torghatten.no)" },
-  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u15",        verplicht: true,  link: "https://www.torghatten.no/booking/find-tickets", enturId: "NSR:StopPlace:59362", enturDest: "Bodø", tip: "Reserveer VOORAF (250 NOK p.p.). Slechts 50% van plekken online — rest walk-on. 2+ weken vooruit boeken in hoogseizoen. Camper: bij 8–10m = 1.677 NOK.", tijden: "Van Moskenes (ma/wo/vr): 05:00 · 08:00 · 09:45 · 11:00 · 14:00 · 15:45 · 20:00 · 21:30 · 23:30 (hoogseizoen mei–sep 2026, wisselend per dag — check torghatten.no)" },
-  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "1u05",        verplicht: false, link: "https://www.torghatten.no/en",                enturId: "NSR:StopPlace:58673", enturDest: "Kilboghamn", tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
+  { dag: 18, naam: "Gryllefjord–Andenes",    duur: "1u40",        verplicht: true,  link: "https://www.torghatten.no/en/our-routes/180", tip: "⚠ GEEN online reservering mogelijk! Campers slapen in de rij — vroeg aankomen of zelfs avond ervoor. Slechts 3 afvaarten per dag in hoogseizoen.", tijden: "Van Gryllefjord: 11:00 · 15:00 · 19:00 · Van Andenes: 08:45 · 13:00 · 17:00 (15 jun–23 aug 2026, bron: torghatten.no)" },
+  { dag: 27, naam: "Moskenes–Bodø",          duur: "3u15",        verplicht: true,  link: "https://www.torghatten.no/booking/find-tickets", tip: "Reserveer VOORAF (250 NOK p.p.). Slechts 50% van plekken online — rest walk-on. 2+ weken vooruit boeken in hoogseizoen. Camper: bij 8–10m = 1.677 NOK.", tijden: "Van Moskenes (ma/wo/vr): 05:00 · 08:00 · 09:45 · 11:00 · 14:00 · 15:45 · 20:00 · 21:30 · 23:30 (hoogseizoen mei–sep 2026, wisselend per dag — check torghatten.no)" },
+  { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "~1u",         verplicht: false, link: "https://www.torghatten.no/en",                tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
   { dag: 30, naam: "Fv17 kleine ferries",    duur: "variabel",    verplicht: false, link: null,                                tip: "2–3 walk-on ferries langs Kystriksveien — geen reservering, gewoon aansluiten", tijden: "Walk-on, frequente dienst overdag" },
-  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "12 min",      verplicht: false, link: "https://www.fjord1.no/eng/",        enturId: "NSR:StopPlace:58741", enturDest: "Hollingsholmen", tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
-  { dag: 45, naam: "Lavik–Oppedal",          duur: "20 min",      verplicht: false, link: "https://booking.norled.no/",        enturId: "NSR:StopPlace:58338", enturDest: "Oppedal", tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
+  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "~15 min",     verplicht: false, link: "https://www.fjord1.no/eng/",        tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
+  { dag: 45, naam: "Lavik–Oppedal",          duur: "~25 min",     verplicht: false, link: "https://booking.norled.no/",        tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
   { dag: 48, naam: "E39 Stavanger-ferries",  duur: "variabel",    verplicht: false, link: null,                                tip: "Meerdere walk-on ferries langs E39 richting Stavanger — geen reservering", tijden: "Frequente dienst overdag, walk-on" },
-  { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  verplicht: true,  geboekt: true, link: "https://fjordline.com/en/timetable", tip: "Fjord Line GEBOEKT ✓ (boeking 13049871) · schip Fjord FSTR · vertrek 26-08-2026. Check-in opent 2u voor vertrek, uiterlijk 60 min ervoor — aparte terminal van Color Line!", tijden: "Vertrek 26-08-2026 · Fjord FSTR-overtocht 2u25. Exacte kloktijd staat op Fjord Line 'My Page'/boarding card (niet in de bevestigingsmail)." },
+  { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u15–3u55",   verplicht: true,  link: "https://fjordline.com/en/timetable", tip: "Fjord Line geboekt ✓ · Catamaran Fjord FSTR (2u15) of cruiseschip (3u55). Check-in camper 1.5u voor vertrek — apart terminal van Color Line!", tijden: "Fjord Line van Kristiansand: check bevestigingsmail voor exacte tijd · fjordline.com" },
 ];
-
-// ─── NASJONALE TURISTVEGER (officiële scenic routes) ───────────────────────
-// Per fase gekoppeld. Bron: nasjonaleturistveger.no — aangewezen scenic wegen
-// met officiële uitzichtpunten/rustplaatsen (vaak ruime parkeerplaats, camper-OK).
-const turistvegByFase = {
-  "Senja":             { naam: "Senja",                  weg: "Fv862 Gryllefjord–Botnhamn",     url: "https://www.nasjonaleturistveger.no/en/routes/senja" },
-  "Andøya":            { naam: "Andøya",                 weg: "Andenes–Bjørnskinn",             url: "https://www.nasjonaleturistveger.no/en/routes/andoya" },
-  "Lofoten":           { naam: "Lofoten",                weg: "E10 Å–Raftsundet",               url: "https://www.nasjonaleturistveger.no/en/routes/lofoten" },
-  "Helgeland":         { naam: "Helgelandskysten",       weg: "Fv17 Kystriksveien",             url: "https://www.nasjonaleturistveger.no/en/routes/helgelandskysten" },
-  "Atlanterhavsvegen": { naam: "Atlanterhavsvegen",      weg: "Atlanterhavsvegen (Kårvåg–Bud)", url: "https://www.nasjonaleturistveger.no/en/routes/atlanterhavsvegen" },
-  "Geirangerfjord":    { naam: "Geiranger–Trollstigen",  weg: "Fv63 Ørnesvingen/Geiranger",     url: "https://www.nasjonaleturistveger.no/en/routes/geiranger--trollstigen" },
-  "Loen":              { naam: "Gamle Strynefjellsvegen", weg: "Rv15 Videseter–Grotli",         url: "https://www.nasjonaleturistveger.no/en/routes/gamle-strynefjellsvegen" },
-  "Bergen":            { naam: "Hardanger",              weg: "Hardangerfjord (dagtrip)",       url: "https://www.nasjonaleturistveger.no/en/routes/hardanger" },
-  "Stavanger":         { naam: "Ryfylke",                weg: "Ryfylke / Lysefjord",            url: "https://www.nasjonaleturistveger.no/en/routes/ryfylke" },
-  "Terugreis":         { naam: "Jæren",                  weg: "Kyst Stavanger→Kristiansand",    url: "https://www.nasjonaleturistveger.no/en/routes/jaren" },
-};
-
-// ─── LIVE FERRY-TIJDEN via Entur (Noorse nationale reisplanner) ────────────
-// Haalt de echte dienstregeling voor de geplande reisdatum op. Geen verbinding?
-// → laatst opgehaalde tijden tonen met duidelijke waarschuwing.
-const ENTUR_GQL = 'https://api.entur.io/journey-planner/v3/graphql';
-function ferryDateISO(dag) {
-  const d = new Date(TRIP_START_DATE);
-  d.setDate(d.getDate() + (dag - 1));
-  const p = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
-function fmtNL(ts) {
-  const d = new Date(ts), p = n => String(n).padStart(2, '0');
-  return `${p(d.getDate())}-${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
-}
-function getFerryCache(dag) {
-  try { return JSON.parse(localStorage.getItem('camperreis_ferrytimes_' + dag)); } catch (e) { return null; }
-}
-function setFerryCache(dag, times) {
-  try { localStorage.setItem('camperreis_ferrytimes_' + dag, JSON.stringify({ times, fetchedAt: Date.now() })); } catch (e) {}
-}
-async function fetchEnturFerry(f) {
-  const dateISO = ferryDateISO(f.dag);
-  const q = `{ stopPlace(id:"${f.enturId}"){ estimatedCalls(numberOfDepartures:50, timeRange:86400, startTime:"${dateISO}T03:00:00+02:00"){ aimedDepartureTime cancellation destinationDisplay{frontText} serviceJourney{line{transportMode}} } } }`;
-  const resp = await fetch(ENTUR_GQL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'ET-Client-Name': 'deedee2610-camperreis' }, body: JSON.stringify({ query: q }) });
-  if (!resp.ok) throw new Error('HTTP ' + resp.status);
-  const j = await resp.json();
-  const calls = j?.data?.stopPlace?.estimatedCalls || [];
-  const dest = (f.enturDest || '').toLowerCase();
-  const times = calls
-    .filter(c => c.serviceJourney?.line?.transportMode === 'water' && !c.cancellation && (c.destinationDisplay?.frontText || '').toLowerCase().includes(dest))
-    .map(c => c.aimedDepartureTime.slice(11, 16));
-  return [...new Set(times)];
-}
-function ferryTimesHtml(f, mode, times, fetchedAt) {
-  const dateLbl = ferryDateISO(f.dag).split('-').reverse().slice(0, 2).join('-');
-  if (mode === 'loading') return `<span class="ferry-live-loading">⏳ Live tijden laden…</span>`;
-  if (mode === 'live')    return `<span class="ferry-live-ok">🟢 Live · ${times.join(' · ')} → ${f.enturDest}</span><span class="ferry-live-meta">dienstregeling ${dateLbl} · bijgewerkt ${fmtNL(fetchedAt)}</span>`;
-  if (mode === 'stale')   return `<span class="ferry-live-stale">⚠️ Geen verbinding</span> ${times.join(' · ')} → ${f.enturDest}<span class="ferry-live-meta">laatst opgehaald ${fmtNL(fetchedAt)} — kan verouderd zijn</span>`;
-  return `<span class="ferry-live-fallback">⚠️ Live tijden niet beschikbaar · indicatie: ${f.tijden || 'zie boekingslink'}</span>`;
-}
-async function refreshLiveFerryTimes() {
-  for (const f of ferryInfo.filter(x => x.enturId)) {
-    const el = document.getElementById('ferrytimes-' + f.dag);
-    if (!el) continue;
-    try {
-      const times = await fetchEnturFerry(f);
-      if (times.length) { setFerryCache(f.dag, times); el.innerHTML = ferryTimesHtml(f, 'live', times, Date.now()); }
-      else { const c = getFerryCache(f.dag); el.innerHTML = c ? ferryTimesHtml(f, 'stale', c.times, c.fetchedAt) : ferryTimesHtml(f, 'fallback'); }
-    } catch (e) {
-      const c = getFerryCache(f.dag);
-      el.innerHTML = c ? ferryTimesHtml(f, 'stale', c.times, c.fetchedAt) : ferryTimesHtml(f, 'fallback');
-    }
-  }
-}
 
 // ─── STOP CONTENT DATA ─────────────────────────────────────────────────────
 // Sleutel = stop.fase. Top-3 campings per stop (niet te groot, hoge beoordeling, natuur, kind+hond OK).
@@ -1747,7 +1655,7 @@ const stopData = {
 
   "Terugreis": {
     activiteiten: [
-      { icon: "⛴", naam: "Ferry Kristiansand–Hirtshals", desc: "Fjord Line — schip Fjord FSTR, overtocht 2u25. GEBOEKT ✓ (boeking 13049871). Aparte terminal van Color Line! Check-in opent 2u voor vertrek, uiterlijk 60 min ervoor aanwezig.", duur: "2u25", kosten: "geboekt", tags: ["✓ geboekt", "⚠ op tijd aanwezig"], link: "https://fjordline.com/en/timetable" },
+      { icon: "⛴", naam: "Ferry Kristiansand–Hirtshals", desc: "Fjord Line of Color Line ferry. Oversteek ca. 2u15–3u30. VOORAF RESERVEREN via fjordline.com of colorline.com.", duur: "2.5–3.5u", kosten: "€60–120 camper", tags: ["reserveren!", "⚠ op tijd aanwezig"], link: "https://fjordline.com" },
       { icon: "🏖", naam: "Kristiansand centrum", desc: "Gezellige havenstad. Posebyen (historisch centrum), Fiskebrygga haven, markt. Relaxte sfeer na de lange reis.", duur: "2–3u", kosten: "gratis", tags: ["🧒 kind-OK"], link: null },
     ],
     campings: [
@@ -2105,7 +2013,7 @@ async function loadWeatherMarkers() {
     if (!w) return;
 
     const stopIdx = stops.indexOf(stop);
-    const di = stopDayIndex(stop.dag) + dayOffset; // dayOffset: weer schuift mee met langer/korter blijven
+    const di = stopDayIndex(stop.dag);
     if (di > 15) return; // buiten 16-daagse Open-Meteo limiet → geen icoon
     const safeIdx = Math.max(0, di); // verleden stops: toon huidige dag
     const ic = wmoToIcon(w.codes[safeIdx]);
@@ -2144,7 +2052,7 @@ async function loadWeatherMarkers() {
         ${stop.ferry ? '<div style="margin-top:6px;font-size:0.72rem;color:#c9873a;">⚓ Ferry — vooraf reserveren</div>' : ''}
         <a class="yr-link" href="${yrUrl}" target="_blank">📅 Bekijk 10-daags weerbericht op yr.no →</a>
         <button class="open-detail-btn" data-open-detail="${stopIdx}">
-          ${hasContent ? '📍 Activiteiten, route & supermarkt →' : '📍 Bekijk stop details →'}
+          ${hasContent ? '📍 Activiteiten & campings →' : '📍 Bekijk stop details →'}
         </button>
       </div>
     `, { maxWidth: 300 });
@@ -2301,8 +2209,8 @@ async function updateDashboard() {
   nextUniqueStops.forEach((ns, i) => {
     const w = weerResults[i];
     if (!w) return;
-    const nsDi = stopDayIndex(ns.dag) + dayOffset; // dayOffset: weer schuift mee
-    if (nsDi > 15 || !w.codes[Math.max(0, nsDi)]) return; // buiten Open-Meteo limiet
+    const nsDi = stopDayIndex(ns.dag);
+    if (nsDi > 15 || !w.codes[nsDi]) return; // buiten Open-Meteo limiet
     const nsSafeIdx = Math.max(0, nsDi);
     const ic = wmoToIcon(w.codes[nsSafeIdx]);
     const yrUrl = `https://www.yr.no/en/forecast/daily-table/${ns.lat.toFixed(4)},${ns.lng.toFixed(4)}`;
@@ -2327,7 +2235,7 @@ async function updateDashboard() {
   const nextStop = stops.slice(idx + 1).find(s => s.type === 'rij');
   if (nextStop) {
     const nw = weatherCache[`${nextStop.lat.toFixed(3)},${nextStop.lng.toFixed(3)}`] || await fetchWeather(nextStop.lat, nextStop.lng);
-    const nextDi = stopDayIndex(nextStop.dag) + dayOffset; // dayOffset: weer schuift mee
+    const nextDi = stopDayIndex(nextStop.dag);
     const nextSafeIdx = Math.max(0, nextDi);
     const nIc = nw && nextDi <= 15 && nw.codes[nextSafeIdx] !== undefined ? wmoToIcon(nw.codes[nextSafeIdx]) : null;
     const bufAfter = flexDays;
@@ -2552,18 +2460,19 @@ function renderTab(tabName, stop) {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <span style="font-size:0.65rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);">Top 3 aanbevolen</span>
       </div>
-    ` + regularCamps.map(c => `
+    ` + regularCamps.map(c => {
+      const campLink = c.link || `https://www.google.com/search?q=${encodeURIComponent(c.naam + ' camping')}`;
+      const naamHtml = `<a href="${campLink}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,0,0,0.3);">${c.naam} ↗</a>`;
+      const allTags = [...(c.tags || []), ...(c.wasserij ? ['🧺 wasserij'] : [])];
+      return `
       <div class="camping-card">
         <div class="camping-top">
-          <div class="camping-name">${c.link ? `<a href="${c.link}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,0,0,0.3);">${c.naam} ↗</a>` : c.naam}</div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            ${c.wasserij ? `<span title="Wasserij aanwezig" style="font-size:1rem;" aria-label="Wasserij">🧺</span>` : ''}
-            <div class="camping-score">★ ${c.score}</div>
-          </div>
+          <div class="camping-name">${naamHtml}</div>
+          <div class="camping-score">★ ${c.score}</div>
         </div>
-        <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
+        <div class="camping-tags">${allTags.map(t => `<span class="atag">${t}</span>`).join('')}</div>
       </div>
-    `).join('') + wildkampCamps.map(c => `
+    `}).join('') + wildkampCamps.map(c => `
         <div class="wildkamp-box" style="margin-top:12px;">
           <div class="wildkamp-icon">⛺</div>
           <div class="wildkamp-text">
@@ -2590,7 +2499,7 @@ function renderTab(tabName, stop) {
     const senjaIdx = stops.findIndex(s => s.fase === 'Senja');
     const senjaPassed = idx > senjaIdx;
 
-    // Navigatie — op rijdagen de volledige (scenic) route, anders "navigeer hierheen"
+    // Navigatie naar deze stop
     const nav = navData[stop.dag] || null;
     const prevStop = idx > 0 ? stops[idx - 1] : null;
     let navSection = '';
@@ -2598,46 +2507,22 @@ function renderTab(tabName, stop) {
       const waypoints = nav?.waypoints || [];
       const gUrl = buildGMapsUrl(prevStop.lat, prevStop.lng, stop.lat, stop.lng, waypoints);
       const scenic = waypoints.length > 0 ? '<span class="nav-scenic-badge">✓ scenic route</span>' : '';
-      navSection = `<a href="${gUrl}" target="_blank" rel="noopener" class="nav-gmaps-btn">🗺 Navigeer de route naar ${stop.naam}${scenic}</a>`;
-    } else if (data.isVertrekpunt) {
-      // Vertrekpunt: route naar de eerste stop (Utrecht → Møns Klint), met scenic waypoints van die stop indien aanwezig
-      const nextStop = stops[idx + 1];
-      if (nextStop) {
-        const wp = navData[nextStop.dag]?.waypoints || [];
-        const gUrl = buildGMapsUrl(stop.lat, stop.lng, nextStop.lat, nextStop.lng, wp);
-        const scenic = wp.length > 0 ? '<span class="nav-scenic-badge">✓ scenic route</span>' : '';
-        navSection = `<a href="${gUrl}" target="_blank" rel="noopener" class="nav-gmaps-btn">🗺 Navigeer de route naar ${nextStop.naam}${scenic}</a>`;
-      }
-    } else {
-      const gUrl = buildGMapsNavUrl(stop.lat, stop.lng);
-      navSection = `<a href="${gUrl}" target="_blank" rel="noopener" class="nav-gmaps-btn">🗺 Navigeer hierheen — ${stop.naam}</a>`;
+      navSection = `<a href="${gUrl}" target="_blank" rel="noopener" class="nav-gmaps-btn">🗺 Navigeer naar ${stop.naam}${scenic}</a>`;
     }
 
-    // Nasjonal turistveg (officiële scenic route voor deze fase)
-    const tv = turistvegByFase[stop.fase];
-    const turistvegSection = tv
-      ? `<a href="${tv.url}" target="_blank" rel="noopener" class="turistveg-banner">🛣️ <span>Nasjonal turistveg: ${tv.naam}<small>${tv.weg} · officiële uitzichtpunten &amp; rustplaatsen</small></span><span class="tv-arrow">↗</span></a>`
-      : '';
-
-    // Supermarkten — eigen winkel, of anders een grote winkel in dezelfde regio (fase)
-    let supermarkten = (nav && nav.supermarkten) ? nav.supermarkten : [];
-    if (supermarkten.length === 0) {
-      const sameFase = stops.find(s => s.fase === stop.fase && navData[s.dag]?.supermarkten?.length);
-      if (sameFase) supermarkten = navData[sameFase.dag].supermarkten;
-    }
+    // Supermarkten onderweg
     let supermarktSection = '';
-    if (supermarkten.length > 0) {
-      const cards = supermarkten.map(s =>
+    if (nav && nav.supermarkten && nav.supermarkten.length > 0) {
+      const cards = nav.supermarkten.map(s =>
         `<a href="${buildGMapsNavUrl(s.lat, s.lng)}" target="_blank" rel="noopener" class="supermarkt-card">
           <span>🛒</span><span class="supermarkt-naam">${s.naam}</span><span class="supermarkt-arrow">→</span>
         </a>`
       ).join('');
-      supermarktSection = `<div class="supermarkt-section"><div class="section-label">🛒 Supermarkt in de buurt (groot filiaal — tik om te navigeren)</div>${cards}</div>`;
+      supermarktSection = `<div class="supermarkt-section">${cards}</div>`;
     }
 
     body.innerHTML = `
       ${navSection}
-      ${turistvegSection}
       ${supermarktSection}
       <div class="route-stat-grid">
         <div class="route-stat"><span class="rv">${daysLeft}</span><span class="rl">Dagen over</span></div>
@@ -2683,19 +2568,13 @@ function saveFerryState() {
   try { localStorage.setItem('camperreis_ferry_v1', JSON.stringify(ferryReservations)); } catch(e) {}
 }
 
-// Te reserveren = verplicht én online reserveerbaar (Gryllefjord dag 18 valt hier buiten)
-function bookableVerplichtFerries() {
-  return ferryInfo.filter(f => f.verplicht && !f.geenReservering);
-}
-
 function getVerplichtDone() {
-  // Een ferry telt als gereserveerd bij een handmatige reservering óf als hij al geboekt is
-  return bookableVerplichtFerries().filter(f => f.geboekt || ferryReservations[f.dag]).length;
+  return ferryInfo.filter(f => f.verplicht && ferryReservations[f.dag]).length;
 }
 
 function updateFerryHeaderBadge() {
   const done = getVerplichtDone();
-  const total = bookableVerplichtFerries().length;
+  const total = ferryInfo.filter(f => f.verplicht).length;
   const btn = document.getElementById('ferryHeaderBtn');
   const countEl = document.getElementById('ferryHeaderCount');
   if (!btn || !countEl) return;
@@ -2721,7 +2600,7 @@ function toggleFerry(dag) {
 
 function renderFerryPanel() {
   const done = getVerplichtDone();
-  const total = bookableVerplichtFerries().length;
+  const total = ferryInfo.filter(f => f.verplicht).length;
   const pct = total > 0 ? (done / total) * 100 : 0;
 
   document.getElementById('ferryProgressFill').style.width = pct + '%';
@@ -2731,31 +2610,13 @@ function renderFerryPanel() {
       : `${done} van ${total} verplichte ferries gereserveerd`;
 
   function renderRow(f) {
-    const isChecked = f.geboekt || !!ferryReservations[f.dag];
+    const isChecked = !!ferryReservations[f.dag];
     const bookBtn = f.link
       ? `<a class="ferry-book-btn" href="${f.link}" target="_blank" rel="noopener">↗ Boek</a>`
       : '';
-    let tijdenHtml = '';
-    if (f.enturId) {
-      const c = getFerryCache(f.dag);
-      const inner = c ? ferryTimesHtml(f, 'stale', c.times, c.fetchedAt) : ferryTimesHtml(f, 'loading');
-      tijdenHtml = `<div class="ferry-row-tijden" id="ferrytimes-${f.dag}">${inner}</div>`;
-    } else if (f.tijden) {
-      tijdenHtml = `<div class="ferry-row-tijden">🕐 ${f.tijden}</div>`;
-    }
-    // Status-element: geen reservering → badge; geboekt → vaste ✓; anders → toggle-checkbox
-    let statusHtml;
-    if (f.geenReservering) {
-      statusHtml = `<div class="ferry-status-badge" title="Deze ferry is niet online te reserveren">Geen reservering — vroeg aankomen</div>`;
-    } else if (f.geboekt) {
-      statusHtml = `<div class="ferry-check checked locked" title="Al geboekt ✓">✓</div>`;
-    } else {
-      statusHtml = `<div class="ferry-check ${isChecked ? 'checked' : ''}"
-             onclick="toggleFerry(${f.dag})"
-             title="${isChecked ? 'Reservering terugnemen' : 'Markeer als gereserveerd'}">
-          ${isChecked ? '✓' : ''}
-        </div>`;
-    }
+    const tijdenHtml = f.tijden
+      ? `<div class="ferry-row-tijden">🕐 ${f.tijden}</div>`
+      : '';
     return `
       <div class="ferry-row">
         <span class="ferry-dag ${f.verplicht ? 'verplicht' : ''}">Dag ${f.dag}</span>
@@ -2765,18 +2626,18 @@ function renderFerryPanel() {
           ${tijdenHtml}
         </div>
         ${bookBtn}
-        ${statusHtml}
+        <div class="ferry-check ${isChecked ? 'checked' : ''}"
+             onclick="toggleFerry(${f.dag})"
+             title="${isChecked ? 'Reservering terugnemen' : 'Markeer als gereserveerd'}">
+          ${isChecked ? '✓' : ''}
+        </div>
       </div>`;
   }
 
-  const reserveren  = ferryInfo.filter(f => f.verplicht && !f.geenReservering);
-  const geenRes     = ferryInfo.filter(f => f.geenReservering);
-  const optioneel   = ferryInfo.filter(f => !f.verplicht && !f.geenReservering);
-  document.getElementById('ferryVerplichtList').innerHTML = reserveren.map(renderRow).join('');
-  const geenResList = document.getElementById('ferryGeenResList');
-  if (geenResList) geenResList.innerHTML = geenRes.map(renderRow).join('');
+  const verplicht = ferryInfo.filter(f => f.verplicht);
+  const optioneel = ferryInfo.filter(f => !f.verplicht);
+  document.getElementById('ferryVerplichtList').innerHTML = verplicht.map(renderRow).join('');
   document.getElementById('ferryOptioneelList').innerHTML = optioneel.map(renderRow).join('');
-  refreshLiveFerryTimes();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

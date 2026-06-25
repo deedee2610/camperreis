@@ -1906,21 +1906,32 @@ async function loadRoute() {
   const PUTTGARDEN  = { lat: 54.497, lng: 11.209 };
   const RODBY       = { lat: 54.652, lng: 11.356 };
   const GRYLLEFJORD = { lat: 69.360, lng: 17.275 }; // vertrektpunt ferry → Andenes
+  // Fv17 Kystriksveien tussenpunten — zorgen dat OSRM via kustroute gaat i.p.v. E6
+  const JEKTVIK    = { lat: 66.554, lng: 13.181 };
+  const KILBOGHAMN = { lat: 66.428, lng: 13.034 };
 
   // Indices in unique waar een water-only ferry aankomt
-  const iAndenes = unique.findIndex(s => s.dag === 18);
-  const iBodo    = unique.findIndex(s => s.dag === 27);
+  const iAndenes  = unique.findIndex(s => s.dag === 18);
+  const iBodo     = unique.findIndex(s => s.dag === 27);
+  const iMoiRana  = unique.findIndex(s => s.dag === 29);
+
+  // Segment 4: Bodø → Fv17 kustroute (via Jektvik+Kilboghamn) → Mo i Rana → … → Kristiansand
+  const seg4Base = unique.slice(iBodo);
+  const iMoiRanaInSeg4 = seg4Base.findIndex(s => s.dag === 29);
+  const seg4 = iMoiRanaInSeg4 > 0
+    ? [...seg4Base.slice(0, iMoiRanaInSeg4), JEKTVIK, KILBOGHAMN, ...seg4Base.slice(iMoiRanaInSeg4)]
+    : seg4Base;
 
   // Vier rijsegmenten, gescheiden door de drie hoofdferries:
   // 1. Utrecht → Puttgarden
   // 2. Rødby → Møns Klint → … → Senja → Gryllefjord (ferry-vertrekpunt)
   // 3. Andenes → … → laatste Lofoten-stop
-  // 4. Bodø → … → Kristiansand
+  // 4. Bodø → Fv17 → … → Kristiansand
   const segments = [
     [unique[0], PUTTGARDEN],
     [RODBY, ...unique.slice(1, iAndenes), GRYLLEFJORD],
     unique.slice(iAndenes, iBodo),
-    unique.slice(iBodo),
+    seg4,
   ].filter(seg => seg.length >= 2);
 
   // Route elk rijsegment apart via OSRM

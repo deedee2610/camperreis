@@ -2051,13 +2051,16 @@ async function loadRoute() {
     unique.slice(iBodo),
   ].filter(seg => seg.length >= 2);
 
-  // De KAARTroute volgt dezelfde scenic detours als de Google Maps-navigatie:
-  // voeg de navData-waypoints (Fv17-kust + ferry-kades) in vóór elke stop die ze heeft,
-  // zodat ferries op de routelijn liggen i.p.v. binnendoor (was: Jektvik–Kilboghamn 47 km los).
+  // Op de Fv17-kustdagen (Helgelandskysten) loopt de werkelijke route via de
+  // kustferries, niet binnendoor via E6. Voeg DAAR de navData-waypoints (incl. de
+  // ferry-kades Jektvik–Kilboghamn) in de kaartroute, zodat de ferry op de lijn ligt
+  // i.p.v. 47 km los. Alleen deze dagen — globaal invoegen zou andere ferries
+  // (bv. Lavik–Oppedal dag 45) juist van de route afduwen via een scenic detour.
+  const mapRouteWaypointDays = new Set([29, 30]);
   function expandSeg(seg) {
     const pts = [];
     seg.forEach((s, i) => {
-      if (i > 0 && s.dag != null && navData[s.dag] && navData[s.dag].waypoints) {
+      if (i > 0 && s.dag != null && mapRouteWaypointDays.has(s.dag) && navData[s.dag] && navData[s.dag].waypoints) {
         navData[s.dag].waypoints.forEach(wp => pts.push({ lat: wp[0], lng: wp[1] }));
       }
       pts.push({ lat: s.lat, lng: s.lng });

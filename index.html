@@ -1102,6 +1102,7 @@
     <button class="map-fullscreen-btn" id="mapFullscreenBtn" onclick="toggleSidebarMobile()" title="Kaart vergroten">⛶</button>
     <div style="position:absolute;bottom:28px;left:10px;z-index:1000;background:rgba(245,240,232,0.92);border:1px solid #d4cfc3;border-radius:8px;padding:7px 11px;font-family:'DM Sans',sans-serif;font-size:0.72rem;line-height:1.8;pointer-events:none;">
       <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:3px;background:#2d6a8f;border-radius:2px;"></span> Rijroute</div>
+      <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:4px;background:#e8590c;border-radius:2px;"></span> 🟧 Scenic route</div>
       <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-block;width:22px;height:0;border-top:2.5px dashed #c9873a;"></span> ⚓ Ferry</div>
     </div>
 
@@ -1301,13 +1302,13 @@ const stops = [
 // ─── FERRY ROUTES ──────────────────────────────────────────────────────────
 // Expliciete ferry-oversteken als coördinatenparen voor kaartvisualisatie
 const ferryRoutes = [
-  { from: [54.497, 11.209], to: [54.652, 11.356], naam: "Puttgarden–Rødby",     duur: "45 min",  tip: "Vooraf reserveren · dag 1" },
-  { from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u40",    tip: "⚠ Geen reservering — vroeg aankomen! · 11:00 · 15:00 · 19:00 van Gryllefjord · dag 18" },
-  { from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u15",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
-  { from: [66.554, 13.181], to: [66.428, 13.034], naam: "Jektvik–Kilboghamn",   duur: "1u05",    tip: "Kystriksveien (Fv17) · dag 29" },
-  { from: [62.457,  6.572], to: [62.461,  6.607], naam: "Aukra–Hollingsholmen", duur: "12 min",  tip: "Fv64 · onderdeel Kårvåg→Ålesund (dag 38)" },
-  { from: [61.107,  5.483], to: [61.145,  5.557], naam: "Lavik–Oppedal",        duur: "20 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
-  { from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  tip: "Geboekt ✓ (Fjord Line, boeking 13049871) · dag 50" },
+  { dag: 1,  from: [54.497, 11.209], to: [54.652, 11.356], naam: "Puttgarden–Rødby",     duur: "45 min",  tip: "Vooraf reserveren · dag 1" },
+  { dag: 18, from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u40",    tip: "⚠ Geen reservering — vroeg aankomen! · 11:00 · 15:00 · 19:00 van Gryllefjord · dag 18" },
+  { dag: 27, from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u15",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
+  { dag: 29, from: [66.554, 13.181], to: [66.428, 13.034], naam: "Jektvik–Kilboghamn",   duur: "1u05",    tip: "Kystriksveien (Fv17) · dag 29" },
+  { dag: 38, from: [62.457,  6.572], to: [62.461,  6.607], naam: "Aukra–Hollingsholmen", duur: "12 min",  tip: "Fv64 · onderdeel Kårvåg→Ålesund (dag 38)" },
+  { dag: 45, from: [61.107,  5.483], to: [61.145,  5.557], naam: "Lavik–Oppedal",        duur: "20 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
+  { dag: 50, from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  tip: "Geboekt ✓ (Fjord Line, boeking 13049871) · dag 50" },
 ];
 
 // ─── NAVIGATIE DATA PER RIJDAG ─────────────────────────────────────────────
@@ -1979,7 +1980,42 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // ─── ROUTING (OSRM) ─────────────────────────────────────────────────────────
 let routeLayer = null;
+let scenicLayer = null;
+let routePointsFlat = [];
 let currentHighlight = null;
+
+// Scenic routes (Nasjonale Turistveger) die we ÉCHT rijden — getekend in onderscheidende kleur.
+// via = punten op de werkelijke scenic-weg (overlappen de blauwe route).
+const SCENIC_COLOR = '#e8590c';
+const scenicLegs = [
+  { naam: 'Senja (Fv862)',                 url: 'https://www.nasjonaleturistveger.no/en/routes/senja',                    via: [[69.155,17.450],[69.360,17.275]] },
+  { naam: 'Lofoten (E10)',                 url: 'https://www.nasjonaleturistveger.no/en/routes/lofoten',                  via: [[68.147,14.189],[68.110,13.900],[67.930,13.087],[67.882,12.971]] },
+  { naam: 'Helgelandskysten (Fv17)',       url: 'https://www.nasjonaleturistveger.no/en/routes/helgelandskysten',         via: [[67.2252,14.6068],[67.0156,14.0932],[66.8078,13.8920],[66.5542,13.1810],[66.4284,13.0340],[66.0870,13.9540],[65.8540,13.4870],[65.6640,12.9960],[65.4808,12.2207]] },
+  { naam: 'Atlanterhavsvegen (Fv64)',      url: 'https://www.nasjonaleturistveger.no/en/routes/atlanterhavsvegen',        via: [[63.0200,7.5800],[63.0165,7.3525],[62.9100,6.9100]] },
+  { naam: 'Geiranger–Ørnevegen (Fv63)',    url: 'https://www.nasjonaleturistveger.no/en/routes/geiranger--trollstigen',   via: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290],[62.1004,7.2052]] },
+  { naam: 'Gamle Strynefjellsvegen (Rv15)',url: 'https://www.nasjonaleturistveger.no/en/routes/gamle-strynefjellsvegen',  via: [[62.0117,7.6438],[61.9200,7.0400],[61.9037,6.7186],[61.8741,6.8430]] },
+];
+
+async function drawScenicRoutes() {
+  if (scenicLayer) map.removeLayer(scenicLayer);
+  scenicLayer = L.layerGroup().addTo(map);
+  for (const leg of scenicLegs) {
+    let pts = leg.via;
+    try {
+      const coordStr = leg.via.map(p => `${p[1].toFixed(5)},${p[0].toFixed(5)}`).join(';');
+      const resp = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`);
+      const data = await resp.json();
+      if (data.routes && data.routes[0]) pts = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+    } catch (e) {}
+    L.polyline(pts, { color: SCENIC_COLOR, weight: 6, opacity: 0.55 })
+      .addTo(scenicLayer)
+      .bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:170px;">
+        <div style="font-size:0.68rem;color:${SCENIC_COLOR};letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px;">🟧 Scenic route</div>
+        <div style="font-size:0.92rem;font-weight:600;margin-bottom:3px;">${leg.naam}</div>
+        <a href="${leg.url}" target="_blank" rel="noopener" style="font-size:0.76rem;">nasjonaleturistveger.no ↗</a>
+      </div>`, { maxWidth: 240 });
+  }
+}
 
 function getUniqueLocationStops() {
   const seen = new Set();
@@ -2015,12 +2051,24 @@ async function loadRoute() {
     unique.slice(iBodo),
   ].filter(seg => seg.length >= 2);
 
-  // Route elk rijsegment apart via OSRM
-  const allPolylines = [];
-  for (const seg of segments) {
+  // De KAARTroute volgt dezelfde scenic detours als de Google Maps-navigatie:
+  // voeg de navData-waypoints (Fv17-kust + ferry-kades) in vóór elke stop die ze heeft,
+  // zodat ferries op de routelijn liggen i.p.v. binnendoor (was: Jektvik–Kilboghamn 47 km los).
+  function expandSeg(seg) {
+    const pts = [];
+    seg.forEach((s, i) => {
+      if (i > 0 && s.dag != null && navData[s.dag] && navData[s.dag].waypoints) {
+        navData[s.dag].waypoints.forEach(wp => pts.push({ lat: wp[0], lng: wp[1] }));
+      }
+      pts.push({ lat: s.lat, lng: s.lng });
+    });
+    return pts;
+  }
+
+  async function routeSeq(seq) {
     const segPoints = [];
-    for (let i = 0; i < seg.length - 1; i += CHUNK - 1) {
-      const chunk = seg.slice(i, i + CHUNK);
+    for (let i = 0; i < seq.length - 1; i += CHUNK - 1) {
+      const chunk = seq.slice(i, i + CHUNK);
       if (chunk.length < 2) break;
       const coordStr = chunk.map(s => `${s.lng.toFixed(5)},${s.lat.toFixed(5)}`).join(';');
       try {
@@ -2035,7 +2083,13 @@ async function loadRoute() {
         chunk.forEach(s => segPoints.push([s.lat, s.lng]));
       }
     }
-    if (segPoints.length > 0) allPolylines.push(segPoints);
+    return segPoints;
+  }
+
+  const allPolylines = [];
+  for (const seg of segments) {
+    const pts = await routeSeq(expandSeg(seg));
+    if (pts.length > 0) allPolylines.push(pts);
   }
 
   if (routeLayer) map.removeLayer(routeLayer);
@@ -2043,6 +2097,10 @@ async function loadRoute() {
   allPolylines.forEach(pts =>
     L.polyline(pts, { color: '#2d6a8f', weight: 3.5, opacity: 0.65 }).addTo(routeLayer)
   );
+  routePointsFlat = allPolylines.flat();
+
+  // Scenic routes in onderscheidende kleur bovenop de blauwe route
+  await drawScenicRoutes();
 
   document.getElementById('routeStatus').textContent = '✓ Route geladen';
   document.getElementById('routeStatus').classList.add('done');
@@ -2079,6 +2137,7 @@ function drawFerryRoutes() {
       className: '', iconSize: [22, 22], iconAnchor: [11, 11]
     });
     const marker = L.marker(fr.from, { icon, zIndexOffset: -200 }).addTo(map);
+    fr._marker = marker;
     marker.bindPopup(`
       <div style="font-family:'DM Sans',sans-serif;min-width:180px;">
         <div style="font-size:0.68rem;color:#8a8070;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">⚓ Ferry vertrek</div>
@@ -2426,9 +2485,7 @@ function renderCampingSidebar(stop) {
   const p4nDeepLink = `park4night://map?lat=${stop.lat.toFixed(4)}&lng=${stop.lng.toFixed(4)}`;
 
   listEl.innerHTML = camps.map(c => {
-    const naamHtml = c.link
-      ? `<a href="${c.link}" target="_blank" rel="noopener">${c.naam} ↗</a>`
-      : c.naam;
+    const naamHtml = `<a href="${campingLink(c)}" target="_blank" rel="noopener">${c.naam} ↗</a>`;
     return `
       <div class="camping-sb-item">
         ${c.wasserij ? `<span class="camping-sb-wasserij" title="Wasserij aanwezig">🧺</span>` : ''}
@@ -2555,13 +2612,10 @@ function renderTab(tabName, stop) {
     ` + regularCamps.map(c => `
       <div class="camping-card">
         <div class="camping-top">
-          <div class="camping-name">${c.link ? `<a href="${c.link}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,0,0,0.3);">${c.naam} ↗</a>` : c.naam}</div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            ${c.wasserij ? `<span title="Wasserij aanwezig" style="font-size:1rem;" aria-label="Wasserij">🧺</span>` : ''}
-            <div class="camping-score">★ ${c.score}</div>
-          </div>
+          <div class="camping-name"><a href="${campingLink(c)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,0,0,0.3);">${c.naam} ↗</a></div>
+          <div class="camping-score">★ ${c.score}</div>
         </div>
-        <div class="camping-tags">${(c.tags || []).map(t => `<span class="atag">${t}</span>`).join('')}</div>
+        <div class="camping-tags">${campingTags(c).map(t => `<span class="atag">${t}</span>`).join('')}</div>
       </div>
     `).join('') + wildkampCamps.map(c => `
         <div class="wildkamp-box" style="margin-top:12px;">
@@ -2712,6 +2766,39 @@ function closeFerryPanel() {
   document.getElementById('ferryPanelOverlay').classList.remove('open');
 }
 
+// Klik op een ferry-titel → sluit het paneel en zoom de kaart naar het ferrypunt,
+// zodat je ziet over welk stuk route het gaat.
+function focusFerryOnMap(dag) {
+  const fr = ferryRoutes.find(r => r.dag === dag);
+  if (!fr) return;
+  closeFerryPanel();
+  const sb = document.querySelector('sidebar');
+  if (window.innerWidth <= 768 && sb && !sb.classList.contains('collapsed')) {
+    toggleSidebarMobile();
+  }
+  const mid = [(fr.from[0] + fr.to[0]) / 2, (fr.from[1] + fr.to[1]) / 2];
+  map.setView(mid, 9, { animate: true });
+  setTimeout(() => { map.invalidateSize(); if (fr._marker) fr._marker.openPopup(); }, 380);
+}
+function ferryHasMapPoint(dag) {
+  return ferryRoutes.some(r => r.dag === dag);
+}
+
+// ─── CAMPING HELPERS ─────────────────────────────────────────────────────────
+// Garandeer dat ELKE camping klikbaar is: eigen site indien bekend, anders een
+// Google Maps-zoeklink op naam (opent de échte plek: route, reviews, openingstijden).
+// Hierdoor kan "camping zonder link" niet meer terugkomen als een nieuwe stop wordt toegevoegd.
+function campingLink(c) {
+  if (c.link) return c.link;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.naam + ' camping')}`;
+}
+// Wasmand (🧺) als tag in dezelfde rij als de andere symbolen, niet los naast de score.
+function campingTags(c) {
+  const tags = (c.tags || []).slice();
+  if (c.wasserij && !tags.some(t => t.includes('🧺'))) tags.push('🧺 wasserij');
+  return tags;
+}
+
 function toggleFerry(dag) {
   ferryReservations[dag] = !ferryReservations[dag];
   saveFerryState();
@@ -2760,7 +2847,7 @@ function renderFerryPanel() {
       <div class="ferry-row">
         <span class="ferry-dag ${f.verplicht ? 'verplicht' : ''}">Dag ${f.dag}</span>
         <div class="ferry-row-info">
-          <div class="ferry-row-naam">${f.naam}</div>
+          <div class="ferry-row-naam"${ferryHasMapPoint(f.dag) ? ` style="cursor:pointer;" onclick="focusFerryOnMap(${f.dag})" title="Toon op de kaart"` : ''}>${f.naam}${ferryHasMapPoint(f.dag) ? ' <span style="opacity:.55;font-size:.85em;">📍</span>' : ''}</div>
           <div class="ferry-row-meta">${f.duur} · ${f.tip}</div>
           ${tijdenHtml}
         </div>

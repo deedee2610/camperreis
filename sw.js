@@ -4,7 +4,7 @@
 // OSM-beleid: geen bulkpre-caching van tegels. Cache-as-you-go is toegestaan.
 
 const TILE_CACHE = 'osm-tiles-v1';
-const STATIC_CACHE = 'static-v1';
+const STATIC_CACHE = 'static-v2'; // bump bij elke shell-wijziging zodat oude cache wordt opgeruimd
 
 // Statische resources die bij installatie worden gecached
 const STATIC_ASSETS = [
@@ -54,12 +54,18 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Statische app-shell: cache first, network fallback
+  // Statische app-shell (index.html): NETWORK-FIRST.
+  // Zo komen nieuwe deploys ALTIJD door (was cache-first → maskeerde elke update).
+  // Val terug op cache als er geen netwerk is, zodat het dashboard onderweg offline werkt.
   if (url.endsWith('/') || url.includes('index.html')) {
     event.respondWith(
-      caches.match(event.request).then(cached =>
-        cached || fetch(event.request)
-      )
+      fetch(event.request).then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(STATIC_CACHE).then(c => c.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(event.request))
     );
     return;
   }

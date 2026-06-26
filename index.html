@@ -1284,7 +1284,7 @@ const stops = [
   { dag: 35, naam: "Trondheim (dag 3)",          lat: 63.4305, lng: 10.3951, type: "rust", fase: "Trondheim",         tips: "Ringve Museum (muziek), Pirbadet zwemparadijs voor kinderen, of dagtrip Oppdal." },
   { dag: 36, naam: "Kårvåg / Atlanterhavsvegen", lat: 63.0200, lng:  7.5800, type: "rij",  fase: "Atlanterhavsvegen", tips: "3u20 via E39 + Fv64. Spectaculaire Atlantische Oceaanweg: 8 bruggen over scheren." },
   { dag: 37, naam: "Atlanterhavsvegen (rust)",   lat: 63.0200, lng:  7.5800, type: "rust", fase: "Atlanterhavsvegen", tips: "Rondrit Atlantic Ocean Road, Bud vissersdorp, Eldhusøya wandelpad, zeehonden spotten." },
-  { dag: 38, naam: "Ålesund",                    lat: 62.4724, lng:  6.1494, type: "rij",  fase: "Ålesund",           tips: "2u26 incl. Fv64 + E136/E39 met ferry. Art Nouveau stad, spectaculaire ligging.", ferry: true },
+  { dag: 38, naam: "Ålesund",                    lat: 62.4724, lng:  6.1494, type: "rij",  fase: "Ålesund",           tips: "Via E39 incl. Molde–Vestnes ferry (35 min, zeer frequent). Art Nouveau stad, spectaculaire ligging.", ferry: true },
   { dag: 39, naam: "Ålesund (rust)",             lat: 62.4724, lng:  6.1494, type: "rust", fase: "Ålesund",           tips: "Aksla top (418 treden, uitzicht), Art Nouveau Museum, Atlanterhavsparken aquarium." },
   { dag: 40, naam: "Geiranger",                  lat: 62.1004, lng:  7.2052, type: "rij",  fase: "Geirangerfjord",    tips: "1u52 via Ørnesvingen (Fv63) — haarspeldweg ZIT al in route. UNESCO fjord." },
   { dag: 41, naam: "Geiranger (dag 2)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Fjordcruise (1.5u), Flydalsjuvet overhang-foto, Storsæterfossen waterval, Dalsnibba 1500m." },
@@ -1306,7 +1306,7 @@ const ferryRoutes = [
   { dag: 18, from: [69.360, 17.275], to: [69.324, 16.127], naam: "Gryllefjord–Andenes",  duur: "1u40",    tip: "⚠ Geen reservering — vroeg aankomen! · 11:00 · 15:00 · 19:00 van Gryllefjord · dag 18" },
   { dag: 27, from: [67.994, 13.169], to: [67.280, 14.404], naam: "Moskenes–Bodø",        duur: "3u15",    tip: "VOORAF RESERVEREN torghatten.no · dag 27" },
   { dag: 29, from: [66.554, 13.181], to: [66.428, 13.034], naam: "Jektvik–Kilboghamn",   duur: "1u05",    tip: "Kystriksveien (Fv17) · dag 29" },
-  { dag: 38, from: [62.457,  6.572], to: [62.461,  6.607], naam: "Aukra–Hollingsholmen", duur: "12 min",  tip: "Fv64 · onderdeel Kårvåg→Ålesund (dag 38)" },
+  { dag: 38, from: [62.7370,  7.1590], to: [62.6515,  7.0848], naam: "Molde–Vestnes",      duur: "35 min",  tip: "E39 · onderdeel Kårvåg→Ålesund (dag 38)" },
   { dag: 45, from: [61.107,  5.483], to: [61.145,  5.557], naam: "Lavik–Oppedal",        duur: "20 min",  tip: "E39 · onderdeel Loen→Bergen (dag 45)" },
   { dag: 50, from: [58.140,  7.990], to: [57.590,  9.960], naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  tip: "Geboekt ✓ (Fjord Line, boeking 13049871) · dag 50" },
 ];
@@ -1332,7 +1332,7 @@ const navData = {
   32: { waypoints: [[65.3990,12.1540],[65.1150,12.0210]], supermarkten: [{ naam: "REMA 1000 Namsos", lat: 64.4652, lng: 11.4911 }] },
   33: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Steinkjer", lat: 64.0190, lng: 11.4915 }] },
   36: { waypoints: [[63.0165,7.3525]], supermarkten: [{ naam: "Coop Obs Leangen Trondheim", lat: 63.4435, lng: 10.4464 }] },
-  38: { waypoints: [[62.7369,7.1582],[62.6440,7.1580]], supermarkten: [{ naam: "REMA 1000 Molde", lat: 62.7359, lng: 7.1638 }] },
+  38: { waypoints: [[62.7370,7.1590],[62.6515,7.0848]], supermarkten: [{ naam: "REMA 1000 Molde", lat: 62.7359, lng: 7.1638 }] }, // Molde ferjekai → Furneset (Molde–Vestnes ferry)
   40: { waypoints: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290]], supermarkten: [{ naam: "Joker Geiranger (klein — grote winkel: Coop Stranda)", lat: 62.1011, lng: 7.2053 }] },
   43: { waypoints: [[62.0117,7.6438]], supermarkten: [{ naam: "Rema 1000 Stryn", lat: 61.9037, lng: 6.7186 }] },
   45: { waypoints: [[60.3692,6.1017]], supermarkten: [{ naam: "REMA 1000 Norheimsund (onderweg)", lat: 60.3750, lng: 6.1456 }, { naam: "Coop Obs Lagunen Bergen", lat: 60.2970, lng: 5.3308 }] },
@@ -1364,7 +1364,7 @@ const ferryInfo = [
   { dag: 27, naam: "Moskenes–Bodø",          duur: "3u15",        verplicht: true,  link: "https://www.torghatten.no/booking/find-tickets", enturId: "NSR:StopPlace:59362", enturDest: "Bodø", tip: "Reserveer VOORAF (250 NOK p.p.). Slechts 50% van plekken online — rest walk-on. 2+ weken vooruit boeken in hoogseizoen. Camper: bij 8–10m = 1.677 NOK.", tijden: "Van Moskenes (ma/wo/vr): 05:00 · 08:00 · 09:45 · 11:00 · 14:00 · 15:45 · 20:00 · 21:30 · 23:30 (hoogseizoen mei–sep 2026, wisselend per dag — check torghatten.no)" },
   { dag: 29, naam: "Jektvik–Kilboghamn",     duur: "1u05",        verplicht: false, link: "https://www.torghatten.no/en",                enturId: "NSR:StopPlace:58673", enturDest: "Kilboghamn", tip: "Kystriksveien (Fv17), frequente dienst, geen reservering nodig", tijden: "Elke 1–2u, ca. 06:00–22:00 dagelijks" },
   { dag: 30, naam: "Fv17 kleine ferries",    duur: "variabel",    verplicht: false, link: null,                                tip: "2–3 walk-on ferries langs Kystriksveien — geen reservering, gewoon aansluiten", tijden: "Walk-on, frequente dienst overdag" },
-  { dag: 38, naam: "Aukra–Hollingsholmen",   duur: "12 min",      verplicht: false, link: "https://www.fjord1.no/eng/",        enturId: "NSR:StopPlace:58741", enturDest: "Hollingsholmen", tip: "E39 route Kårvåg→Ålesund, Fjord1, frequente dienst", tijden: "Elke 30–60 min · ca. 05:30–22:00" },
+  { dag: 38, naam: "Molde–Vestnes",          duur: "35 min",      verplicht: false, link: "https://www.fjord1.no/eng/",        enturId: "NSR:StopPlace:58735", enturDest: "Vestnes", tip: "E39 route Kårvåg→Ålesund, Fjord1, zeer frequente dienst (walk-on, geen reservering)", tijden: "Elke 20–40 min · ca. 05:00–01:00 dagelijks" },
   { dag: 45, naam: "Lavik–Oppedal",          duur: "20 min",      verplicht: false, link: "https://booking.norled.no/",        enturId: "NSR:StopPlace:58338", enturDest: "Oppedal", tip: "E39 route Loen→Bergen, Norled, frequente verbinding", tijden: "Elke 20–30 min · ca. 05:30–23:00" },
   { dag: 48, naam: "E39 Stavanger-ferries",  duur: "variabel",    verplicht: false, link: null,                                tip: "Meerdere walk-on ferries langs E39 richting Stavanger — geen reservering", tijden: "Frequente dienst overdag, walk-on" },
   { dag: 50, naam: "Kristiansand–Hirtshals", duur: "2u25 (FSTR)",  verplicht: true,  geboekt: true, link: "https://fjordline.com/en/timetable", tip: "Fjord Line GEBOEKT ✓ (boeking 13049871) · schip Fjord FSTR · vertrek 26-08-2026. Check-in opent 2u voor vertrek, uiterlijk 60 min ervoor — aparte terminal van Color Line!", tijden: "Vertrek 26-08-2026 · Fjord FSTR-overtocht 2u25. Exacte kloktijd staat op Fjord Line 'My Page'/boarding card (niet in de bevestigingsmail)." },
@@ -2051,12 +2051,12 @@ async function loadRoute() {
     unique.slice(iBodo),
   ].filter(seg => seg.length >= 2);
 
-  // Op de Fv17-kustdagen (Helgelandskysten) loopt de werkelijke route via de
-  // kustferries, niet binnendoor via E6. Voeg DAAR de navData-waypoints (incl. de
-  // ferry-kades Jektvik–Kilboghamn) in de kaartroute, zodat de ferry op de lijn ligt
-  // i.p.v. 47 km los. Alleen deze dagen — globaal invoegen zou andere ferries
-  // (bv. Lavik–Oppedal dag 45) juist van de route afduwen via een scenic detour.
-  const mapRouteWaypointDays = new Set([29, 30]);
+  // Op sommige dagen loopt de werkelijke route via een ferry die OSRM anders mijdt:
+  // dag 29-30 = Fv17-kustferries (Jektvik–Kilboghamn), dag 38 = Molde–Vestnes (E39).
+  // Voeg DAAR de navData-waypoints (incl. de ferry-kades) in de kaartroute, zodat de
+  // ferry op de lijn ligt i.p.v. tientallen km los. Alleen deze dagen — globaal
+  // invoegen zou andere ferries (bv. Lavik–Oppedal dag 45) van de route afduwen.
+  const mapRouteWaypointDays = new Set([29, 30, 38]);
   function expandSeg(seg) {
     const pts = [];
     seg.forEach((s, i) => {

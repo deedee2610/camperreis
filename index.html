@@ -1282,14 +1282,14 @@ const stops = [
   { dag: 33, naam: "Trondheim",                  lat: 63.4305, lng: 10.3951, type: "rij",  fase: "Trondheim",         tips: "~2u30 via E6. Derde stad van Noorwegen. Nidarosdomen aanrader." },
   { dag: 34, naam: "Trondheim (dag 2)",          lat: 63.4305, lng: 10.3951, type: "rust", fase: "Trondheim",         tips: "Nidarosdomen (gotische kathedraal), Bakklandet historisch kwartier, Festning." },
   { dag: 35, naam: "Trondheim (dag 3)",          lat: 63.4305, lng: 10.3951, type: "rust", fase: "Trondheim",         tips: "Ringve Museum (muziek), Pirbadet zwemparadijs voor kinderen, of dagtrip Oppdal." },
-  { dag: 36, naam: "Kårvåg / Atlanterhavsvegen", lat: 63.0200, lng:  7.5800, type: "rij",  fase: "Atlanterhavsvegen", tips: "3u20 via E39 + Fv64. Spectaculaire Atlantische Oceaanweg: 8 bruggen over scheren." },
-  { dag: 37, naam: "Atlanterhavsvegen (rust)",   lat: 63.0200, lng:  7.5800, type: "rust", fase: "Atlanterhavsvegen", tips: "Rondrit Atlantic Ocean Road, Bud vissersdorp, Eldhusøya wandelpad, zeehonden spotten." },
+  { dag: 36, naam: "Sylteosen / Fræna",          lat: 62.8460, lng:  7.0830, type: "rij",  fase: "Atlanterhavsvegen", tips: "~4u via E39 + volledige Fv64 (Kårvåg→Bud, 8 bruggen) + Fv664 + Fv663. Rij de hele Atlanterhavsvegen van noord naar zuid." },
+  { dag: 37, naam: "Sylteosen (rust)",           lat: 62.8460, lng:  7.0830, type: "rust", fase: "Atlanterhavsvegen", tips: "Rondrit Fv64 bruggen, Bud vissersdorp, Eldhusøya wandelpad, zeehonden spotten." },
   { dag: 38, naam: "Ålesund",                    lat: 62.4724, lng:  6.1494, type: "rij",  fase: "Ålesund",           tips: "Via E39 incl. Molde–Vestnes ferry (35 min, zeer frequent). Art Nouveau stad, spectaculaire ligging.", ferry: true },
   { dag: 39, naam: "Ålesund (rust)",             lat: 62.4724, lng:  6.1494, type: "rust", fase: "Ålesund",           tips: "Aksla top (418 treden, uitzicht), Art Nouveau Museum, Atlanterhavsparken aquarium." },
   { dag: 40, naam: "Geiranger",                  lat: 62.1004, lng:  7.2052, type: "rij",  fase: "Geirangerfjord",    tips: "1u52 via Ørnesvingen (Fv63) — haarspeldweg ZIT al in route. UNESCO fjord." },
   { dag: 41, naam: "Geiranger (dag 2)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Fjordcruise (1.5u), Flydalsjuvet overhang-foto, Storsæterfossen waterval, Dalsnibba 1500m." },
   { dag: 42, naam: "Geiranger (dag 3)",          lat: 62.1004, lng:  7.2052, type: "rust", fase: "Geirangerfjord",    tips: "Trollstigen dagtrip (~1u30 v/v, check open-status!), kayak fjord, of rustdag." },
-  { dag: 43, naam: "Loen",                       lat: 61.8741, lng:  6.8430, type: "rij",  fase: "Loen",              tips: "1u34 via Grotli bergpass (Rv15). Spectaculair berglandschap." },
+  { dag: 43, naam: "Loen",                       lat: 61.8741, lng:  6.8430, type: "rij",  fase: "Loen",              tips: "~2u via Rv15 → Grotli → Gamle Strynefjellsvegen (historische bergweg, niet tunnel). Spectaculair berglandschap." },
   { dag: 44, naam: "Loen (rust)",                lat: 61.8741, lng:  6.8430, type: "rust", fase: "Loen",              tips: "Loen Skylift (1011m, 5 min), Briksdalsbreen gletsjerwandeling, Lovatnet kayak." },
   { dag: 45, naam: "Bergen",                     lat: 60.3913, lng:  5.3221, type: "rij",  fase: "Bergen",            tips: "4u46 via E39 incl. ferry + tol. Steinsdalsfossen (loop achter waterval) onderweg.", ferry: true },
   { dag: 46, naam: "Bergen (dag 2)",             lat: 60.3913, lng:  5.3221, type: "rust", fase: "Bergen",            tips: "Bryggen UNESCO, Fløybanen kabelbaan, vismarkt Torget, Aquarium Bergen (kind-OK)." },
@@ -1331,10 +1331,10 @@ const navData = {
   30: { waypoints: [[66.0870,13.9540],[65.8540,13.4870],[65.6640,12.9960],[65.4808,12.2207]], supermarkten: [{ naam: "REMA 1000 Brønnøysund", lat: 65.4807, lng: 12.2207 }] },
   32: { waypoints: [[65.3990,12.1540],[65.1150,12.0210]], supermarkten: [{ naam: "REMA 1000 Namsos", lat: 64.4652, lng: 11.4911 }] },
   33: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Steinkjer", lat: 64.0190, lng: 11.4915 }] },
-  36: { waypoints: [[63.0165,7.3525]], supermarkten: [{ naam: "Coop Obs Leangen Trondheim", lat: 63.4435, lng: 10.4464 }] },
+  36: { waypoints: [[63.0200,7.5800],[63.0165,7.3525],[63.0040,7.2200],[62.9580,7.0950],[62.9090,7.0090],[62.8750,7.0460],[62.8520,7.0750]], supermarkten: [{ naam: "Coop Obs Leangen Trondheim", lat: 63.4435, lng: 10.4464 }] }, // Kårvåg (N-end Fv64) → 8 bruggen → Bud → Fv664 → Fv663 → Sylteosen
   38: { waypoints: [[62.7370,7.1590],[62.6515,7.0848]], supermarkten: [{ naam: "REMA 1000 Molde", lat: 62.7359, lng: 7.1638 }] }, // Molde ferjekai → Furneset (Molde–Vestnes ferry)
   40: { waypoints: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290]], supermarkten: [{ naam: "Joker Geiranger (klein — grote winkel: Coop Stranda)", lat: 62.1011, lng: 7.2053 }] },
-  43: { waypoints: [[62.0117,7.6438]], supermarkten: [{ naam: "Rema 1000 Stryn", lat: 61.9037, lng: 6.7186 }] },
+  43: { waypoints: [[62.0570,7.5200],[62.0117,7.6438],[61.9400,7.3000],[61.9037,6.7186]], supermarkten: [{ naam: "Rema 1000 Stryn", lat: 61.9037, lng: 6.7186 }] }, // Rv15 aanloop → Grotli → Gamle Strynefjellsvegen → Videseter → Loen
   45: { waypoints: [[60.3692,6.1017]], supermarkten: [{ naam: "REMA 1000 Norheimsund (onderweg)", lat: 60.3750, lng: 6.1456 }, { naam: "Coop Obs Lagunen Bergen", lat: 60.2970, lng: 5.3308 }] },
   48: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Mariero Stavanger", lat: 58.9346, lng: 5.7533 }] },
   50: { waypoints: [], supermarkten: [{ naam: "REMA 1000 Kristiansand", lat: 58.1067, lng: 7.9599 }] },
@@ -1670,6 +1670,7 @@ const stopData = {
       { naam: "Kårvåg Camping", score: 8.4, tags: ["🐕 hond", "🌊 zeezicht", "🌿 natuur", "⭐ kleine camping"], p4nId: null, lat: 63.0200, lng: 7.5800, wildkamp: false, wasserij: false, link: "https://www.atlanterhavsveien.org/" },
       { naam: "Atlantic Ocean Road Camping", score: 8.0, tags: ["🐕 hond", "🌊 brug nabij", "🕊 rustig"], p4nId: null, lat: 63.0100, lng: 7.3400, wildkamp: false, wasserij: false, link: null },
       { naam: "Bud Camping", score: 7.6, tags: ["🐕 hond", "⚓ haven", "🏘 dorp nabij"], p4nId: null, lat: 62.9100, lng: 7.0100, wildkamp: true, wasserij: false, wildkampTip: "Langs de scheren bij de Atlanterhavsvegen zijn mooie wildkampplekken op de rotsen bij zee. Norsk allemannsrett.", link: "https://budcamping.no/en/frontpage/" },
+      { naam: "Sylteosen Camping (Fræna)", score: 7.8, tags: ["🐕 hond", "🌊 zeezicht", "🌿 natuur", "⭐ rustig"], p4nId: null, lat: 62.8460, lng: 7.0830, wildkamp: true, wasserij: false, wildkampTip: "Kust van Fræna na Fv663 — rustige plek met toegang tot zee. Norsk allemannsrett langs de scheren.", link: null },
     ]
   },
 
@@ -1991,7 +1992,7 @@ const scenicLegs = [
   { naam: 'Senja (Fv862)',                 url: 'https://www.nasjonaleturistveger.no/en/routes/senja',                    via: [[69.155,17.450],[69.360,17.275]] },
   { naam: 'Lofoten (E10)',                 url: 'https://www.nasjonaleturistveger.no/en/routes/lofoten',                  via: [[68.147,14.189],[68.110,13.900],[67.930,13.087],[67.882,12.971]] },
   { naam: 'Helgelandskysten (Fv17)',       url: 'https://www.nasjonaleturistveger.no/en/routes/helgelandskysten',         via: [[67.2252,14.6068],[67.0156,14.0932],[66.8078,13.8920],[66.5542,13.1810],[66.4284,13.0340],[66.0870,13.9540],[65.8540,13.4870],[65.6640,12.9960],[65.4808,12.2207]] },
-  { naam: 'Atlanterhavsvegen (Fv64)',      url: 'https://www.nasjonaleturistveger.no/en/routes/atlanterhavsvegen',        via: [[63.0200,7.5800],[63.0165,7.3525],[62.9100,6.9100]] },
+  { naam: 'Atlanterhavsvegen (Fv64)',      url: 'https://www.nasjonaleturistveger.no/en/routes/atlanterhavsvegen',        via: [[63.0200,7.5800],[63.0165,7.3525],[63.0040,7.2200],[62.9580,7.0950],[62.9090,7.0090],[62.8750,7.0460],[62.8520,7.0750]] },
   { naam: 'Geiranger–Ørnevegen (Fv63)',    url: 'https://www.nasjonaleturistveger.no/en/routes/geiranger--trollstigen',   via: [[62.2782,6.9750],[62.1982,7.0580],[62.1480,7.1290],[62.1004,7.2052]] },
   { naam: 'Gamle Strynefjellsvegen (Rv15)',url: 'https://www.nasjonaleturistveger.no/en/routes/gamle-strynefjellsvegen',  via: [[62.0117,7.6438],[61.9200,7.0400],[61.9037,6.7186],[61.8741,6.8430]] },
 ];
@@ -2154,6 +2155,33 @@ function drawFerryRoutes() {
 
 // ─── WEATHER MARKERS ────────────────────────────────────────────────────────
 let weatherMarkers = [];
+let stopDotMarkers = [];
+
+function initStopDots() {
+  const unique = getUniqueLocationStops();
+  unique.forEach(stop => {
+    const stopIdx = stops.indexOf(stop);
+    const hasContent = !!(stopDataByDag[stop.dag] || stopData[stop.fase]);
+    const dot = L.circleMarker([stop.lat, stop.lng], {
+      radius: 5,
+      color: '#ffffff',
+      fillColor: '#2d6a8f',
+      fillOpacity: 0.85,
+      weight: 1.5
+    });
+    dot.bindTooltip(`Dag ${stop.dag} — ${stop.naam}`, { permanent: false, direction: 'top', offset: [0, -6] });
+    dot.bindPopup(`
+      <div class="stop-popup">
+        <div class="day-badge">Dag ${stop.dag} · ${stop.fase}</div>
+        <h4>${stop.naam}</h4>
+        <p class="tip">${stop.tips}</p>
+        ${hasContent ? `<button class="open-detail-btn" data-open-detail="${stopIdx}">📍 Activiteiten, route & supermarkt →</button>` : ''}
+      </div>
+    `, { maxWidth: 260 });
+    dot.addTo(map);
+    stopDotMarkers.push({ marker: dot, stopIdx });
+  });
+}
 
 async function loadWeatherMarkers() {
   const unique = getUniqueLocationStops();
@@ -3012,23 +3040,32 @@ function onManualLocationChange() {
 
 // ─── A3: Dim eerdere stops op de kaart, highlight actieve stop ───────────────
 function updatePastStopMarkers(currentIdx) {
-  if (!weatherMarkers || !weatherMarkers.length) return;
   const currentStop = stops[currentIdx];
   if (!currentStop) return;
 
-  weatherMarkers.forEach(({ marker, stopIdx }) => {
-    const markerStop = stops[stopIdx];
-    const el = marker.getElement();
-    if (!el) return;
+  // Weer-markers (div icons)
+  if (weatherMarkers && weatherMarkers.length) {
+    weatherMarkers.forEach(({ marker, stopIdx }) => {
+      const markerStop = stops[stopIdx];
+      const el = marker.getElement();
+      if (!el) return;
+      if (markerStop.dag < currentStop.dag) {
+        el.style.opacity = '0.28';
+        el.style.filter  = 'grayscale(100%)';
+      } else {
+        el.style.opacity = '1';
+        el.style.filter  = 'none';
+      }
+    });
+  }
 
+  // Stop-puntjes
+  stopDotMarkers.forEach(({ marker, stopIdx }) => {
+    const markerStop = stops[stopIdx];
     if (markerStop.dag < currentStop.dag) {
-      // Verleden: grijs en semi-transparant
-      el.style.opacity = '0.28';
-      el.style.filter  = 'grayscale(100%)';
+      marker.setStyle({ fillOpacity: 0.2, opacity: 0.2 });
     } else {
-      // Huidig of toekomst: normaal
-      el.style.opacity = '1';
-      el.style.filter  = 'none';
+      marker.setStyle({ fillOpacity: 0.85, opacity: 1 });
     }
   });
 }
@@ -3238,6 +3275,7 @@ function clearFreeStop(andUpdate = true) {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 updateFerryHeaderBadge();
 loadRoute();
+initStopDots();
 loadWeatherMarkers();
 initAutoDate();
 

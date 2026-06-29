@@ -2717,7 +2717,7 @@ function renderTab(tabName, stop) {
           <span>🛒</span><span class="supermarkt-naam">${s.naam}</span><span class="supermarkt-arrow">→</span>
         </a>`
       ).join('');
-      supermarktSection = `<div class="supermarkt-section"><div class="section-label">🛒 Supermarkt in de buurt (groot filiaal — tik om te navigeren)</div>${cards}</div>`;
+      supermarktSection = `<div class="supermarkt-section">${cards}</div>`;
     }
 
     body.innerHTML = `
